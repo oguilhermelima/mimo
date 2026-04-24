@@ -170,6 +170,44 @@
   }
 }
 
+@keyframes sheet-slide-up {
+  0% {
+    transform: translateY(100%);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+@keyframes overlay-fade-in {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes skeleton-shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+@keyframes fade-slide-up {
+  0% {
+    opacity: 0;
+    transform: translateY(0.5rem);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 @utility animate-float-slow {
   animation: float-slow 14s ease-in-out infinite;
 }
@@ -199,6 +237,25 @@
 }
 @utility animate-rise-fade {
   animation: rise-fade 2.6s ease-in-out infinite;
+}
+@utility animate-sheet-slide-up {
+  animation: sheet-slide-up 280ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+@utility animate-overlay-fade-in {
+  animation: overlay-fade-in 220ms ease-out;
+}
+@utility animate-fade-slide-up {
+  animation: fade-slide-up 380ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+@utility animate-skeleton-shimmer {
+  background: linear-gradient(
+    90deg,
+    var(--color-muted) 0%,
+    color-mix(in oklab, var(--color-muted) 70%, white) 50%,
+    var(--color-muted) 100%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.6s ease-in-out infinite;
 }
 /* Mantém o rounded no hover mesmo durante transforms pesados (Safari glitch). */
 @utility clip-rounded {

@@ -6,13 +6,33 @@ import { createTRPCOptionsProxy } from "@trpc/tanstack-react-query";
 
 import type { AppRouter } from "@caixa/api";
 import { appRouter, createTRPCContext } from "@caixa/api";
+import type { UserRole } from "@caixa/db/schema";
 
+import { auth } from "~/lib/auth";
 import { createQueryClient } from "./query-client";
 
 const createContext = cache(async () => {
   const heads = new Headers(await headers());
   heads.set("x-trpc-source", "rsc");
-  return createTRPCContext({ headers: heads });
+  const session = await auth.api.getSession({ headers: heads });
+  return createTRPCContext({
+    headers: heads,
+    session: session
+      ? {
+          session: {
+            id: session.session.id,
+            expiresAt: new Date(session.session.expiresAt),
+          },
+          user: {
+            id: session.user.id,
+            email: session.user.email,
+            name: session.user.name,
+            role: (session.user.role as UserRole | undefined) ?? "user",
+            emailVerified: session.user.emailVerified,
+          },
+        }
+      : null,
+  });
 });
 
 const getQueryClient = cache(createQueryClient);

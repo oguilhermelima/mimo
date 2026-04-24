@@ -7,6 +7,7 @@ import { Toaster } from "@caixa/ui/toast";
 
 import { env } from "~/env";
 import { Logo } from "~/components/logo";
+import { MobileNav } from "~/components/mobile-nav";
 import { OrnamentalDivider } from "~/components/ornaments";
 import { SiteHeader } from "~/components/site-header";
 import { TRPCReactProvider } from "~/trpc/react";
@@ -49,9 +50,10 @@ export default function RootLayout(props: { children: React.ReactNode }) {
         <ThemeProvider>
           <TRPCReactProvider>
             <SiteHeader />
-            <main className="overflow-x-hidden pt-[72px] md:pt-[80px]">
+            <main className="overflow-x-hidden pb-20 pt-[64px] lg:pb-0 lg:pt-[88px]">
               {props.children}
             </main>
+            <MobileNav />
 
             <footer className="relative mt-20 overflow-hidden border-t border-border/40 bg-gradient-to-br from-primary/5 via-muted/30 to-accent/30">
               <div className="mx-auto flex w-full max-w-7xl flex-col items-center gap-7 px-6 py-16 text-center md:px-10 md:py-20">

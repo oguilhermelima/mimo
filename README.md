@@ -1,4 +1,4 @@
-# Mimo
+# Encantim
 
 Loja de caixinhas artesanais personalizadas. Monorepo T3 Turbo (pnpm + turbo + Next 16 + tRPC v11 + Drizzle + Postgres).
 
@@ -87,7 +87,7 @@ Env vars (CLI ou pelo dashboard → Settings → Environment Variables):
 | `ADMIN_PASSWORD` | senha do `/admin` (mínimo 6 chars) |
 | `ADMIN_SESSION_SECRET` | secret pra HMAC do cookie admin (mínimo 16 chars) |
 | `NEXT_PUBLIC_WHATSAPP_NUMBER` | DDI+DDD+número, só dígitos (ex: `5511999999999`) |
-| `NEXT_PUBLIC_STORE_NAME` | opcional, default `Mimo` |
+| `NEXT_PUBLIC_STORE_NAME` | opcional, default `Encantim` |
 
 Gerar `ADMIN_SESSION_SECRET`:
 ```bash

@@ -13,7 +13,7 @@ export const env = createEnv({
     ADMIN_SESSION_SECRET: z.string().min(16),
   },
   client: {
-    NEXT_PUBLIC_STORE_NAME: z.string().default("Mimo"),
+    NEXT_PUBLIC_STORE_NAME: z.string().default("Encantim"),
     NEXT_PUBLIC_WHATSAPP_NUMBER: z
       .string()
       .regex(/^\d{10,15}$/, "apenas dígitos (DDI+DDD+número)"),

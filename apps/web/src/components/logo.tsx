@@ -25,7 +25,7 @@ export function Logo({
       )}
     >
       <span className="font-serif text-2xl italic tracking-tight md:text-3xl">
-        mimo
+        encantim
       </span>
       {withTagline && (
         <span className="mt-1 text-[9px] uppercase tracking-[0.42em] text-primary/55 md:text-[10px]">
@@ -50,7 +50,7 @@ export function Logo({
         <LogoMark className={cn("size-14 shrink-0", markClassName)} />
         <span className="inline-flex flex-col items-center leading-none text-primary">
           <span className="font-serif text-2xl italic tracking-tight md:text-3xl">
-            mimo
+            encantim
           </span>
           {withTagline && (
             <span className="mt-1 text-[9px] uppercase tracking-[0.42em] text-primary/55 md:text-[10px]">
@@ -70,7 +70,7 @@ export function Logo({
 }
 
 /**
- * Emblema Mimo: laço de fita (o gesto do mimo — embrulhar um presente)
+ * Emblema Encantim: laço de fita (o gesto do encantim — embrulhar um presente)
  * com sparkle acima (encanto). Silhueta preenchida em duas opacidades
  * criando hierarquia: laço principal sólido, fitas caindo mais suaves.
  */
@@ -148,7 +148,7 @@ export function LogoMark({ className }: { className?: string }) {
 }
 
 /**
- * Versão horizontal inline: laço pequeno + "mimo" italic + linha decorativa.
+ * Versão horizontal inline: laço pequeno + "encantim" italic + linha decorativa.
  * Usada em breadcrumbs, rodapés, divisores.
  */
 export function LogoMonogram({ className }: { className?: string }) {
@@ -202,7 +202,7 @@ export function LogoMonogram({ className }: { className?: string }) {
         <rect x="8.5" y="16" width="3" height="5" rx="0.6" fill="currentColor" />
       </g>
 
-      {/* wordmark "mimo" italic centralizado */}
+      {/* wordmark "encantim" italic centralizado */}
       <g
         style={{
           fontFamily:
@@ -218,7 +218,7 @@ export function LogoMonogram({ className }: { className?: string }) {
           fontSize="22"
           fontWeight="500"
         >
-          mimo
+          encantim
         </text>
       </g>
 

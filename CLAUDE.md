@@ -1,4 +1,4 @@
-# Mimo — project guide
+# Encantim — project guide
 
 Loja web de caixinhas artesanais personalizadas (presentes: dia das mães, aniversários). Checkout via WhatsApp (sem gateway de pagamento). Pacotes internos permanecem no namespace `@caixa/*` — só a marca pública mudou.
 

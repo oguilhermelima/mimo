@@ -26,7 +26,7 @@ export const metadata: Metadata = {
     template: `%s · ${env.NEXT_PUBLIC_STORE_NAME}`,
   },
   description:
-    "Mimo — caixinhas artesanais feitas à mão para presentes delicados. Dia das mães, aniversários, momentos especiais.",
+    "Encantim — caixinhas artesanais feitas à mão para presentes delicados. Dia das mães, aniversários, momentos especiais.",
 };
 
 export const viewport: Viewport = {

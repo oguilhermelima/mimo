@@ -3,19 +3,31 @@ import superjson from "superjson";
 import { z, ZodError } from "zod/v4";
 
 import { db } from "@caixa/db/client";
+import type { UserRole } from "@caixa/db/schema";
 
-/**
- * Admin gate is cookie-based: Next middleware sets `admin-session` after a
- * successful password post at `/api/admin/login`. tRPC context just reflects
- * whether the cookie is present.
- */
-export const createTRPCContext = async (opts: { headers: Headers }) => {
-  const isAdmin = opts.headers
-    .get("cookie")
-    ?.split(";")
-    .some((c) => c.trim().startsWith("admin-session="));
+export interface AuthSessionUser {
+  id: string;
+  email: string;
+  name: string;
+  role: UserRole;
+  emailVerified: boolean;
+}
 
-  return { db, isAdmin: Boolean(isAdmin) };
+export interface AuthSession {
+  user: AuthSessionUser;
+  session: { id: string; expiresAt: Date };
+}
+
+export const createTRPCContext = async (opts: {
+  headers: Headers;
+  session: AuthSession | null;
+}) => {
+  return {
+    db,
+    headers: opts.headers,
+    session: opts.session,
+    user: opts.session?.user ?? null,
+  };
 };
 
 const t = initTRPC.context<typeof createTRPCContext>().create({
@@ -43,11 +55,26 @@ const timingMiddleware = t.middleware(async ({ next, path }) => {
 
 export const publicProcedure = t.procedure.use(timingMiddleware);
 
+export const protectedProcedure = t.procedure
+  .use(timingMiddleware)
+  .use(({ ctx, next }) => {
+    if (!ctx.user) {
+      throw new TRPCError({
+        code: "UNAUTHORIZED",
+        message: "Faça login pra continuar",
+      });
+    }
+    return next({ ctx: { ...ctx, user: ctx.user, session: ctx.session! } });
+  });
+
 export const adminProcedure = t.procedure
   .use(timingMiddleware)
   .use(({ ctx, next }) => {
-    if (!ctx.isAdmin) {
-      throw new TRPCError({ code: "UNAUTHORIZED", message: "Admin only" });
+    if (!ctx.user) {
+      throw new TRPCError({ code: "UNAUTHORIZED", message: "Login obrigatório" });
     }
-    return next({ ctx });
+    if (ctx.user.role !== "admin") {
+      throw new TRPCError({ code: "FORBIDDEN", message: "Acesso restrito" });
+    }
+    return next({ ctx: { ...ctx, user: ctx.user, session: ctx.session! } });
   });

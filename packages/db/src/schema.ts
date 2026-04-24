@@ -35,6 +35,9 @@ export const COUPON_SCOPES = [
 ] as const;
 export type CouponScope = (typeof COUPON_SCOPES)[number];
 
+export const USER_ROLES = ["user", "admin"] as const;
+export type UserRole = (typeof USER_ROLES)[number];
+
 /**
  * Products: template_box/box são shells; jewelry/perfume/cosmetic são conteúdos.
  * Composição de caixas (pré-montadas e encomendas) vive na tabela `bundle`.
@@ -225,6 +228,92 @@ export const Coupon = pgTable("coupon", (t) => ({
   active: t.boolean().notNull().default(true),
 
   createdAt: t.timestamp().defaultNow().notNull(),
+}));
+
+/* ────────── auth (better-auth) ────────── */
+
+/**
+ * Tabelas exigidas pelo better-auth. IDs são strings (nanoid) — não UUID.
+ * Custom fields: cpf, phone (additionalFields no auth config).
+ * Plugin admin: role, banned, banReason, banExpires.
+ */
+export const User = pgTable("user", (t) => ({
+  id: t.text().notNull().primaryKey(),
+  name: t.text().notNull(),
+  email: t.text().notNull().unique(),
+  emailVerified: t.boolean("email_verified").notNull().default(false),
+  image: t.text(),
+  cpf: t.varchar({ length: 11 }).unique(),
+  phone: t.varchar({ length: 20 }),
+  role: t
+    .varchar({ length: 16 })
+    .notNull()
+    .default("user")
+    .$type<UserRole>(),
+  banned: t.boolean().notNull().default(false),
+  banReason: t.text("ban_reason"),
+  banExpires: t.timestamp("ban_expires", { withTimezone: true }),
+  createdAt: t.timestamp("created_at").defaultNow().notNull(),
+  updatedAt: t
+    .timestamp("updated_at", { mode: "date", withTimezone: true })
+    .defaultNow()
+    .notNull(),
+}));
+
+export const Session = pgTable("session", (t) => ({
+  id: t.text().notNull().primaryKey(),
+  userId: t
+    .text("user_id")
+    .notNull()
+    .references(() => User.id, { onDelete: "cascade" }),
+  token: t.text().notNull().unique(),
+  expiresAt: t.timestamp("expires_at", { withTimezone: true }).notNull(),
+  ipAddress: t.text("ip_address"),
+  userAgent: t.text("user_agent"),
+  impersonatedBy: t.text("impersonated_by"),
+  createdAt: t.timestamp("created_at").defaultNow().notNull(),
+  updatedAt: t
+    .timestamp("updated_at", { mode: "date", withTimezone: true })
+    .defaultNow()
+    .notNull(),
+}));
+
+export const Account = pgTable("account", (t) => ({
+  id: t.text().notNull().primaryKey(),
+  userId: t
+    .text("user_id")
+    .notNull()
+    .references(() => User.id, { onDelete: "cascade" }),
+  accountId: t.text("account_id").notNull(),
+  providerId: t.text("provider_id").notNull(),
+  accessToken: t.text("access_token"),
+  refreshToken: t.text("refresh_token"),
+  idToken: t.text("id_token"),
+  accessTokenExpiresAt: t.timestamp("access_token_expires_at", {
+    withTimezone: true,
+  }),
+  refreshTokenExpiresAt: t.timestamp("refresh_token_expires_at", {
+    withTimezone: true,
+  }),
+  scope: t.text(),
+  password: t.text(),
+  createdAt: t.timestamp("created_at").defaultNow().notNull(),
+  updatedAt: t
+    .timestamp("updated_at", { mode: "date", withTimezone: true })
+    .defaultNow()
+    .notNull(),
+}));
+
+export const Verification = pgTable("verification", (t) => ({
+  id: t.text().notNull().primaryKey(),
+  identifier: t.text().notNull(),
+  value: t.text().notNull(),
+  expiresAt: t.timestamp("expires_at", { withTimezone: true }).notNull(),
+  createdAt: t.timestamp("created_at").defaultNow().notNull(),
+  updatedAt: t
+    .timestamp("updated_at", { mode: "date", withTimezone: true })
+    .defaultNow()
+    .notNull(),
 }));
 
 /* ────────── relations ────────── */

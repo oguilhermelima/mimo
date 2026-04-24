@@ -1,6 +1,25 @@
 import { createEnv } from "@t3-oss/env-nextjs";
 import { z } from "zod/v4";
 
+const optionalUrl = z
+  .string()
+  .optional()
+  .transform((v) => (v && v.length > 0 ? v : undefined))
+  .pipe(z.url().optional());
+
+const optionalEmail = z
+  .string()
+  .optional()
+  .transform((v) => (v && v.length > 0 ? v : undefined))
+  .pipe(z.email().optional());
+
+const optionalMin = (min: number) =>
+  z
+    .string()
+    .optional()
+    .transform((v) => (v && v.length > 0 ? v : undefined))
+    .pipe(z.string().min(min).optional());
+
 export const env = createEnv({
   shared: {
     NODE_ENV: z
@@ -9,9 +28,13 @@ export const env = createEnv({
   },
   server: {
     DATABASE_URL: z.url(),
-    ADMIN_PASSWORD: z.string().min(6),
-    ADMIN_SESSION_SECRET: z.string().min(16),
-    BLOB_READ_WRITE_TOKEN: z.string().min(1).optional(),
+    BETTER_AUTH_SECRET: z.string().min(32),
+    BETTER_AUTH_URL: optionalUrl,
+    RESEND_API_KEY: optionalMin(1),
+    RESEND_FROM: z.email().default("onboarding@resend.dev"),
+    BLOB_READ_WRITE_TOKEN: optionalMin(1),
+    INITIAL_ADMIN_EMAIL: optionalEmail,
+    INITIAL_ADMIN_PASSWORD: optionalMin(8),
   },
   client: {
     NEXT_PUBLIC_STORE_NAME: z.string().default("Encantim"),

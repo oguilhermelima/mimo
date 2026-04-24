@@ -1,5 +1,9 @@
+import { eq } from "drizzle-orm";
+import { hashPassword } from "better-auth/crypto";
+
 import { db } from "./client";
 import {
+  Account,
   Bundle,
   BundleItem,
   BundleMedia,
@@ -8,7 +12,51 @@ import {
   Product,
   ProductMedia,
   Stamp,
+  User,
 } from "./schema";
+
+async function seedAdmin() {
+  const email = process.env.INITIAL_ADMIN_EMAIL;
+  const password = process.env.INITIAL_ADMIN_PASSWORD;
+  if (!email || !password) {
+    console.log(
+      "seed: skipping admin (set INITIAL_ADMIN_EMAIL + INITIAL_ADMIN_PASSWORD to seed)",
+    );
+    return;
+  }
+
+  console.log(`seed: admin (${email})`);
+
+  const existing = await db
+    .select({ id: User.id })
+    .from(User)
+    .where(eq(User.email, email))
+    .limit(1);
+
+  if (existing[0]) {
+    await db.delete(User).where(eq(User.id, existing[0].id));
+  }
+
+  const userId = crypto.randomUUID();
+  const accountId = crypto.randomUUID();
+  const hashed = await hashPassword(password);
+
+  await db.insert(User).values({
+    id: userId,
+    name: "Admin",
+    email,
+    emailVerified: true,
+    role: "admin",
+  });
+
+  await db.insert(Account).values({
+    id: accountId,
+    userId,
+    accountId: userId,
+    providerId: "credential",
+    password: hashed,
+  });
+}
 
 async function main() {
   console.log("seed: wiping");
@@ -20,6 +68,8 @@ async function main() {
   await db.delete(Coupon);
   await db.delete(Stamp);
   await db.delete(Product);
+
+  await seedAdmin();
 
   console.log("seed: shells (template_box)");
   const [shellMedia] = await db

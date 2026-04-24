@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import Image from "next/image";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "@caixa/ui/toast";
@@ -28,9 +28,11 @@ export function MediaManager({
 }) {
   const trpc = useTRPC();
   const qc = useQueryClient();
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [url, setUrl] = useState("");
   const [alt, setAlt] = useState("");
   const [kind, setKind] = useState<MediaKind>("image");
+  const [uploading, setUploading] = useState(false);
 
   const invalidate = () =>
     qc.invalidateQueries({
@@ -42,6 +44,7 @@ export function MediaManager({
       onSuccess: () => {
         setUrl("");
         setAlt("");
+        if (fileInputRef.current) fileInputRef.current.value = "";
         toast.success("mídia adicionada");
         invalidate();
       },
@@ -53,6 +56,40 @@ export function MediaManager({
       onSuccess: invalidate,
     }),
   );
+
+  const handleFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setUploading(true);
+    try {
+      const form = new FormData();
+      form.append("file", file);
+      form.append("folder", "product");
+
+      const res = await fetch("/api/admin/upload", {
+        method: "POST",
+        body: form,
+      });
+
+      if (!res.ok) {
+        const { error } = (await res.json().catch(() => ({ error: "falha no upload" }))) as {
+          error?: string;
+        };
+        throw new Error(error ?? "falha no upload");
+      }
+
+      const { url: uploadedUrl } = (await res.json()) as { url: string };
+      setUrl(uploadedUrl);
+      toast.success("arquivo enviado — preencha descrição e adicione");
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : "falha no upload";
+      toast.error(msg);
+      if (fileInputRef.current) fileInputRef.current.value = "";
+    } finally {
+      setUploading(false);
+    }
+  };
 
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -101,33 +138,52 @@ export function MediaManager({
         <p className="text-sm text-muted-foreground">nenhuma mídia ainda</p>
       )}
 
-      <form onSubmit={submit} className="grid gap-3 md:grid-cols-[140px_1fr_1fr_auto]">
-        <select
-          value={kind}
-          onChange={(e) => setKind(e.target.value as MediaKind)}
-          className="rounded-md border border-border bg-background px-3 py-2 text-sm"
-        >
-          {MEDIA_KINDS.map((k) => (
-            <option key={k} value={k}>
-              {k}
-            </option>
-          ))}
-        </select>
-        <Input
-          type="url"
-          placeholder="url (https://…)"
-          value={url}
-          onChange={(e) => setUrl(e.target.value)}
-          required
-        />
-        <Input
-          placeholder="descrição (alt)"
-          value={alt}
-          onChange={(e) => setAlt(e.target.value)}
-        />
-        <Button type="submit" disabled={add.isPending}>
-          Adicionar
-        </Button>
+      <form onSubmit={submit} className="space-y-3">
+        <div className="flex flex-col gap-2 rounded-xl border border-dashed border-border/60 p-3 md:flex-row md:items-center md:gap-3">
+          <label className="text-sm font-medium text-muted-foreground md:w-40">
+            Enviar arquivo
+          </label>
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            onChange={handleFile}
+            disabled={uploading}
+            className="block w-full text-sm file:mr-3 file:rounded-md file:border-0 file:bg-primary/10 file:px-3 file:py-2 file:text-primary hover:file:bg-primary/20 disabled:opacity-60"
+          />
+          {uploading ? (
+            <span className="text-xs text-muted-foreground">enviando…</span>
+          ) : null}
+        </div>
+
+        <div className="grid gap-3 md:grid-cols-[140px_1fr_1fr_auto]">
+          <select
+            value={kind}
+            onChange={(e) => setKind(e.target.value as MediaKind)}
+            className="rounded-md border border-border bg-background px-3 py-2 text-sm"
+          >
+            {MEDIA_KINDS.map((k) => (
+              <option key={k} value={k}>
+                {k}
+              </option>
+            ))}
+          </select>
+          <Input
+            type="url"
+            placeholder="url (upload ou cole um link)"
+            value={url}
+            onChange={(e) => setUrl(e.target.value)}
+            required
+          />
+          <Input
+            placeholder="descrição (alt)"
+            value={alt}
+            onChange={(e) => setAlt(e.target.value)}
+          />
+          <Button type="submit" disabled={add.isPending || uploading}>
+            Adicionar
+          </Button>
+        </div>
       </form>
     </div>
   );

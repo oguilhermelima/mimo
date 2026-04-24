@@ -18,6 +18,7 @@ const config = {
       { protocol: "https", hostname: "images.unsplash.com" },
       { protocol: "https", hostname: "**.cloudfront.net" },
       { protocol: "https", hostname: "**.amazonaws.com" },
+      { protocol: "https", hostname: "**.public.blob.vercel-storage.com" },
     ],
   },
 };

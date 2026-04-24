@@ -11,6 +11,7 @@ export const env = createEnv({
     DATABASE_URL: z.url(),
     ADMIN_PASSWORD: z.string().min(6),
     ADMIN_SESSION_SECRET: z.string().min(16),
+    BLOB_READ_WRITE_TOKEN: z.string().min(1).optional(),
   },
   client: {
     NEXT_PUBLIC_STORE_NAME: z.string().default("Encantim"),

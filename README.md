@@ -56,3 +56,56 @@ Admin: `http://localhost:3000/admin` → login com `ADMIN_PASSWORD`.
 4. Botão "encomendar no WhatsApp" abre `wa.me` com a mensagem pronta
 
 Não processamos pagamento na interface — tudo fecha no WhatsApp.
+
+## Deploy
+
+Stack de produção: **Vercel** (Next.js + API routes) + **Neon** (Postgres gerenciado).
+
+### 1. Postgres no Neon
+
+1. Criar projeto em [neon.tech](https://neon.tech) (Free tier serve).
+2. Copiar a connection string (use a **pooled**).
+3. Localmente, colar em `.env` como `DATABASE_URL` e rodar:
+   ```bash
+   pnpm db:push       # cria schema no Neon
+   pnpm db:seed       # opcional: popula demo
+   ```
+
+### 2. Vercel
+
+```bash
+vercel login                    # login interativo (abre browser)
+cd apps/web
+vercel link                     # linka o projeto; aceita "apps/web" como Root Directory
+```
+
+Env vars (CLI ou pelo dashboard → Settings → Environment Variables):
+
+| Nome | Descrição |
+|------|-----------|
+| `DATABASE_URL` | connection string do Neon (pooled) |
+| `ADMIN_PASSWORD` | senha do `/admin` (mínimo 6 chars) |
+| `ADMIN_SESSION_SECRET` | secret pra HMAC do cookie admin (mínimo 16 chars) |
+| `NEXT_PUBLIC_WHATSAPP_NUMBER` | DDI+DDD+número, só dígitos (ex: `5511999999999`) |
+| `NEXT_PUBLIC_STORE_NAME` | opcional, default `Mimo` |
+
+Gerar `ADMIN_SESSION_SECRET`:
+```bash
+openssl rand -hex 32
+```
+
+Adicionar via CLI:
+```bash
+vercel env add DATABASE_URL production
+vercel env add ADMIN_PASSWORD production
+vercel env add ADMIN_SESSION_SECRET production
+vercel env add NEXT_PUBLIC_WHATSAPP_NUMBER production
+# repetir com "preview" e "development" se quiser ambientes separados
+```
+
+Deploy:
+```bash
+vercel --prod
+```
+
+Vercel auto-detecta Next.js + Turborepo. Se precisar customizar build, ver `apps/web/vercel.json`.

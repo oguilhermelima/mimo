@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useQuery } from "@tanstack/react-query";
@@ -19,22 +19,31 @@ export function CartView() {
   const entries = useCart((s) => s.entries);
   const remove = useCart((s) => s.remove);
   const setQuantity = useCart((s) => s.setQuantity);
-  const setChildren = useCart((s) => s.setChildren);
   const clear = useCart((s) => s.clear);
 
   const trpc = useTRPC();
-  const childIds = useMemo(
-    () => Array.from(new Set(entries.flatMap((e) => e.childIds))),
-    [entries],
-  );
-  const { data: childProducts } = useQuery(
-    trpc.product.byIds.queryOptions({ ids: childIds }),
-  );
-
   const [paymentMethod, setPaymentMethod] = useState<string>("pix");
   const [notes, setNotes] = useState("");
+  const [couponCode, setCouponCode] = useState("");
+
+  const couponQuery = useQuery(
+    trpc.coupon.byCode.queryOptions(
+      { code: couponCode.trim().toUpperCase() },
+      { enabled: couponCode.trim().length > 0 },
+    ),
+  );
 
   const grand = totalCents(entries);
+  const coupon = couponQuery.data;
+  const couponInvalid = coupon && "_invalid" in coupon;
+  const discountCents =
+    coupon && !couponInvalid && typeof grand === "number"
+      ? coupon.discountType === "percent"
+        ? Math.round((grand * coupon.discountValue) / 100)
+        : Math.min(grand, coupon.discountValue)
+      : 0;
+  const finalTotal =
+    typeof grand === "number" ? Math.max(0, grand - discountCents) : null;
 
   if (entries.length === 0) {
     return (
@@ -53,89 +62,60 @@ export function CartView() {
   return (
     <div className="grid gap-8 lg:grid-cols-[1fr_360px]">
       <ul className="space-y-4">
-        {entries.map((entry) => {
-          const childDetails = childProducts?.filter((p) =>
-            entry.childIds.includes(p.id),
-          );
-          return (
-            <li
-              key={entry.lineId}
-              className="flex gap-4 rounded-2xl bg-card p-4 ring-1 ring-border/40"
-            >
-              <div className="relative size-24 shrink-0 overflow-hidden rounded-xl bg-muted">
-                {entry.imageUrl && (
-                  <Image
-                    src={entry.imageUrl}
-                    alt=""
-                    fill
-                    sizes="96px"
-                    className="object-cover"
-                  />
-                )}
+        {entries.map((entry) => (
+          <li
+            key={entry.lineId}
+            className="flex gap-4 rounded-2xl bg-card p-4 ring-1 ring-border/40"
+          >
+            <div className="relative aspect-[4/5] w-24 shrink-0 overflow-hidden rounded-xl bg-muted">
+              {entry.imageUrl && (
+                <Image
+                  src={entry.imageUrl}
+                  alt=""
+                  fill
+                  sizes="96px"
+                  className="object-cover"
+                />
+              )}
+            </div>
+
+            <div className="flex flex-1 flex-col gap-2">
+              <div className="flex items-start justify-between gap-2">
+                <div>
+                  <p className="font-serif text-lg">{entry.title}</p>
+                  <p className="text-sm text-muted-foreground">
+                    {formatBRL(entry.priceCents)}
+                    {entry.kind === "bundle" && (
+                      <span className="ml-2 rounded-full bg-primary/10 px-2 py-0.5 text-xs text-primary">
+                        caixinha
+                      </span>
+                    )}
+                  </p>
+                </div>
+                <button
+                  onClick={() => remove(entry.lineId)}
+                  className="text-xs text-muted-foreground hover:text-destructive"
+                >
+                  Remover
+                </button>
               </div>
 
-              <div className="flex flex-1 flex-col gap-2">
-                <div className="flex items-start justify-between gap-2">
-                  <div>
-                    <p className="font-serif text-lg">{entry.title}</p>
-                    <p className="text-sm text-muted-foreground">
-                      {formatBRL(entry.priceCents)}
-                    </p>
-                  </div>
-                  <button
-                    onClick={() => remove(entry.lineId)}
-                    className="text-xs text-muted-foreground hover:text-destructive"
-                  >
-                    Remover
-                  </button>
-                </div>
-
-                <div className="flex items-center gap-2">
-                  <label className="text-xs text-muted-foreground">Qtd.</label>
-                  <input
-                    type="number"
-                    min={1}
-                    max={99}
-                    value={entry.quantity}
-                    onChange={(e) =>
-                      setQuantity(entry.lineId, Number(e.target.value))
-                    }
-                    className="h-8 w-16 rounded-md border border-border bg-background px-2 text-sm"
-                  />
-                </div>
-
-                {childDetails && childDetails.length > 0 && (
-                  <details className="mt-2 rounded-lg bg-primary/5 p-3 text-sm">
-                    <summary className="cursor-pointer font-serif text-primary">
-                      Itens da Caixinha ({childDetails.length})
-                    </summary>
-                    <ul className="mt-2 space-y-1 text-muted-foreground">
-                      {childDetails.map((c) => (
-                        <li
-                          key={c.id}
-                          className="flex items-center justify-between"
-                        >
-                          <span>{c.title}</span>
-                          <button
-                            onClick={() =>
-                              setChildren(
-                                entry.lineId,
-                                entry.childIds.filter((id) => id !== c.id),
-                              )
-                            }
-                            className="text-xs hover:text-destructive"
-                          >
-                            Remover
-                          </button>
-                        </li>
-                      ))}
-                    </ul>
-                  </details>
-                )}
+              <div className="flex items-center gap-2">
+                <label className="text-xs text-muted-foreground">Qtd.</label>
+                <input
+                  type="number"
+                  min={1}
+                  max={99}
+                  value={entry.quantity}
+                  onChange={(e) =>
+                    setQuantity(entry.lineId, Number(e.target.value))
+                  }
+                  className="h-8 w-16 rounded-md border border-border bg-background px-2 text-sm"
+                />
               </div>
-            </li>
-          );
-        })}
+            </div>
+          </li>
+        ))}
       </ul>
 
       <aside className="h-fit space-y-4 rounded-2xl bg-card p-6 ring-1 ring-border/40">
@@ -145,12 +125,42 @@ export function CartView() {
         </div>
         <dl className="space-y-1 text-sm">
           <div className="flex justify-between">
+            <dt className="text-muted-foreground">Subtotal</dt>
+            <dd>{grand == null ? "sob consulta" : formatBRL(grand)}</dd>
+          </div>
+          {discountCents > 0 && (
+            <div className="flex justify-between text-emerald-700">
+              <dt>Cupom {coupon?.code}</dt>
+              <dd>- {formatBRL(discountCents)}</dd>
+            </div>
+          )}
+          <div className="flex justify-between border-t border-border/40 pt-2">
             <dt className="text-muted-foreground">Total</dt>
             <dd className="font-serif text-lg text-primary">
-              {grand == null ? "sob consulta" : formatBRL(grand)}
+              {finalTotal == null ? "sob consulta" : formatBRL(finalTotal)}
             </dd>
           </div>
         </dl>
+
+        <div className="space-y-2">
+          <label className="text-xs font-medium text-muted-foreground">
+            Cupom
+          </label>
+          <input
+            value={couponCode}
+            onChange={(e) => setCouponCode(e.target.value)}
+            placeholder="CODIGO"
+            className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm uppercase"
+          />
+          {couponCode && couponQuery.data === null && (
+            <p className="text-xs text-destructive">cupom não encontrado</p>
+          )}
+          {couponInvalid && (
+            <p className="text-xs text-destructive">
+              {(coupon as { _invalid?: string })._invalid}
+            </p>
+          )}
+        </div>
 
         <div className="space-y-2">
           <label className="text-xs font-medium text-muted-foreground">
@@ -188,6 +198,8 @@ export function CartView() {
               entries,
               paymentMethod,
               notes,
+              couponCode:
+                coupon && !couponInvalid ? coupon.code : undefined,
               storeName: env.NEXT_PUBLIC_STORE_NAME,
               phone: env.NEXT_PUBLIC_WHATSAPP_NUMBER,
             })}

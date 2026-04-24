@@ -3,15 +3,17 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
+export type CartKind = "product" | "bundle";
+
 export interface CartEntry {
-  /** Linha do carrinho (uuid gerado no client, não o produto) */
+  /** Linha do carrinho (uuid gerado no client). */
   lineId: string;
-  productId: string;
+  /** Referência ao item: produto standalone ou bundle catalog. */
+  kind: CartKind;
+  itemId: string;
   title: string;
   priceCents: number | null;
   quantity: number;
-  /** Para "montar caixinha": ids dos filhos inclusos */
-  childIds: string[];
   imageUrl: string | null;
 }
 
@@ -20,7 +22,6 @@ interface CartState {
   add: (entry: Omit<CartEntry, "lineId" | "quantity"> & { quantity?: number }) => void;
   remove: (lineId: string) => void;
   setQuantity: (lineId: string, quantity: number) => void;
-  setChildren: (lineId: string, childIds: string[]) => void;
   clear: () => void;
 }
 
@@ -47,15 +48,9 @@ export const useCart = create<CartState>()(
             e.lineId === lineId ? { ...e, quantity: Math.max(1, quantity) } : e,
           ),
         })),
-      setChildren: (lineId, childIds) =>
-        set((s) => ({
-          entries: s.entries.map((e) =>
-            e.lineId === lineId ? { ...e, childIds } : e,
-          ),
-        })),
       clear: () => set({ entries: [] }),
     }),
-    { name: "caixa-cart-v1" },
+    { name: "caixa-cart-v2" },
   ),
 );
 

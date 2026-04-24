@@ -2,10 +2,13 @@ import { Suspense } from "react";
 
 import { HydrateClient, prefetch, trpc } from "~/trpc/server";
 import { Catalog } from "~/components/catalog";
+import { EncomendaBanner } from "~/components/encomenda-banner";
 import { Hero } from "~/components/hero";
+import { CatalogGridSkeleton } from "~/components/skeletons";
 
 export default function HomePage() {
-  prefetch(trpc.product.catalog.queryOptions());
+  prefetch(trpc.bundle.catalogList.queryOptions());
+  prefetch(trpc.product.catalog.queryOptions({ type: "box" }));
 
   return (
     <HydrateClient>
@@ -18,19 +21,24 @@ export default function HomePage() {
         className="mx-auto w-full max-w-7xl scroll-mt-24 px-6 py-20 md:px-10 md:py-28"
       >
         <div className="mb-10 flex flex-col items-center text-center md:mb-14">
-          <h2 className="font-serif text-4xl text-foreground md:text-5xl lg:text-6xl">
+          <span className="text-xs uppercase tracking-[0.3em] text-primary">
+            confira nossos últimos lançamentos
+          </span>
+          <h2 className="mt-3 font-serif text-4xl text-foreground md:text-5xl lg:text-6xl">
             nossas caixinhas
           </h2>
           <p className="mt-4 max-w-md text-muted-foreground">
             toque em qualquer uma para montar do seu jeito e encomendar
           </p>
         </div>
-        <Suspense
-          fallback={<p className="text-center text-muted-foreground">carregando…</p>}
-        >
+        <Suspense fallback={<CatalogGridSkeleton />}>
           <Catalog />
         </Suspense>
       </section>
+
+      <EncomendaBanner />
+
+      <div className="h-20 md:h-28" />
     </HydrateClient>
   );
 }

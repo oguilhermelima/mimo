@@ -30,3 +30,31 @@ export function paymentLabel(method: string): string {
       return method;
   }
 }
+
+export function productTypeLabel(type: string): string {
+  switch (type) {
+    case "template_box":
+      return "Caixa crua (shell)";
+    case "box":
+      return "Caixa pronta";
+    case "jewelry":
+      return "Joalheiro";
+    case "perfume":
+      return "Perfume";
+    case "cosmetic":
+      return "Cosmético";
+    default:
+      return type;
+  }
+}
+
+export function bundleSourceLabel(source: string): string {
+  switch (source) {
+    case "catalog":
+      return "Catálogo";
+    case "user_order":
+      return "Encomenda";
+    default:
+      return source;
+  }
+}

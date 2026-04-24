@@ -20,10 +20,32 @@ import {
 
 export function Hero() {
   const trpc = useTRPC();
-  const { data } = useSuspenseQuery(trpc.product.catalog.queryOptions());
-  const featured = data.find((p) => p.media.length > 0);
+  const { data: bundles } = useSuspenseQuery(
+    trpc.bundle.catalogList.queryOptions(),
+  );
+
+  type FeaturedLike = {
+    id: string;
+    slug: string;
+    title: string;
+    media: { url: string; alt: string | null }[];
+  };
+  const enriched: FeaturedLike[] = bundles
+    .filter((b): b is typeof b & { slug: string } => b.slug != null)
+    .map((b) => ({
+      id: b.id,
+      slug: b.slug,
+      title: b.title,
+      media:
+        b.media.length > 0
+          ? b.media.map((m) => ({ url: m.url, alt: m.alt }))
+          : (b.templateBox?.media ?? []),
+    }))
+    .filter((x) => x.media.length > 0);
+
+  const featured = enriched[0];
   const heroImg = featured?.media[0];
-  const side = data
+  const side = enriched
     .filter((p) => p.id !== featured?.id && p.media.length > 0)
     .slice(0, 3);
 
@@ -107,7 +129,7 @@ export function Hero() {
                 <div className="absolute -inset-4 rounded-[2.5rem] bg-gradient-to-br from-primary/30 via-accent/30 to-primary/20 blur-2xl" />
 
                 <Link
-                  href={`/produto/${featured.slug}`}
+                  href={`/caixa/${featured.slug}`}
                   className="group relative block aspect-[4/5] w-full"
                 >
                   {/* cantos ornamentados */}
@@ -160,7 +182,7 @@ export function Hero() {
                 {side[0] && (
                   <FloatingThumb
                     product={side[0]}
-                    className="absolute -left-6 -top-6 hidden h-32 w-[6.4rem] sm:block md:-left-12 md:-top-12 md:h-40 md:w-32"
+                    className="absolute -left-6 -top-6 hidden aspect-[4/5] w-[6.4rem] sm:block md:-left-12 md:-top-12 md:w-32"
                     style={{ animationDelay: "0.5s" }}
                     label="02"
                   />
@@ -168,7 +190,7 @@ export function Hero() {
                 {side[1] && (
                   <FloatingThumb
                     product={side[1]}
-                    className="absolute -right-6 top-1/3 hidden h-28 w-[5.6rem] sm:block md:-right-10 md:h-32 md:w-[6.4rem]"
+                    className="absolute -right-6 top-1/3 hidden aspect-[4/5] w-[5.6rem] sm:block md:-right-10 md:w-[6.4rem]"
                     style={{ animationDelay: "1.8s" }}
                     label="03"
                   />
@@ -176,7 +198,7 @@ export function Hero() {
                 {side[2] && (
                   <FloatingThumb
                     product={side[2]}
-                    className="absolute -bottom-6 left-6 hidden h-28 w-[5.6rem] sm:block md:-bottom-10 md:left-8 md:h-32 md:w-[6.4rem]"
+                    className="absolute -bottom-6 left-6 hidden aspect-[4/5] w-[5.6rem] sm:block md:-bottom-10 md:left-8 md:w-[6.4rem]"
                     style={{ animationDelay: "3.2s" }}
                     label="04"
                   />
@@ -267,7 +289,7 @@ function FloatingThumb({
   const m = product.media[0]!;
   return (
     <Link
-      href={`/produto/${product.slug}`}
+      href={`/caixa/${product.slug}`}
       aria-label={product.title}
       className={`animate-float-tilt group absolute overflow-hidden rounded-2xl shadow-xl ring-2 ring-background transition-[box-shadow,ring] duration-300 hover:ring-primary ${className ?? ""}`}
       style={{

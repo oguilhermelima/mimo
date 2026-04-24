@@ -1,23 +1,39 @@
+import {
+  getCookieCache,
+  getSessionCookie,
+} from "better-auth/cookies";
 import { NextResponse, type NextRequest } from "next/server";
 
-import { verifySession, SESSION_COOKIE_NAME } from "~/lib/admin-session";
+const COOKIE_PREFIX = "caixa";
 
 export const config = {
-  matcher: ["/admin/:path*"],
+  matcher: ["/admin/:path*", "/conta/:path*"],
 };
 
 export async function middleware(req: NextRequest) {
   const pathname = req.nextUrl.pathname;
-  if (pathname === "/admin/login") return NextResponse.next();
+  const isAdminRoute = pathname.startsWith("/admin");
 
-  const secret = process.env.ADMIN_SESSION_SECRET;
-  const cookie = req.cookies.get(SESSION_COOKIE_NAME)?.value;
-
-  if (!secret || !(await verifySession(secret, cookie))) {
+  const sessionCookie = getSessionCookie(req, { cookiePrefix: COOKIE_PREFIX });
+  if (!sessionCookie) {
     const url = req.nextUrl.clone();
-    url.pathname = "/admin/login";
+    url.pathname = "/entrar";
     url.searchParams.set("from", pathname);
     return NextResponse.redirect(url);
   }
+
+  if (isAdminRoute) {
+    const cache = await getCookieCache(req, {
+      cookiePrefix: COOKIE_PREFIX,
+      secret: process.env.BETTER_AUTH_SECRET,
+    });
+
+    if (cache && (cache.user as { role?: string }).role !== "admin") {
+      const url = req.nextUrl.clone();
+      url.pathname = "/";
+      return NextResponse.redirect(url);
+    }
+  }
+
   return NextResponse.next();
 }

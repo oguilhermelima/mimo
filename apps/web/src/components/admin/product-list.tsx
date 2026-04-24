@@ -11,6 +11,7 @@ import { toast } from "@caixa/ui/toast";
 
 import { Button } from "@caixa/ui/button";
 
+import { authClient } from "~/lib/auth-client";
 import { formatBRL, productTypeLabel } from "~/lib/format";
 import { useTRPC } from "~/trpc/react";
 import { LogoMonogram } from "~/components/logo";
@@ -40,8 +41,8 @@ export function AdminProductList() {
   );
 
   const logout = async () => {
-    await fetch("/api/admin/logout", { method: "POST" });
-    router.replace("/admin/login");
+    await authClient.signOut();
+    router.replace("/entrar");
     router.refresh();
   };
 

@@ -1,7 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { put } from "@vercel/blob";
 
-import { SESSION_COOKIE_NAME, verifySession } from "~/lib/admin-session";
+import { auth } from "~/lib/auth";
 
 const MAX_BYTES = 5 * 1024 * 1024;
 const ALLOWED_MIME = new Set([
@@ -14,9 +14,8 @@ const ALLOWED_MIME = new Set([
 const ALLOWED_FOLDERS = new Set(["product", "stamp", "bundle"]);
 
 export async function POST(req: NextRequest) {
-  const secret = process.env.ADMIN_SESSION_SECRET;
-  const cookie = req.cookies.get(SESSION_COOKIE_NAME)?.value;
-  if (!secret || !(await verifySession(secret, cookie))) {
+  const session = await auth.api.getSession({ headers: req.headers });
+  if (!session || session.user.role !== "admin") {
     return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   }
 

@@ -1,0 +1,7 @@
+{
+  "name": "@caixa/tsconfig",
+  "private": true,
+  "files": [
+    "*.json"
+  ]
+}

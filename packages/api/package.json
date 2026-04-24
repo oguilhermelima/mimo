@@ -21,7 +21,7 @@
     "@caixa/db": "workspace:*",
     "@caixa/validators": "workspace:*",
     "@trpc/server": "catalog:",
-    "drizzle-orm": "^0.44.7",
+    "drizzle-orm": "^0.45.2",
     "superjson": "2.2.3",
     "zod": "catalog:"
   },

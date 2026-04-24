@@ -1,0 +1,231 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "@caixa/tailwind-config/theme";
+
+@source "../../../../packages/ui/src/*.{ts,tsx}";
+@source "../../../../apps/web/src/**/*.{ts,tsx}";
+
+@theme {
+  --font-sans: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-serif: var(--font-serif), ui-serif, Georgia, serif;
+}
+
+@custom-variant dark (&:where(.dark, .dark *));
+@custom-variant light (&:where(.light, .light *));
+@custom-variant auto (&:where(.auto, .auto *));
+
+@utility container {
+  margin-inline: auto;
+  padding-inline: 2rem;
+  @media (width >= --theme(--breakpoint-sm)) {
+    max-width: none;
+  }
+  @media (width >= 1400px) {
+    max-width: 1400px;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    letter-spacing: var(--tracking-normal);
+  }
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+@keyframes float-slow {
+  0%, 100% {
+    transform: translate(0, 0) scale(1);
+  }
+  50% {
+    transform: translate(2rem, -2.5rem) scale(1.08);
+  }
+}
+
+@keyframes float-reverse {
+  0%, 100% {
+    transform: translate(0, 0) scale(1);
+  }
+  50% {
+    transform: translate(-2.5rem, 2rem) scale(0.94);
+  }
+}
+
+@keyframes float-tilt {
+  0%, 100% {
+    transform: translateY(0) rotate(-2deg);
+  }
+  50% {
+    transform: translateY(-0.75rem) rotate(2deg);
+  }
+}
+
+@keyframes twinkle {
+  0%, 100% {
+    opacity: 0.2;
+    transform: scale(0.8) rotate(0);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.2) rotate(180deg);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -150% 50%;
+  }
+  100% {
+    background-position: 250% 50%;
+  }
+}
+
+@keyframes drift-up {
+  0% {
+    transform: translate3d(0, 120%, 0) rotate(0);
+    opacity: 0;
+  }
+  10%, 80% {
+    opacity: 1;
+  }
+  100% {
+    transform: translate3d(-3rem, -120%, 0) rotate(360deg);
+    opacity: 0;
+  }
+}
+
+@keyframes drift-down {
+  0% {
+    transform: translate3d(0, -120%, 0) rotate(0);
+    opacity: 0;
+  }
+  15%, 85% {
+    opacity: 1;
+  }
+  100% {
+    transform: translate3d(2rem, 120%, 0) rotate(-360deg);
+    opacity: 0;
+  }
+}
+
+@keyframes halo-pulse {
+  0%, 100% {
+    opacity: 0.6;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.08);
+  }
+}
+
+@keyframes sparkle-pop {
+  0% {
+    opacity: 0;
+    transform: scale(0.3) rotate(0);
+  }
+  40% {
+    opacity: 1;
+    transform: scale(1.15) rotate(180deg);
+  }
+  70% {
+    opacity: 1;
+    transform: scale(1) rotate(300deg);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0.7) rotate(360deg);
+  }
+}
+
+@keyframes shine-sweep {
+  0% {
+    transform: translateX(-120%) skewX(-18deg);
+    opacity: 0;
+  }
+  30% {
+    opacity: 0.65;
+  }
+  100% {
+    transform: translateX(220%) skewX(-18deg);
+    opacity: 0;
+  }
+}
+
+@keyframes rise-fade {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, 0.75rem, 0) scale(0.5);
+  }
+  30% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translate3d(-0.5rem, -1.5rem, 0) scale(1.1);
+  }
+}
+
+@utility animate-float-slow {
+  animation: float-slow 14s ease-in-out infinite;
+}
+@utility animate-float-reverse {
+  animation: float-reverse 18s ease-in-out infinite;
+}
+@utility animate-float-tilt {
+  animation: float-tilt 8s ease-in-out infinite;
+}
+@utility animate-twinkle {
+  animation: twinkle 4s ease-in-out infinite;
+}
+@utility animate-drift-up {
+  animation: drift-up 18s linear infinite;
+}
+@utility animate-drift-down {
+  animation: drift-down 22s linear infinite;
+}
+@utility animate-halo-pulse {
+  animation: halo-pulse 6s ease-in-out infinite;
+}
+@utility animate-sparkle-pop {
+  animation: sparkle-pop 2.2s ease-in-out infinite;
+}
+@utility animate-shine-sweep {
+  animation: shine-sweep 1.6s ease-out forwards;
+}
+@utility animate-rise-fade {
+  animation: rise-fade 2.6s ease-in-out infinite;
+}
+/* Mantém o rounded no hover mesmo durante transforms pesados (Safari glitch). */
+@utility clip-rounded {
+  isolation: isolate;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  -webkit-mask-image: -webkit-radial-gradient(white, black);
+}
+@utility scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+@utility text-shimmer {
+  background: linear-gradient(
+    90deg,
+    var(--color-primary) 0%,
+    var(--color-foreground) 25%,
+    var(--color-primary) 50%,
+    var(--color-foreground) 75%,
+    var(--color-primary) 100%
+  );
+  background-size: 200% auto;
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  animation: shimmer 8s linear infinite;
+}

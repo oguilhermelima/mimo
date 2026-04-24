@@ -69,24 +69,23 @@ export function Hero() {
           <div className="relative z-10 text-center md:text-left">
             <span className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-background/60 px-4 py-2 text-[10px] font-semibold uppercase tracking-[0.3em] text-primary shadow-sm shadow-primary/10 backdrop-blur-sm md:text-xs">
               <span aria-hidden>✦</span>
-              coleção dia das mães
+              Coleção Dia das Mães
               <span aria-hidden>✦</span>
             </span>
 
-            <h1 className="mt-7 font-serif font-medium leading-[0.92] tracking-tight text-foreground [font-size:clamp(3.25rem,9vw,7.5rem)]">
-              presentes
+            <h1 className="mt-7 break-words font-serif font-medium leading-[0.95] tracking-tight text-foreground [font-size:clamp(2.75rem,8vw,6.25rem)]">
+              Pequenos
               <br />
-              feitos{" "}
-              <em className="text-shimmer font-serif italic">à&nbsp;mão</em>,
+              <em className="text-shimmer font-serif italic">Encantos</em>,
               <br />
-              com{" "}
-              <em className="text-shimmer font-serif italic">carinho</em>.
+              Feitos à{" "}
+              <em className="text-shimmer font-serif italic">Mão</em>.
             </h1>
 
             <p className="mx-auto mt-7 max-w-md text-balance text-base leading-relaxed text-muted-foreground md:mx-0 md:max-w-lg md:text-lg">
-              Caixas artesanais que guardam memórias. Monte a sua com os
-              itens que quiser — a gente finaliza tudo com carinho pelo
-              WhatsApp.
+              Caixinhas artesanais que nascem devagar — papel por papel,
+              laço por laço. Escolha uma pronta ou monte a sua; a gente
+              amarra cada detalhe pelo WhatsApp.
             </p>
 
             <div className="mt-10 flex flex-col items-center gap-3 sm:flex-row md:items-start">
@@ -114,9 +113,9 @@ export function Hero() {
             </div>
 
             <dl className="mt-12 grid grid-cols-3 gap-4 text-left md:max-w-md">
-              <HeroStat n="100%" t="artesanal" />
-              <HeroStat n="sob" t="encomenda" />
-              <HeroStat n="pix / cartão" t="ou ted" />
+              <HeroStat n="100%" t="Artesanal" />
+              <HeroStat n="Sob" t="Encomenda" />
+              <HeroStat n="Pix / Cartão" t="ou TED" />
             </dl>
           </div>
 
@@ -165,7 +164,7 @@ export function Hero() {
                     <div className="pointer-events-none absolute bottom-6 left-6 right-6 z-10 text-primary-foreground">
                       <p className="flex items-center gap-2 text-[10px] uppercase tracking-[0.3em] opacity-90">
                         <span className="inline-block h-px w-6 bg-primary-foreground/70" />
-                        em destaque
+                        Em Destaque
                       </p>
                       <p className="mt-2 font-serif text-3xl leading-tight md:text-4xl">
                         {featured.title}
@@ -174,7 +173,7 @@ export function Hero() {
 
                     <span className="absolute right-5 top-5 z-10 inline-flex items-center gap-1.5 rounded-full bg-background/90 px-3 py-1.5 text-xs font-medium text-primary shadow-md backdrop-blur">
                       <span className="size-1.5 rounded-full bg-primary animate-pulse" />
-                      Clique para Ver
+                      Clique para ver
                     </span>
                   </div>
                 </Link>
@@ -207,6 +206,7 @@ export function Hero() {
             ) : (
               <HeroPlaceholder />
             )}
+
           </div>
         </div>
 
@@ -322,7 +322,7 @@ function HeroPlaceholder() {
   return (
     <div className="relative aspect-[4/5] w-full overflow-hidden rounded-[2rem] bg-gradient-to-br from-primary/20 via-accent to-muted ring-1 ring-primary/20">
       <div className="absolute inset-0 flex items-center justify-center">
-        <p className="font-serif text-xl text-primary/70">suas caixinhas aqui</p>
+        <p className="font-serif text-xl text-primary/70">Suas caixinhas aqui</p>
       </div>
     </div>
   );

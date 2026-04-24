@@ -240,7 +240,7 @@ export function ProductsPage() {
               <input
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                placeholder="nome da caixa, item…"
+                placeholder="Nome da caixa, item…"
                 className="h-10 w-full rounded-full border border-border/70 bg-background pl-9 pr-3 text-sm transition-colors focus:border-primary/60 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
               />
             </div>
@@ -267,14 +267,14 @@ export function ProductsPage() {
               <input
                 value={priceMin}
                 onChange={(e) => setPriceMin(e.target.value)}
-                placeholder={`min R$${priceBounds.min}`}
+                placeholder={`Min R$${priceBounds.min}`}
                 inputMode="numeric"
                 className="h-10 rounded-full border border-border/70 bg-background px-3 text-sm focus:border-primary/60 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
               />
               <input
                 value={priceMax}
                 onChange={(e) => setPriceMax(e.target.value)}
-                placeholder={`máx R$${priceBounds.max}`}
+                placeholder={`Máx R$${priceBounds.max}`}
                 inputMode="numeric"
                 className="h-10 rounded-full border border-border/70 bg-background px-3 text-sm focus:border-primary/60 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
               />
@@ -343,7 +343,7 @@ export function ProductsPage() {
           onClick={clearFilters}
           className="text-xs text-muted-foreground underline hover:text-primary"
         >
-          limpar filtros
+          Limpar filtros
         </button>
       )}
     </div>
@@ -354,7 +354,7 @@ export function ProductsPage() {
       <header className="space-y-2">
         <h1 className="font-serif text-4xl text-primary md:text-5xl">Produtos</h1>
         <p className="text-muted-foreground">
-          caixas prontas, itens avulsos e tudo que vai dentro de uma encomenda
+          Caixas prontas, itens avulsos e tudo que vai dentro de uma encomenda.
         </p>
       </header>
 
@@ -384,7 +384,7 @@ export function ProductsPage() {
           </div>
           {filtered.length === 0 ? (
             <div className="rounded-2xl border border-dashed border-border/60 bg-muted/30 p-10 text-center text-muted-foreground">
-              nenhum item encontrado com esses filtros
+              Nenhum item encontrado com esses filtros.
             </div>
           ) : (
             <ul className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3">

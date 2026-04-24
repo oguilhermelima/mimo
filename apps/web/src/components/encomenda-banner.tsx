@@ -14,13 +14,13 @@ export function EncomendaBanner() {
           <div className="max-w-xl space-y-3">
             <span className="inline-flex items-center gap-2 rounded-full bg-background/60 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.3em] text-primary ring-1 ring-primary/30 backdrop-blur">
               <Sparkles className="size-3" />
-              feito sob medida
+              Feito sob medida
             </span>
             <h2 className="font-serif text-3xl leading-tight text-foreground md:text-4xl">
-              monte a sua própria caixinha
+              Monte a sua própria caixinha
             </h2>
             <p className="text-muted-foreground md:text-lg">
-              escolha a caixa crua, a estampa e os itens que você quer dentro —
+              Escolha a caixa crua, a estampa e os itens que vão dentro —
               fechamos tudo no WhatsApp com carinho.
             </p>
           </div>

@@ -25,7 +25,7 @@ export function Logo({
       )}
     >
       <span className="font-serif text-2xl italic tracking-tight md:text-[1.75rem]">
-        encantim
+        Encantim
       </span>
       {withTagline && (
         <span className="mt-1.5 text-[9px] uppercase tracking-[0.42em] text-primary/55 md:text-[10px]">
@@ -54,7 +54,7 @@ export function Logo({
         <LogoMark className={cn("size-12 shrink-0", markClassName)} />
         <span className="inline-flex flex-col items-center leading-none text-primary">
           <span className="font-serif text-2xl italic tracking-tight md:text-[1.75rem]">
-            encantim
+            Encantim
           </span>
           {withTagline && (
             <span className="mt-1.5 text-[9px] uppercase tracking-[0.42em] text-primary/55 md:text-[10px]">
@@ -109,7 +109,7 @@ export function LogoMark({ className }: { className?: string }) {
 }
 
 /**
- * Versão horizontal inline: sparkle + "encantim" italic + sparkle.
+ * Versão horizontal inline: sparkle + "Encantim" italic + sparkle.
  * Usada em breadcrumbs, rodapés, separadores.
  */
 export function LogoMonogram({ className }: { className?: string }) {
@@ -138,7 +138,7 @@ export function LogoMonogram({ className }: { className?: string }) {
         />
       </g>
 
-      {/* wordmark "encantim" italic centralizado */}
+      {/* wordmark "Encantim" italic centralizado */}
       <g
         style={{
           fontFamily:
@@ -154,7 +154,7 @@ export function LogoMonogram({ className }: { className?: string }) {
           fontSize="21"
           fontWeight="500"
         >
-          encantim
+          Encantim
         </text>
       </g>
 

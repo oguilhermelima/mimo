@@ -52,7 +52,7 @@ export function CartView() {
         <p className="text-muted-foreground">
           Carrinho vazio.{" "}
           <Link href="/" className="text-primary hover:underline">
-            Ver Catálogo
+            Ver catálogo
           </Link>
         </p>
       </div>
@@ -87,7 +87,7 @@ export function CartView() {
                     {formatBRL(entry.priceCents)}
                     {entry.kind === "bundle" && (
                       <span className="ml-2 rounded-full bg-primary/10 px-2 py-0.5 text-xs text-primary">
-                        caixinha
+                        Caixinha
                       </span>
                     )}
                   </p>
@@ -126,7 +126,7 @@ export function CartView() {
         <dl className="space-y-1 text-sm">
           <div className="flex justify-between">
             <dt className="text-muted-foreground">Subtotal</dt>
-            <dd>{grand == null ? "sob consulta" : formatBRL(grand)}</dd>
+            <dd>{grand == null ? "Sob consulta" : formatBRL(grand)}</dd>
           </div>
           {discountCents > 0 && (
             <div className="flex justify-between text-emerald-700">
@@ -137,7 +137,7 @@ export function CartView() {
           <div className="flex justify-between border-t border-border/40 pt-2">
             <dt className="text-muted-foreground">Total</dt>
             <dd className="font-serif text-lg text-primary">
-              {finalTotal == null ? "sob consulta" : formatBRL(finalTotal)}
+              {finalTotal == null ? "Sob consulta" : formatBRL(finalTotal)}
             </dd>
           </div>
         </dl>
@@ -153,7 +153,7 @@ export function CartView() {
             className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm uppercase"
           />
           {couponCode && couponQuery.data === null && (
-            <p className="text-xs text-destructive">cupom não encontrado</p>
+            <p className="text-xs text-destructive">Cupom não encontrado.</p>
           )}
           {couponInvalid && (
             <p className="text-xs text-destructive">
@@ -164,7 +164,7 @@ export function CartView() {
 
         <div className="space-y-2">
           <label className="text-xs font-medium text-muted-foreground">
-            Forma de Pagamento
+            Forma de pagamento
           </label>
           <select
             value={paymentMethod}
@@ -186,7 +186,7 @@ export function CartView() {
           <textarea
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
-            placeholder="personalizações, cores, bilhete…"
+            placeholder="Personalizações, cores, bilhete…"
             rows={3}
             className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm"
           />
@@ -214,7 +214,7 @@ export function CartView() {
           onClick={clear}
           className="w-full text-xs text-muted-foreground hover:text-destructive"
         >
-          Esvaziar Carrinho
+          Esvaziar carrinho
         </button>
       </aside>
     </div>

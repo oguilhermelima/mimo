@@ -98,7 +98,7 @@ export function BundleDetail({ slug }: { slug: string }) {
               {gallery.length === 0 ? (
                 <div className="relative aspect-[4/5] w-full shrink-0 snap-center overflow-hidden rounded-3xl bg-muted/50 ring-1 ring-border/40">
                   <div className="flex h-full items-center justify-center font-serif text-muted-foreground">
-                    sem mídia
+                    Sem mídia
                   </div>
                 </div>
               ) : (
@@ -273,7 +273,7 @@ export function BundleDetail({ slug }: { slug: string }) {
             disabled={isSoldOut}
           >
             <ShoppingBag className="size-4" />
-            {isSoldOut ? "Esgotado" : "Adicionar ao Carrinho"}
+            {isSoldOut ? "Esgotado" : "Adicionar ao carrinho"}
           </Button>
         </div>
       </div>

@@ -141,8 +141,8 @@ export function CustomOrderFlow() {
         <div>
           <h1 className="font-serif text-4xl text-primary">Monte sua caixinha</h1>
           <p className="mt-2 text-muted-foreground">
-            escolha a caixa, a estampa e os itens — a gente finaliza pelo
-            WhatsApp
+            Escolha a caixa, a estampa e os itens — a gente finaliza pelo
+            WhatsApp.
           </p>
         </div>
 
@@ -178,7 +178,7 @@ export function CustomOrderFlow() {
           </h2>
           {templates.data.length === 0 ? (
             <p className="text-muted-foreground">
-              nenhuma caixa crua disponível no momento
+              Nenhuma caixa crua disponível no momento.
             </p>
           ) : (
             <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -207,7 +207,7 @@ export function CustomOrderFlow() {
                           />
                         ) : (
                           <div className="flex h-full items-center justify-center font-serif text-sm text-muted-foreground">
-                            sem foto
+                            Sem foto
                           </div>
                         )}
                         {checked && (
@@ -253,7 +253,7 @@ export function CustomOrderFlow() {
                 }`}
               >
                 <Sparkles className="mx-auto mb-2 size-6" />
-                <p className="font-serif text-lg">sem estampa</p>
+                <p className="font-serif text-lg">Sem estampa</p>
               </button>
             </li>
             {stamps.data.map((s) => {
@@ -311,7 +311,7 @@ export function CustomOrderFlow() {
             O que vai dentro?
           </h2>
           {contents.data.length === 0 ? (
-            <p className="text-muted-foreground">nenhum item disponível</p>
+            <p className="text-muted-foreground">Nenhum item disponível.</p>
           ) : (
             <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {contents.data.map((p) => {
@@ -417,7 +417,7 @@ export function CustomOrderFlow() {
 
           <div className="grid gap-4 md:grid-cols-2">
             <div className="space-y-2">
-              <Label>seu nome</Label>
+              <Label>Seu nome</Label>
               <Input
                 value={customerName}
                 onChange={(e) => setCustomerName(e.target.value)}
@@ -425,7 +425,7 @@ export function CustomOrderFlow() {
               />
             </div>
             <div className="space-y-2">
-              <Label>pagamento</Label>
+              <Label>Pagamento</Label>
               <select
                 value={paymentMethod}
                 onChange={(e) =>
@@ -443,13 +443,13 @@ export function CustomOrderFlow() {
           </div>
 
           <div className="space-y-2">
-            <Label>observações (opcional)</Label>
+            <Label>Observações (opcional)</Label>
             <textarea
               value={customerNote}
               onChange={(e) => setCustomerNote(e.target.value)}
               rows={3}
               className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm"
-              placeholder="bilhete, personalizações, cores…"
+              placeholder="Bilhete, personalizações, cores…"
             />
           </div>
         </section>

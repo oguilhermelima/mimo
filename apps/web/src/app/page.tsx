@@ -22,13 +22,13 @@ export default function HomePage() {
       >
         <div className="mb-10 flex flex-col items-center text-center md:mb-14">
           <span className="text-xs uppercase tracking-[0.3em] text-primary">
-            confira nossos últimos lançamentos
+            Confira nossos últimos lançamentos
           </span>
           <h2 className="mt-3 font-serif text-4xl text-foreground md:text-5xl lg:text-6xl">
-            nossas caixinhas
+            Nossas caixinhas
           </h2>
           <p className="mt-4 max-w-md text-muted-foreground">
-            toque em qualquer uma para montar do seu jeito e encomendar
+            Toque em qualquer uma para montar do seu jeito e encomendar
           </p>
         </div>
         <Suspense fallback={<CatalogGridSkeleton />}>

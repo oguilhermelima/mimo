@@ -1,5 +1,5 @@
 export function formatBRL(cents: number | null | undefined): string {
-  if (cents == null) return "sob consulta";
+  if (cents == null) return "Sob consulta";
   return new Intl.NumberFormat("pt-BR", {
     style: "currency",
     currency: "BRL",

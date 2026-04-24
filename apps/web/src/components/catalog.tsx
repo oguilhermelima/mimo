@@ -94,7 +94,7 @@ export function Catalog() {
                 />
               ) : (
                 <div className="flex h-full items-center justify-center font-serif text-sm text-muted-foreground">
-                  sem foto
+                  Sem foto
                 </div>
               )}
               <div className="absolute left-3 top-3 flex flex-col gap-1">

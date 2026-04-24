@@ -2,6 +2,8 @@ import { z } from "zod/v4";
 
 import { PAYMENT_METHODS } from "@caixa/db/schema";
 
+export * from "./auth";
+
 /**
  * Cart items: product standalone OU bundle (caixa pronta).
  * Encomenda (user_order bundle) não passa pelo cart — criada direto em /encomenda.

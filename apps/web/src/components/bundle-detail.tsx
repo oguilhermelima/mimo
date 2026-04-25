@@ -9,7 +9,6 @@ import {
   ArrowRight,
   ChevronLeft,
   ChevronRight,
-  MessageCircleHeart,
   Ruler,
   ShoppingBag,
   Sparkles,
@@ -18,7 +17,6 @@ import { toast } from "@caixa/ui/toast";
 
 import { Button } from "@caixa/ui/button";
 
-import { env } from "~/env";
 import { useCart } from "~/lib/cart-store";
 import { formatBRL, formatDimensions } from "~/lib/format";
 import { useTRPC } from "~/trpc/react";
@@ -84,9 +82,6 @@ export function BundleDetail({ slug }: { slug: string }) {
     });
     toast.success(`${bundle.title} adicionada ao carrinho`);
   };
-
-  const waMessage = `Olá! Quero saber mais sobre a caixa "${bundle.title}" 💌`;
-  const waHref = `https://wa.me/${env.NEXT_PUBLIC_WHATSAPP_NUMBER}?text=${encodeURIComponent(waMessage)}`;
 
   return (
     <div className="relative isolate space-y-8 md:space-y-10">
@@ -365,28 +360,23 @@ export function BundleDetail({ slug }: { slug: string }) {
             </div>
           )}
 
-          <div className="mt-2 flex flex-col gap-3 sm:flex-row">
-            <Button
-              onClick={handleAdd}
-              size="lg"
-              className="flex-1 gap-2 rounded-full shadow-lg shadow-primary/25"
-              disabled={isSoldOut}
-            >
-              <ShoppingBag className="size-4" />
-              {isSoldOut ? "Esgotado" : "Adicionar ao carrinho"}
-            </Button>
-            <Button
-              asChild
-              size="lg"
-              variant="outline"
-              className="gap-2 rounded-full border-primary/30 bg-background/60 backdrop-blur-sm"
-            >
-              <a href={waHref} target="_blank" rel="noreferrer">
-                <MessageCircleHeart className="size-4" />
-                WhatsApp
-              </a>
-            </Button>
-          </div>
+          <Button
+            onClick={handleAdd}
+            disabled={isSoldOut}
+            className="group/cta relative mt-2 h-16 w-full gap-3 overflow-hidden rounded-full text-base font-semibold tracking-wide shadow-xl shadow-primary/30 transition-all hover:shadow-2xl hover:shadow-primary/40 disabled:opacity-60 md:h-[72px] md:text-lg"
+          >
+            <span
+              aria-hidden
+              className="pointer-events-none absolute inset-0 bg-gradient-to-r from-transparent via-white/25 to-transparent opacity-0 transition-opacity group-hover/cta:animate-shine-sweep"
+            />
+            <ShoppingBag className="size-5 md:size-[22px]" />
+            {isSoldOut ? "Esgotado" : "Adicionar ao carrinho"}
+            {!isSoldOut && (
+              <span aria-hidden className="ml-1 font-serif text-base opacity-80 md:text-lg">
+                ✦
+              </span>
+            )}
+          </Button>
         </div>
       </div>
 

@@ -36,9 +36,9 @@ const CATEGORIES: { value: string; label: string }[] = [
 
 type SizeBucket = "small" | "medium" | "large";
 const SIZE_BUCKETS: { value: SizeBucket; label: string; max?: number; min?: number }[] = [
-  { value: "small", label: "Pequena (até 150mm)", max: 150 },
-  { value: "medium", label: "Média (150–200mm)", min: 150, max: 200 },
-  { value: "large", label: "Grande (200mm+)", min: 200 },
+  { value: "small", label: "Pequena (até 15cm)", max: 150 },
+  { value: "medium", label: "Média (15–20cm)", min: 150, max: 200 },
+  { value: "large", label: "Grande (20cm+)", min: 200 },
 ];
 
 function sizeBucketOf(heightMm: number | null): SizeBucket | null {
@@ -352,9 +352,9 @@ export function ProductsPage() {
   return (
     <div className="space-y-6">
       <header className="space-y-2">
-        <h1 className="font-serif text-4xl text-primary md:text-5xl">Produtos</h1>
+        <h1 className="font-serif text-4xl text-primary md:text-5xl">Presentes</h1>
         <p className="text-muted-foreground">
-          Caixas prontas, itens avulsos e tudo que vai dentro de uma encomenda.
+          Caixas prontas, itens avulsos e tudo que pode entrar na sua caixinha.
         </p>
       </header>
 
@@ -388,21 +388,10 @@ export function ProductsPage() {
             </div>
           ) : (
             <ul className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3">
-              {filtered.map((it, i) => (
-                <li
-                  key={it.key}
-                  className="animate-fade-slide-up min-w-0"
-                  style={{ animationDelay: `${Math.min(i, 8) * 50}ms` }}
-                >
+              {filtered.map((it) => (
+                <li key={it.key} className="min-w-0">
                   <Link href={it.href} className="group block">
-                    <div
-                      className="relative aspect-[4/5] w-full overflow-hidden rounded-2xl bg-muted/50 ring-1 ring-border/40 transition-[box-shadow,ring] duration-500 group-hover:ring-primary/50"
-                      style={{
-                        isolation: "isolate",
-                        transform: "translateZ(0)",
-                        backfaceVisibility: "hidden",
-                      }}
-                    >
+                    <div className="relative aspect-[4/5] w-full overflow-hidden rounded-2xl bg-muted/50 ring-1 ring-border/40 transition-[box-shadow,ring] duration-500 group-hover:ring-primary/50">
                       {it.imageUrl ? (
                         <Image
                           src={it.imageUrl}

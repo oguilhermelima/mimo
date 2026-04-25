@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Cormorant_Garamond, Inter } from "next/font/google";
+import { Fraunces, Inter } from "next/font/google";
 
 import { cn } from "@caixa/ui";
 import { ThemeProvider } from "@caixa/ui/theme";
@@ -9,15 +9,17 @@ import { env } from "~/env";
 import { Logo } from "~/components/logo";
 import { MobileNav } from "~/components/mobile-nav";
 import { OrnamentalDivider } from "~/components/ornaments";
+import { ScrollRestore } from "~/components/scroll-restore";
 import { SiteHeader } from "~/components/site-header";
 import { TRPCReactProvider } from "~/trpc/react";
 
 import "~/app/styles.css";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
-const serif = Cormorant_Garamond({
+const serif = Fraunces({
   subsets: ["latin"],
-  weight: ["400", "500", "600"],
+  weight: ["400", "500", "600", "700"],
+  style: ["normal", "italic"],
   variable: "--font-serif",
 });
 
@@ -49,6 +51,7 @@ export default function RootLayout(props: { children: React.ReactNode }) {
       >
         <ThemeProvider>
           <TRPCReactProvider>
+            <ScrollRestore />
             <SiteHeader />
             <main className="overflow-x-hidden pb-20 pt-[64px] lg:pb-0 lg:pt-[88px]">
               {props.children}
@@ -56,7 +59,7 @@ export default function RootLayout(props: { children: React.ReactNode }) {
             <MobileNav />
 
             <footer className="relative mt-20 overflow-hidden border-t border-border/40 bg-gradient-to-br from-primary/5 via-muted/30 to-accent/30">
-              <div className="mx-auto flex w-full max-w-7xl flex-col items-center gap-7 px-6 py-16 text-center md:px-10 md:py-20">
+              <div className="mx-auto flex w-full max-w-7xl flex-col items-center gap-7 px-6 pb-28 pt-16 text-center md:px-10 md:py-20">
                 <Logo
                   variant="full"
                   withTagline

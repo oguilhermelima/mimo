@@ -98,6 +98,453 @@
   }
 }
 
+/* ======================================================================
+   Variantes de paleta — toggle via [data-palette] no <html>.
+   Sem o atributo, mantém a paleta sálvia institucional original.
+   ====================================================================== */
+
+/* A — Sálvia + Terracota (warm earth, artesanal aconchegante) */
+:root[data-palette="terracota"] {
+  --background: oklch(0.985 0.008 70);
+  --foreground: oklch(0.235 0.025 40);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.235 0.025 40);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.235 0.025 40);
+  --primary: oklch(0.56 0.095 38);
+  --primary-foreground: oklch(0.985 0.008 70);
+  --secondary: oklch(0.94 0.018 90);
+  --secondary-foreground: oklch(0.4 0.04 45);
+  --muted: oklch(0.95 0.014 80);
+  --muted-foreground: oklch(0.5 0.025 45);
+  --accent: oklch(0.86 0.06 80);
+  --accent-foreground: oklch(0.4 0.07 50);
+  --border: oklch(0.9 0.018 70);
+  --input: oklch(1 0 0);
+  --ring: oklch(0.56 0.095 38);
+  --chart-1: oklch(0.56 0.095 38);
+  --chart-2: oklch(0.7 0.085 55);
+  --chart-3: oklch(0.78 0.07 75);
+  --chart-4: oklch(0.86 0.06 80);
+  --chart-5: oklch(0.5 0.06 130);
+  --sidebar: oklch(0.94 0.018 90);
+  --sidebar-foreground: oklch(0.4 0.04 45);
+  --sidebar-primary: oklch(0.56 0.095 38);
+  --sidebar-primary-foreground: oklch(0.985 0.008 70);
+  --sidebar-accent: oklch(0.86 0.06 80);
+  --sidebar-accent-foreground: oklch(0.4 0.07 50);
+  --sidebar-border: oklch(0.9 0.018 70);
+  --sidebar-ring: oklch(0.56 0.095 38);
+}
+
+/* B — Rosa-velho + Sálvia (romantic gift, dia das mães afetivo) */
+:root[data-palette="rosa"] {
+  --background: oklch(0.985 0.008 25);
+  --foreground: oklch(0.245 0.025 15);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.245 0.025 15);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.245 0.025 15);
+  --primary: oklch(0.6 0.075 18);
+  --primary-foreground: oklch(0.985 0.008 25);
+  --secondary: oklch(0.95 0.012 100);
+  --secondary-foreground: oklch(0.4 0.035 20);
+  --muted: oklch(0.95 0.012 30);
+  --muted-foreground: oklch(0.5 0.022 20);
+  --accent: oklch(0.88 0.045 30);
+  --accent-foreground: oklch(0.42 0.06 20);
+  --border: oklch(0.9 0.018 25);
+  --input: oklch(1 0 0);
+  --ring: oklch(0.6 0.075 18);
+  --chart-1: oklch(0.6 0.075 18);
+  --chart-2: oklch(0.72 0.07 25);
+  --chart-3: oklch(0.82 0.055 35);
+  --chart-4: oklch(0.85 0.06 78);
+  --chart-5: oklch(0.5 0.04 130);
+  --sidebar: oklch(0.95 0.012 100);
+  --sidebar-foreground: oklch(0.4 0.035 20);
+  --sidebar-primary: oklch(0.6 0.075 18);
+  --sidebar-primary-foreground: oklch(0.985 0.008 25);
+  --sidebar-accent: oklch(0.88 0.045 30);
+  --sidebar-accent-foreground: oklch(0.42 0.06 20);
+  --sidebar-border: oklch(0.9 0.018 25);
+  --sidebar-ring: oklch(0.6 0.075 18);
+}
+
+/* C — Oliva (verde quente terroso, alternativa à sálvia fria) */
+:root[data-palette="oliva"] {
+  --background: oklch(0.98 0.012 95);
+  --foreground: oklch(0.23 0.028 105);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.23 0.028 105);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.23 0.028 105);
+  --primary: oklch(0.5 0.085 112);
+  --primary-foreground: oklch(0.985 0.012 90);
+  --secondary: oklch(0.95 0.018 95);
+  --secondary-foreground: oklch(0.38 0.04 110);
+  --muted: oklch(0.95 0.014 100);
+  --muted-foreground: oklch(0.5 0.025 105);
+  --accent: oklch(0.88 0.05 90);
+  --accent-foreground: oklch(0.4 0.06 105);
+  --border: oklch(0.9 0.018 100);
+  --input: oklch(1 0 0);
+  --ring: oklch(0.5 0.085 112);
+  --chart-1: oklch(0.5 0.085 112);
+  --chart-2: oklch(0.62 0.075 105);
+  --chart-3: oklch(0.74 0.06 95);
+  --chart-4: oklch(0.85 0.05 88);
+  --chart-5: oklch(0.92 0.03 100);
+  --sidebar: oklch(0.95 0.018 95);
+  --sidebar-foreground: oklch(0.38 0.04 110);
+  --sidebar-primary: oklch(0.5 0.085 112);
+  --sidebar-primary-foreground: oklch(0.985 0.012 90);
+  --sidebar-accent: oklch(0.88 0.05 90);
+  --sidebar-accent-foreground: oklch(0.4 0.06 105);
+  --sidebar-border: oklch(0.9 0.018 100);
+  --sidebar-ring: oklch(0.5 0.085 112);
+}
+
+/* D — Eucalipto (verde-azulado claro, fresco e delicado) */
+:root[data-palette="eucalipto"] {
+  --background: oklch(0.985 0.008 170);
+  --foreground: oklch(0.24 0.025 175);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.24 0.025 175);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.24 0.025 175);
+  --primary: oklch(0.54 0.06 175);
+  --primary-foreground: oklch(0.985 0.008 170);
+  --secondary: oklch(0.95 0.012 170);
+  --secondary-foreground: oklch(0.4 0.03 175);
+  --muted: oklch(0.955 0.012 170);
+  --muted-foreground: oklch(0.52 0.022 175);
+  --accent: oklch(0.88 0.04 170);
+  --accent-foreground: oklch(0.42 0.045 175);
+  --border: oklch(0.91 0.014 170);
+  --input: oklch(1 0 0);
+  --ring: oklch(0.54 0.06 175);
+  --chart-1: oklch(0.54 0.06 175);
+  --chart-2: oklch(0.66 0.05 175);
+  --chart-3: oklch(0.78 0.04 175);
+  --chart-4: oklch(0.86 0.04 165);
+  --chart-5: oklch(0.92 0.025 170);
+  --sidebar: oklch(0.95 0.012 170);
+  --sidebar-foreground: oklch(0.4 0.03 175);
+  --sidebar-primary: oklch(0.54 0.06 175);
+  --sidebar-primary-foreground: oklch(0.985 0.008 170);
+  --sidebar-accent: oklch(0.88 0.04 170);
+  --sidebar-accent-foreground: oklch(0.42 0.045 175);
+  --sidebar-border: oklch(0.91 0.014 170);
+  --sidebar-ring: oklch(0.54 0.06 175);
+}
+
+/* E — Coral + Pêssego (rosa quente afetivo, alegre) */
+:root[data-palette="coral"] {
+  --background: oklch(0.985 0.01 40);
+  --foreground: oklch(0.245 0.03 25);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.245 0.03 25);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.245 0.03 25);
+  --primary: oklch(0.64 0.135 28);
+  --primary-foreground: oklch(0.985 0.01 40);
+  --secondary: oklch(0.95 0.018 40);
+  --secondary-foreground: oklch(0.42 0.05 30);
+  --muted: oklch(0.955 0.014 35);
+  --muted-foreground: oklch(0.52 0.03 30);
+  --accent: oklch(0.86 0.07 50);
+  --accent-foreground: oklch(0.42 0.08 35);
+  --border: oklch(0.9 0.02 30);
+  --input: oklch(1 0 0);
+  --ring: oklch(0.64 0.135 28);
+  --chart-1: oklch(0.64 0.135 28);
+  --chart-2: oklch(0.74 0.1 38);
+  --chart-3: oklch(0.82 0.08 50);
+  --chart-4: oklch(0.88 0.06 65);
+  --chart-5: oklch(0.92 0.04 50);
+  --sidebar: oklch(0.95 0.018 40);
+  --sidebar-foreground: oklch(0.42 0.05 30);
+  --sidebar-primary: oklch(0.64 0.135 28);
+  --sidebar-primary-foreground: oklch(0.985 0.01 40);
+  --sidebar-accent: oklch(0.86 0.07 50);
+  --sidebar-accent-foreground: oklch(0.42 0.08 35);
+  --sidebar-border: oklch(0.9 0.02 30);
+  --sidebar-ring: oklch(0.64 0.135 28);
+}
+
+/* F — Pêssego (peach fuzz, aconchegante e tendência) */
+:root[data-palette="pessego"] {
+  --background: oklch(0.985 0.012 65);
+  --foreground: oklch(0.245 0.028 45);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.245 0.028 45);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.245 0.028 45);
+  --primary: oklch(0.7 0.105 52);
+  --primary-foreground: oklch(0.235 0.03 35);
+  --secondary: oklch(0.95 0.02 65);
+  --secondary-foreground: oklch(0.4 0.045 50);
+  --muted: oklch(0.955 0.016 60);
+  --muted-foreground: oklch(0.52 0.028 50);
+  --accent: oklch(0.86 0.06 75);
+  --accent-foreground: oklch(0.4 0.07 55);
+  --border: oklch(0.9 0.02 60);
+  --input: oklch(1 0 0);
+  --ring: oklch(0.7 0.105 52);
+  --chart-1: oklch(0.7 0.105 52);
+  --chart-2: oklch(0.78 0.085 60);
+  --chart-3: oklch(0.85 0.07 70);
+  --chart-4: oklch(0.9 0.05 80);
+  --chart-5: oklch(0.6 0.085 40);
+  --sidebar: oklch(0.95 0.02 65);
+  --sidebar-foreground: oklch(0.4 0.045 50);
+  --sidebar-primary: oklch(0.7 0.105 52);
+  --sidebar-primary-foreground: oklch(0.235 0.03 35);
+  --sidebar-accent: oklch(0.86 0.06 75);
+  --sidebar-accent-foreground: oklch(0.4 0.07 55);
+  --sidebar-border: oklch(0.9 0.02 60);
+  --sidebar-ring: oklch(0.7 0.105 52);
+}
+
+/* G — Lavanda + Ouro velho (delicado, romântico, nostálgico) */
+:root[data-palette="lavanda"] {
+  --background: oklch(0.985 0.008 300);
+  --foreground: oklch(0.25 0.028 295);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.25 0.028 295);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.25 0.028 295);
+  --primary: oklch(0.58 0.08 295);
+  --primary-foreground: oklch(0.985 0.008 300);
+  --secondary: oklch(0.95 0.014 300);
+  --secondary-foreground: oklch(0.4 0.04 295);
+  --muted: oklch(0.955 0.012 300);
+  --muted-foreground: oklch(0.52 0.025 295);
+  --accent: oklch(0.82 0.08 80);
+  --accent-foreground: oklch(0.4 0.07 60);
+  --border: oklch(0.9 0.016 300);
+  --input: oklch(1 0 0);
+  --ring: oklch(0.58 0.08 295);
+  --chart-1: oklch(0.58 0.08 295);
+  --chart-2: oklch(0.7 0.07 295);
+  --chart-3: oklch(0.82 0.06 295);
+  --chart-4: oklch(0.82 0.08 80);
+  --chart-5: oklch(0.9 0.04 300);
+  --sidebar: oklch(0.95 0.014 300);
+  --sidebar-foreground: oklch(0.4 0.04 295);
+  --sidebar-primary: oklch(0.58 0.08 295);
+  --sidebar-primary-foreground: oklch(0.985 0.008 300);
+  --sidebar-accent: oklch(0.82 0.08 80);
+  --sidebar-accent-foreground: oklch(0.4 0.07 60);
+  --sidebar-border: oklch(0.9 0.016 300);
+  --sidebar-ring: oklch(0.58 0.08 295);
+}
+
+/* H — Jade (verde joia mais saturado, alternativa vibrante à sálvia) */
+:root[data-palette="jade"] {
+  --background: oklch(0.985 0.008 155);
+  --foreground: oklch(0.22 0.03 160);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.22 0.03 160);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.22 0.03 160);
+  --primary: oklch(0.5 0.09 160);
+  --primary-foreground: oklch(0.985 0.008 155);
+  --secondary: oklch(0.95 0.014 155);
+  --secondary-foreground: oklch(0.38 0.04 160);
+  --muted: oklch(0.955 0.012 155);
+  --muted-foreground: oklch(0.5 0.025 160);
+  --accent: oklch(0.86 0.06 155);
+  --accent-foreground: oklch(0.4 0.07 160);
+  --border: oklch(0.9 0.018 155);
+  --input: oklch(1 0 0);
+  --ring: oklch(0.5 0.09 160);
+  --chart-1: oklch(0.5 0.09 160);
+  --chart-2: oklch(0.62 0.085 158);
+  --chart-3: oklch(0.74 0.07 155);
+  --chart-4: oklch(0.86 0.06 155);
+  --chart-5: oklch(0.92 0.04 155);
+  --sidebar: oklch(0.95 0.014 155);
+  --sidebar-foreground: oklch(0.38 0.04 160);
+  --sidebar-primary: oklch(0.5 0.09 160);
+  --sidebar-primary-foreground: oklch(0.985 0.008 155);
+  --sidebar-accent: oklch(0.86 0.06 155);
+  --sidebar-accent-foreground: oklch(0.4 0.07 160);
+  --sidebar-border: oklch(0.9 0.018 155);
+  --sidebar-ring: oklch(0.5 0.09 160);
+}
+
+/* I — Blush (rosa-pó muito claro, super delicado e afetivo) */
+:root[data-palette="blush"] {
+  --background: oklch(0.985 0.012 15);
+  --foreground: oklch(0.255 0.025 12);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.255 0.025 12);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.255 0.025 12);
+  --primary: oklch(0.68 0.085 12);
+  --primary-foreground: oklch(0.985 0.012 15);
+  --secondary: oklch(0.95 0.018 15);
+  --secondary-foreground: oklch(0.42 0.04 15);
+  --muted: oklch(0.96 0.014 15);
+  --muted-foreground: oklch(0.52 0.025 12);
+  --accent: oklch(0.9 0.04 15);
+  --accent-foreground: oklch(0.45 0.05 15);
+  --border: oklch(0.91 0.02 15);
+  --input: oklch(1 0 0);
+  --ring: oklch(0.68 0.085 12);
+  --chart-1: oklch(0.68 0.085 12);
+  --chart-2: oklch(0.78 0.07 18);
+  --chart-3: oklch(0.86 0.05 22);
+  --chart-4: oklch(0.9 0.04 15);
+  --chart-5: oklch(0.5 0.04 130);
+  --sidebar: oklch(0.95 0.018 15);
+  --sidebar-foreground: oklch(0.42 0.04 15);
+  --sidebar-primary: oklch(0.68 0.085 12);
+  --sidebar-primary-foreground: oklch(0.985 0.012 15);
+  --sidebar-accent: oklch(0.9 0.04 15);
+  --sidebar-accent-foreground: oklch(0.45 0.05 15);
+  --sidebar-border: oklch(0.91 0.02 15);
+  --sidebar-ring: oklch(0.68 0.085 12);
+}
+
+/* J — Salmão (rosa-laranja vibrante, alegre e calorosa) */
+:root[data-palette="salmao"] {
+  --background: oklch(0.985 0.012 35);
+  --foreground: oklch(0.245 0.03 25);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.245 0.03 25);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.245 0.03 25);
+  --primary: oklch(0.68 0.13 30);
+  --primary-foreground: oklch(0.985 0.012 35);
+  --secondary: oklch(0.95 0.018 30);
+  --secondary-foreground: oklch(0.42 0.05 25);
+  --muted: oklch(0.955 0.014 30);
+  --muted-foreground: oklch(0.52 0.028 25);
+  --accent: oklch(0.86 0.07 35);
+  --accent-foreground: oklch(0.42 0.08 30);
+  --border: oklch(0.9 0.02 28);
+  --input: oklch(1 0 0);
+  --ring: oklch(0.68 0.13 30);
+  --chart-1: oklch(0.68 0.13 30);
+  --chart-2: oklch(0.76 0.1 38);
+  --chart-3: oklch(0.84 0.08 50);
+  --chart-4: oklch(0.88 0.06 65);
+  --chart-5: oklch(0.92 0.04 50);
+  --sidebar: oklch(0.95 0.018 30);
+  --sidebar-foreground: oklch(0.42 0.05 25);
+  --sidebar-primary: oklch(0.68 0.13 30);
+  --sidebar-primary-foreground: oklch(0.985 0.012 35);
+  --sidebar-accent: oklch(0.86 0.07 35);
+  --sidebar-accent-foreground: oklch(0.42 0.08 30);
+  --sidebar-border: oklch(0.9 0.02 28);
+  --sidebar-ring: oklch(0.68 0.13 30);
+}
+
+/* K — Mel + Canela (dourado quente, afetivo aconchegante) */
+:root[data-palette="mel"] {
+  --background: oklch(0.985 0.014 75);
+  --foreground: oklch(0.24 0.03 50);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.24 0.03 50);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.24 0.03 50);
+  --primary: oklch(0.55 0.105 60);
+  --primary-foreground: oklch(0.985 0.014 75);
+  --secondary: oklch(0.94 0.022 75);
+  --secondary-foreground: oklch(0.4 0.05 55);
+  --muted: oklch(0.95 0.018 70);
+  --muted-foreground: oklch(0.52 0.03 55);
+  --accent: oklch(0.85 0.075 75);
+  --accent-foreground: oklch(0.42 0.08 55);
+  --border: oklch(0.9 0.02 70);
+  --input: oklch(1 0 0);
+  --ring: oklch(0.55 0.105 60);
+  --chart-1: oklch(0.55 0.105 60);
+  --chart-2: oklch(0.66 0.1 65);
+  --chart-3: oklch(0.78 0.085 72);
+  --chart-4: oklch(0.85 0.075 75);
+  --chart-5: oklch(0.5 0.085 40);
+  --sidebar: oklch(0.94 0.022 75);
+  --sidebar-foreground: oklch(0.4 0.05 55);
+  --sidebar-primary: oklch(0.55 0.105 60);
+  --sidebar-primary-foreground: oklch(0.985 0.014 75);
+  --sidebar-accent: oklch(0.85 0.075 75);
+  --sidebar-accent-foreground: oklch(0.42 0.08 55);
+  --sidebar-border: oklch(0.9 0.02 70);
+  --sidebar-ring: oklch(0.55 0.105 60);
+}
+
+/* L — Berinjela (roxo profundo, presente noturno e elegante) */
+:root[data-palette="berinjela"] {
+  --background: oklch(0.985 0.008 320);
+  --foreground: oklch(0.24 0.03 320);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.24 0.03 320);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.24 0.03 320);
+  --primary: oklch(0.42 0.095 325);
+  --primary-foreground: oklch(0.985 0.008 320);
+  --secondary: oklch(0.95 0.014 320);
+  --secondary-foreground: oklch(0.4 0.04 325);
+  --muted: oklch(0.955 0.012 320);
+  --muted-foreground: oklch(0.52 0.025 325);
+  --accent: oklch(0.82 0.075 80);
+  --accent-foreground: oklch(0.4 0.07 60);
+  --border: oklch(0.9 0.018 320);
+  --input: oklch(1 0 0);
+  --ring: oklch(0.42 0.095 325);
+  --chart-1: oklch(0.42 0.095 325);
+  --chart-2: oklch(0.55 0.085 322);
+  --chart-3: oklch(0.7 0.07 320);
+  --chart-4: oklch(0.82 0.075 80);
+  --chart-5: oklch(0.9 0.04 320);
+  --sidebar: oklch(0.95 0.014 320);
+  --sidebar-foreground: oklch(0.4 0.04 325);
+  --sidebar-primary: oklch(0.42 0.095 325);
+  --sidebar-primary-foreground: oklch(0.985 0.008 320);
+  --sidebar-accent: oklch(0.82 0.075 80);
+  --sidebar-accent-foreground: oklch(0.4 0.07 60);
+  --sidebar-border: oklch(0.9 0.018 320);
+  --sidebar-ring: oklch(0.42 0.095 325);
+}
+
+/* M — Bordô + Ouro velho (ateliê premium, presente luxo) */
+:root[data-palette="bordo"] {
+  --background: oklch(0.98 0.01 80);
+  --foreground: oklch(0.22 0.03 25);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.22 0.03 25);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.22 0.03 25);
+  --primary: oklch(0.42 0.105 22);
+  --primary-foreground: oklch(0.98 0.01 80);
+  --secondary: oklch(0.94 0.02 80);
+  --secondary-foreground: oklch(0.36 0.04 30);
+  --muted: oklch(0.94 0.014 75);
+  --muted-foreground: oklch(0.5 0.025 35);
+  --accent: oklch(0.78 0.08 78);
+  --accent-foreground: oklch(0.36 0.07 35);
+  --border: oklch(0.89 0.018 60);
+  --input: oklch(1 0 0);
+  --ring: oklch(0.42 0.105 22);
+  --chart-1: oklch(0.42 0.105 22);
+  --chart-2: oklch(0.55 0.09 30);
+  --chart-3: oklch(0.68 0.085 60);
+  --chart-4: oklch(0.78 0.08 78);
+  --chart-5: oklch(0.86 0.04 90);
+  --sidebar: oklch(0.94 0.02 80);
+  --sidebar-foreground: oklch(0.36 0.04 30);
+  --sidebar-primary: oklch(0.42 0.105 22);
+  --sidebar-primary-foreground: oklch(0.98 0.01 80);
+  --sidebar-accent: oklch(0.78 0.08 78);
+  --sidebar-accent-foreground: oklch(0.36 0.07 35);
+  --sidebar-border: oklch(0.89 0.018 60);
+  --sidebar-ring: oklch(0.42 0.105 22);
+}
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);

@@ -9,6 +9,7 @@ import { env } from "~/env";
 import { Logo } from "~/components/logo";
 import { MobileNav } from "~/components/mobile-nav";
 import { OrnamentalDivider } from "~/components/ornaments";
+import { PaletteSwitcher } from "~/components/palette-switcher";
 import { ScrollRestore } from "~/components/scroll-restore";
 import { SiteHeader } from "~/components/site-header";
 import { TRPCReactProvider } from "~/trpc/react";
@@ -78,6 +79,7 @@ export default function RootLayout(props: { children: React.ReactNode }) {
               </div>
             </footer>
             <Toaster />
+            <PaletteSwitcher />
           </TRPCReactProvider>
         </ThemeProvider>
       </body>

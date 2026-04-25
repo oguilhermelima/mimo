@@ -64,10 +64,10 @@ export function CartView() {
           Comece pelos presentes ou monte uma caixa do zero.
         </p>
         <div className="mt-6 flex flex-col items-center justify-center gap-3 sm:flex-row">
-          <Button asChild size="lg" className="rounded-full px-7 shadow-lg shadow-primary/20">
+          <Button asChild size="lg" className="px-7">
             <Link href="/produtos">Ver os Presentes</Link>
           </Button>
-          <Button asChild size="lg" variant="outline" className="rounded-full px-7">
+          <Button asChild size="lg" variant="outline" className="px-7">
             <Link href="/encomenda">Montar a sua caixa</Link>
           </Button>
         </div>
@@ -255,7 +255,7 @@ export function CartView() {
         ) : (
           <Button
             size="lg"
-            className="w-full gap-2 rounded-full shadow-lg shadow-primary/25"
+            className="w-full gap-2 shadow-lg shadow-primary/25"
             asChild
           >
             <Link href={checkoutHref}>

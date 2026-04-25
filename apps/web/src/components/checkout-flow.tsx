@@ -18,13 +18,15 @@ import {
   Truck,
 } from "lucide-react";
 
-import { PAYMENT_METHODS, type PaymentMethod } from "@caixa/db/schema";
+import type { PaymentMethod } from "@caixa/db/schema";
+import { PAYMENT_METHODS } from "@caixa/db/schema";
 import { Button } from "@caixa/ui/button";
 import { Input } from "@caixa/ui/input";
 import { Label } from "@caixa/ui/label";
 import { toast } from "@caixa/ui/toast";
 
-import { totalCents, useCart, type CartEntry } from "~/lib/cart-store";
+import type { CartEntry } from "~/lib/cart-store";
+import { totalCents, useCart } from "~/lib/cart-store";
 import { formatBRL, paymentLabel } from "~/lib/format";
 import { useCepAutofill } from "~/lib/use-cep-autofill";
 import { useTRPC } from "~/trpc/react";
@@ -48,7 +50,9 @@ export function CheckoutFlow() {
 
   const [fulfillment, setFulfillment] = useState<Fulfillment>("pickup_taboao");
   const [selectedAddressId, setSelectedAddressId] = useState<string | null>(
-    addresses.data.find((a) => a.isDefault)?.id ?? addresses.data[0]?.id ?? null,
+    addresses.data.find((a) => a.isDefault)?.id ??
+      addresses.data[0]?.id ??
+      null,
   );
   const [showNewAddress, setShowNewAddress] = useState(
     addresses.data.length === 0,
@@ -135,10 +139,10 @@ export function CheckoutFlow() {
     <div className="grid min-w-0 gap-8 lg:grid-cols-[minmax(0,1fr)_380px]">
       <div className="min-w-0 space-y-8">
         <header>
-          <h1 className="font-serif text-4xl text-primary md:text-5xl">
+          <h1 className="text-primary font-serif text-4xl md:text-5xl">
             Finalizar compra
           </h1>
-          <p className="mt-2 text-muted-foreground md:text-lg">
+          <p className="text-muted-foreground mt-2 md:text-lg">
             Ao concluir o pedido, reservamos os itens por 12 horas. Em seguida,
             entramos em contato pelo WhatsApp para confirmar o pagamento e a
             entrega.
@@ -205,7 +209,7 @@ export function CheckoutFlow() {
                         }}
                         className={`flex w-full items-start gap-3 rounded-2xl border p-4 text-left transition ${
                           checked
-                            ? "border-primary bg-primary/5 ring-2 ring-primary/40"
+                            ? "border-primary bg-primary/5 ring-primary/40 ring-2"
                             : "border-border/60 hover:border-primary/40"
                         }`}
                       >
@@ -219,10 +223,10 @@ export function CheckoutFlow() {
                           {checked && <Check className="size-3" />}
                         </span>
                         <div className="flex-1 text-sm">
-                          <p className="font-medium text-foreground">
+                          <p className="text-foreground font-medium">
                             {addr.label ?? addr.recipientName}
                             {addr.isDefault && (
-                              <span className="ml-2 rounded-full bg-primary/15 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.18em] text-primary">
+                              <span className="bg-primary/15 text-primary ml-2 rounded-full px-2 py-0.5 text-[10px] font-semibold tracking-[0.18em] uppercase">
                                 padrão
                               </span>
                             )}
@@ -262,7 +266,6 @@ export function CheckoutFlow() {
               <Button
                 type="button"
                 variant="outline"
-                className="rounded-full"
                 onClick={() => setShowNewAddress(true)}
               >
                 <MapPin className="mr-2 size-4" />
@@ -276,11 +279,11 @@ export function CheckoutFlow() {
             title="Local de retirada"
             description="Endereço completo combinado pelo WhatsApp após a reserva."
           >
-            <div className="rounded-2xl border border-primary/20 bg-primary/5 p-4 text-sm">
-              <p className="font-serif text-lg text-primary">
+            <div className="border-primary/20 bg-primary/5 rounded-2xl border p-4 text-sm">
+              <p className="text-primary font-serif text-lg">
                 {STORE_PICKUP_CITY}
               </p>
-              <p className="mt-1 text-muted-foreground">
+              <p className="text-muted-foreground mt-1">
                 Ao confirmar a reserva, entramos em contato pelo WhatsApp para
                 combinar o local exato e o horário da retirada.
               </p>
@@ -301,13 +304,13 @@ export function CheckoutFlow() {
                 onClick={() => setPaymentMethod(m)}
                 className={`flex items-center justify-between rounded-2xl border p-4 text-left transition ${
                   paymentMethod === m
-                    ? "border-primary bg-primary/5 ring-2 ring-primary/40"
+                    ? "border-primary bg-primary/5 ring-primary/40 ring-2"
                     : "border-border/60 hover:border-primary/40"
                 }`}
               >
                 <span className="text-sm font-medium">{paymentLabel(m)}</span>
                 {paymentMethod === m && (
-                  <Check className="size-4 text-primary" />
+                  <Check className="text-primary size-4" />
                 )}
               </button>
             ))}
@@ -324,19 +327,19 @@ export function CheckoutFlow() {
             onChange={(e) => setCustomerNote(e.target.value)}
             rows={4}
             maxLength={2000}
-            className="w-full resize-none rounded-2xl border border-border/70 bg-background px-4 py-3 text-sm transition focus:border-primary/60 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+            className="border-border/70 bg-background focus:border-primary/60 focus-visible:ring-primary/40 w-full resize-none rounded-2xl border px-4 py-3 text-sm transition focus:outline-none focus-visible:ring-2"
             placeholder="Bilhete, cor da fita, mensagem especial…"
           />
         </Section>
       </div>
 
-      <aside className="h-fit space-y-5 rounded-2xl border border-primary/15 bg-gradient-to-br from-card via-card to-primary/5 p-6 ring-1 ring-border/40 lg:sticky lg:top-24">
-        <div className="flex items-center justify-between border-b border-border/40 pb-3">
-          <h2 className="flex items-center gap-2 font-serif text-2xl text-foreground">
-            <Sparkles className="size-4 text-primary" />
+      <aside className="border-primary/15 from-card via-card to-primary/5 ring-border/40 h-fit space-y-5 rounded-2xl border bg-gradient-to-br p-6 ring-1 lg:sticky lg:top-24">
+        <div className="border-border/40 flex items-center justify-between border-b pb-3">
+          <h2 className="text-foreground flex items-center gap-2 font-serif text-2xl">
+            <Sparkles className="text-primary size-4" />
             Resumo
           </h2>
-          <span className="text-[10px] uppercase tracking-[0.28em] text-muted-foreground">
+          <span className="text-muted-foreground text-[10px] tracking-[0.28em] uppercase">
             {entries.length} {entries.length === 1 ? "item" : "itens"}
           </span>
         </div>
@@ -344,7 +347,7 @@ export function CheckoutFlow() {
         <ul className="space-y-3">
           {entries.map((e) => (
             <li key={e.lineId} className="flex items-center gap-3">
-              <div className="relative size-12 shrink-0 overflow-hidden rounded-lg bg-muted ring-1 ring-border/40">
+              <div className="bg-muted ring-border/40 relative size-12 shrink-0 overflow-hidden rounded-lg ring-1">
                 {e.imageUrl ? (
                   <Image
                     src={e.imageUrl}
@@ -354,14 +357,14 @@ export function CheckoutFlow() {
                     className="object-cover"
                   />
                 ) : (
-                  <div className="flex h-full items-center justify-center text-lg text-primary/40">
+                  <div className="text-primary/40 flex h-full items-center justify-center text-lg">
                     ✦
                   </div>
                 )}
               </div>
               <div className="min-w-0 flex-1 text-sm">
-                <p className="truncate font-medium leading-tight">{e.title}</p>
-                <p className="text-xs text-muted-foreground">
+                <p className="truncate leading-tight font-medium">{e.title}</p>
+                <p className="text-muted-foreground text-xs">
                   {e.quantity}× ·{" "}
                   {formatBRL(
                     e.priceCents != null ? e.priceCents * e.quantity : null,
@@ -372,7 +375,7 @@ export function CheckoutFlow() {
           ))}
         </ul>
 
-        <dl className="space-y-1 border-t border-border/40 pt-3 text-sm">
+        <dl className="border-border/40 space-y-1 border-t pt-3 text-sm">
           <div className="flex justify-between">
             <dt className="text-muted-foreground">Subtotal</dt>
             <dd className="tabular-nums">{formatBRL(grand)}</dd>
@@ -383,11 +386,11 @@ export function CheckoutFlow() {
               <dd>validado na confirmação</dd>
             </div>
           )}
-          <div className="flex items-baseline justify-between border-t border-border/40 pt-2">
-            <dt className="text-[10px] uppercase tracking-[0.28em] text-muted-foreground">
+          <div className="border-border/40 flex items-baseline justify-between border-t pt-2">
+            <dt className="text-muted-foreground text-[10px] tracking-[0.28em] uppercase">
               Total estimado
             </dt>
-            <dd className="font-serif text-2xl text-primary tabular-nums">
+            <dd className="text-primary font-serif text-2xl tabular-nums">
               {formatBRL(grand)}
             </dd>
           </div>
@@ -395,14 +398,14 @@ export function CheckoutFlow() {
 
         <Button
           size="lg"
-          className="w-full rounded-full"
+          className="w-full"
           disabled={!canSubmit}
           onClick={handleSubmit}
         >
           {createOrder.isPending ? "reservando…" : "Reservar pedido"}
         </Button>
 
-        <p className="text-center text-xs text-muted-foreground">
+        <p className="text-muted-foreground text-center text-xs">
           A reserva fica válida por 12 horas. Sem confirmação dentro desse
           prazo, os itens retornam ao estoque automaticamente.
         </p>
@@ -425,13 +428,13 @@ function Section({
   return (
     <section className="space-y-4">
       <header className="flex items-center gap-3">
-        <span className="flex size-8 items-center justify-center rounded-full bg-primary text-sm font-semibold text-primary-foreground">
+        <span className="bg-primary text-primary-foreground flex size-8 items-center justify-center rounded-full text-sm font-semibold">
           {number}
         </span>
         <div>
-          <h2 className="font-serif text-2xl text-foreground">{title}</h2>
+          <h2 className="text-foreground font-serif text-2xl">{title}</h2>
           {description && (
-            <p className="text-sm text-muted-foreground">{description}</p>
+            <p className="text-muted-foreground text-sm">{description}</p>
           )}
         </div>
       </header>
@@ -459,7 +462,7 @@ function FulfillmentCard({
       onClick={onClick}
       className={`flex flex-col items-start gap-2 rounded-2xl border p-4 text-left transition ${
         checked
-          ? "border-primary bg-primary/5 ring-2 ring-primary/40"
+          ? "border-primary bg-primary/5 ring-primary/40 ring-2"
           : "border-border/60 hover:border-primary/40"
       }`}
     >
@@ -473,7 +476,7 @@ function FulfillmentCard({
         {icon}
       </span>
       <span className="font-serif text-lg">{title}</span>
-      <span className="text-xs text-muted-foreground">{description}</span>
+      <span className="text-muted-foreground text-xs">{description}</span>
     </button>
   );
 }
@@ -543,7 +546,7 @@ function NewAddressForm({
   return (
     <form
       onSubmit={submit}
-      className="space-y-7 rounded-2xl border border-border/60 bg-card/50 p-5 md:p-6"
+      className="border-border/60 bg-card/50 space-y-7 rounded-2xl border p-5 md:p-6"
     >
       <FormSubsection title="Quem recebe">
         <div className="grid gap-4 sm:grid-cols-[1.5fr_1fr]">
@@ -647,19 +650,18 @@ function NewAddressForm({
         </div>
       </FormSubsection>
 
-      <div className="flex items-center justify-end gap-2 border-t border-border/40 pt-4">
+      <div className="border-border/40 flex items-center justify-end gap-2 border-t pt-4">
         {onCancel && (
           <Button
             type="button"
             variant="outline"
-            className="rounded-full"
             onClick={onCancel}
             disabled={pending}
           >
             Cancelar
           </Button>
         )}
-        <Button type="submit" className="rounded-full" disabled={pending}>
+        <Button type="submit" disabled={pending}>
           {pending ? "salvando…" : "Salvar endereço"}
         </Button>
       </div>
@@ -676,7 +678,7 @@ function FormSubsection({
 }) {
   return (
     <div className="space-y-4">
-      <h3 className="text-[10px] font-semibold uppercase tracking-[0.28em] text-primary/80">
+      <h3 className="text-primary/80 text-[10px] font-semibold tracking-[0.28em] uppercase">
         {title}
       </h3>
       <div className="space-y-4">{children}</div>
@@ -698,7 +700,7 @@ function Field({
   return (
     <div className="space-y-1.5">
       <div className="flex items-baseline justify-between gap-2">
-        <Label className="text-[10px] font-semibold uppercase tracking-[0.22em] text-muted-foreground">
+        <Label className="text-muted-foreground text-[10px] font-semibold tracking-[0.22em] uppercase">
           {label}
         </Label>
         {hint && (

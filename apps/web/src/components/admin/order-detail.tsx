@@ -90,7 +90,8 @@ export function AdminOrderDetail({ id }: { id: string }) {
 
   const [reason, setReason] = useState("");
 
-  const canPay = order.status === "reservado" || order.status === "aguardando_pagamento";
+  const canPay =
+    order.status === "reservado" || order.status === "aguardando_pagamento";
   const canFulfill = order.status === "pago";
   const canCancel = order.status !== "cancelado" && order.status !== "entregue";
 
@@ -99,7 +100,7 @@ export function AdminOrderDetail({ id }: { id: string }) {
       <div>
         <Link
           href="/admin/pedidos"
-          className="inline-flex items-center gap-1 text-sm text-muted-foreground transition hover:text-primary"
+          className="text-muted-foreground hover:text-primary inline-flex items-center gap-1 text-sm transition"
         >
           <ChevronLeft className="size-4" /> Lista
         </Link>
@@ -107,15 +108,13 @@ export function AdminOrderDetail({ id }: { id: string }) {
 
       <header className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <p className="font-mono text-xs text-muted-foreground">
-            #{order.id}
-          </p>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-muted-foreground font-mono text-xs">#{order.id}</p>
+          <p className="text-muted-foreground text-sm">
             Criado em {new Date(order.createdAt).toLocaleString("pt-BR")}
           </p>
         </div>
         <span
-          className={`rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] ring-1 ${
+          className={`rounded-full px-3 py-1 text-xs font-semibold tracking-[0.18em] uppercase ring-1 ${
             STATUS_TONE[order.status] ?? STATUS_TONE.cancelado
           }`}
         >
@@ -124,7 +123,7 @@ export function AdminOrderDetail({ id }: { id: string }) {
       </header>
 
       <section className="grid gap-4 md:grid-cols-2">
-        <div className="space-y-1 rounded-2xl border border-border/40 bg-card/30 p-5 text-sm">
+        <div className="border-border/40 bg-card/30 space-y-1 rounded-2xl border p-5 text-sm">
           <h3 className="font-serif text-lg">Cliente</h3>
           <p className="font-medium">{order.customerName}</p>
           <p className="text-muted-foreground">{order.customerEmail}</p>
@@ -135,7 +134,7 @@ export function AdminOrderDetail({ id }: { id: string }) {
             CPF: {formatCpf(order.customerCpf)}
           </p>
         </div>
-        <div className="space-y-1 rounded-2xl border border-border/40 bg-card/30 p-5 text-sm">
+        <div className="border-border/40 bg-card/30 space-y-1 rounded-2xl border p-5 text-sm">
           <h3 className="font-serif text-lg">Recebimento</h3>
           <p>{FULFILLMENT_LABEL[order.fulfillmentMethod]}</p>
           {order.fulfillmentMethod === "delivery" && order.deliverStreet && (
@@ -159,21 +158,21 @@ export function AdminOrderDetail({ id }: { id: string }) {
         </div>
       </section>
 
-      <section className="space-y-3 rounded-2xl border border-border/40 bg-card/30 p-5">
+      <section className="border-border/40 bg-card/30 space-y-3 rounded-2xl border p-5">
         <h3 className="font-serif text-lg">Itens</h3>
-        <ul className="divide-y divide-border/40">
+        <ul className="divide-border/40 divide-y">
           {order.items.map((it) => (
             <li
               key={it.id}
               className="flex items-start justify-between gap-4 py-3"
             >
               <div className="flex-1">
-                <p className="text-[10px] uppercase tracking-[0.2em] text-primary/80">
+                <p className="text-primary/80 text-[10px] tracking-[0.2em] uppercase">
                   {KIND_LABEL[it.kind] ?? it.kind}
                 </p>
                 <p className="font-medium">{it.titleSnapshot}</p>
                 {it.bundle?.items && it.bundle.items.length > 0 && (
-                  <ul className="mt-1.5 space-y-0.5 text-xs text-muted-foreground">
+                  <ul className="text-muted-foreground mt-1.5 space-y-0.5 text-xs">
                     {it.bundle.templateBox && (
                       <li>Caixa: {it.bundle.templateBox.title}</li>
                     )}
@@ -190,7 +189,7 @@ export function AdminOrderDetail({ id }: { id: string }) {
               </div>
               <div className="shrink-0 text-right text-sm">
                 <p className="text-muted-foreground">{it.quantity}×</p>
-                <p className="font-serif text-lg text-primary tabular-nums">
+                <p className="text-primary font-serif text-lg tabular-nums">
                   {formatBRL(it.priceCentsSnapshot * it.quantity)}
                 </p>
               </div>
@@ -198,7 +197,7 @@ export function AdminOrderDetail({ id }: { id: string }) {
           ))}
         </ul>
 
-        <dl className="space-y-1 border-t border-border/40 pt-3 text-sm">
+        <dl className="border-border/40 space-y-1 border-t pt-3 text-sm">
           <div className="flex justify-between">
             <dt className="text-muted-foreground">Subtotal</dt>
             <dd className="tabular-nums">{formatBRL(order.subtotalCents)}</dd>
@@ -211,36 +210,35 @@ export function AdminOrderDetail({ id }: { id: string }) {
               </dd>
             </div>
           )}
-          <div className="flex items-baseline justify-between border-t border-border/40 pt-2">
-            <dt className="text-[10px] uppercase tracking-[0.28em] text-muted-foreground">
+          <div className="border-border/40 flex items-baseline justify-between border-t pt-2">
+            <dt className="text-muted-foreground text-[10px] tracking-[0.28em] uppercase">
               Total
             </dt>
-            <dd className="font-serif text-2xl text-primary tabular-nums">
+            <dd className="text-primary font-serif text-2xl tabular-nums">
               {formatBRL(order.totalCents)}
             </dd>
           </div>
         </dl>
-        <p className="text-xs text-muted-foreground">
+        <p className="text-muted-foreground text-xs">
           Pagamento: {paymentLabel(order.paymentMethod)}
         </p>
       </section>
 
       {order.customerNote && (
-        <section className="rounded-2xl border border-border/40 bg-card/30 p-5 text-sm">
+        <section className="border-border/40 bg-card/30 rounded-2xl border p-5 text-sm">
           <h3 className="mb-2 font-serif text-lg">Observações</h3>
-          <p className="whitespace-pre-line text-muted-foreground">
+          <p className="text-muted-foreground whitespace-pre-line">
             {order.customerNote}
           </p>
         </section>
       )}
 
-      <section className="space-y-3 rounded-2xl border border-primary/15 bg-primary/5 p-5">
+      <section className="border-primary/15 bg-primary/5 space-y-3 rounded-2xl border p-5">
         <h3 className="font-serif text-lg">Ações</h3>
         <div className="flex flex-wrap gap-2">
           {canPay && (
             <Button
               type="button"
-              className="rounded-full"
               onClick={() => markPaid.mutate({ id: order.id })}
               disabled={markPaid.isPending}
             >
@@ -251,7 +249,6 @@ export function AdminOrderDetail({ id }: { id: string }) {
             <Button
               type="button"
               variant="outline"
-              className="rounded-full"
               onClick={() => markFulfilled.mutate({ id: order.id })}
               disabled={markFulfilled.isPending}
             >
@@ -260,7 +257,7 @@ export function AdminOrderDetail({ id }: { id: string }) {
           )}
           {canCancel && (
             <details className="w-full">
-              <summary className="cursor-pointer rounded-full border border-destructive/40 px-4 py-1.5 text-sm text-destructive">
+              <summary className="border-destructive/40 text-destructive cursor-pointer rounded-full border px-4 py-1.5 text-sm">
                 Cancelar pedido
               </summary>
               <div className="mt-3 flex flex-wrap items-center gap-2">
@@ -268,12 +265,11 @@ export function AdminOrderDetail({ id }: { id: string }) {
                   value={reason}
                   onChange={(e) => setReason(e.target.value)}
                   placeholder="motivo (opcional)"
-                  className="flex-1 rounded-full border border-border/70 bg-background px-4 py-2 text-sm"
+                  className="border-border/70 bg-background flex-1 rounded-full border px-4 py-2 text-sm"
                 />
                 <Button
                   type="button"
                   variant="destructive"
-                  className="rounded-full"
                   onClick={() => {
                     if (
                       confirm(
@@ -295,7 +291,7 @@ export function AdminOrderDetail({ id }: { id: string }) {
           )}
         </div>
         {order.status === "reservado" && (
-          <p className="text-xs text-muted-foreground">
+          <p className="text-muted-foreground text-xs">
             Reservado até{" "}
             {new Date(order.reservedUntil).toLocaleString("pt-BR")}.
           </p>

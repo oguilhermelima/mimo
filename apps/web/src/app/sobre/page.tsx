@@ -229,10 +229,10 @@ export default function SobrePage() {
             caixinha é única — assim como a história que ela carrega.
           </p>
           <div className="flex flex-col gap-3 sm:flex-row">
-            <Button asChild size="lg" className="rounded-full px-7 shadow-lg shadow-primary/25">
+            <Button asChild size="lg" className="px-7">
               <Link href="/produtos">Ver os Presentes</Link>
             </Button>
-            <Button asChild size="lg" variant="outline" className="rounded-full px-7">
+            <Button asChild size="lg" variant="outline" className="px-7">
               <Link href="/encomenda">Montar sua caixinha</Link>
             </Button>
           </div>

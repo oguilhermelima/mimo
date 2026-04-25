@@ -61,7 +61,7 @@ export function EncomendaBanner() {
           <Button
             asChild
             size="lg"
-            className="group w-full gap-2 rounded-full px-7 shadow-lg shadow-primary/30 md:w-auto"
+            className="group w-full gap-2 px-7 shadow-lg shadow-primary/30 md:w-auto"
           >
             <Link href="/encomenda">
               Montar a sua caixa

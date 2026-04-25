@@ -14,9 +14,9 @@ import {
   ShoppingBag,
   Sparkles,
 } from "lucide-react";
-import { toast } from "@caixa/ui/toast";
 
 import { Button } from "@caixa/ui/button";
+import { toast } from "@caixa/ui/toast";
 
 import { useCart } from "~/lib/cart-store";
 import { formatBRL, formatDimensions } from "~/lib/format";
@@ -84,7 +84,8 @@ export function CustomOrderFlow() {
     if (step === "template") return !!templateBoxId;
     if (step === "stamp") return true;
     if (step === "items") return selectedItems.length > 0;
-    if (step === "confirm") return !!selectedTemplate && selectedItems.length > 0;
+    if (step === "confirm")
+      return !!selectedTemplate && selectedItems.length > 0;
     return false;
   };
 
@@ -138,10 +139,10 @@ export function CustomOrderFlow() {
     <div className="space-y-8 pb-40 md:pb-36">
       <header className="space-y-6 md:space-y-8">
         <div>
-          <h1 className="font-serif text-4xl text-primary md:text-5xl">
+          <h1 className="text-primary font-serif text-4xl md:text-5xl">
             Monte sua caixinha
           </h1>
-          <p className="mt-2 text-muted-foreground md:text-lg">
+          <p className="text-muted-foreground mt-2 md:text-lg">
             Escolha a caixa, a estampa e os itens — depois é só finalizar a
             compra.
           </p>
@@ -150,10 +151,10 @@ export function CustomOrderFlow() {
         <ol className="relative mx-auto flex w-full items-start justify-between gap-1 px-2">
           <div
             aria-hidden
-            className="absolute left-[12.5%] right-[12.5%] top-5 -z-0 h-0.5 rounded-full bg-border/50 md:top-7"
+            className="bg-border/50 absolute top-5 right-[12.5%] left-[12.5%] -z-0 h-0.5 rounded-full md:top-7"
           >
             <div
-              className="h-full rounded-full bg-primary transition-all duration-500"
+              className="bg-primary h-full rounded-full transition-all duration-500"
               style={{
                 width: `${(currentIdx / (STEPS.length - 1)) * 100}%`,
               }}
@@ -171,20 +172,16 @@ export function CustomOrderFlow() {
                 <div
                   className={`flex size-10 items-center justify-center rounded-full font-serif text-base font-semibold transition-all duration-300 md:size-14 md:text-lg ${
                     active
-                      ? "scale-110 bg-primary text-primary-foreground ring-4 ring-primary/30 shadow-lg shadow-primary/30"
+                      ? "bg-primary text-primary-foreground ring-primary/30 shadow-primary/30 scale-110 shadow-lg ring-4"
                       : done
-                        ? "bg-primary text-primary-foreground ring-2 ring-primary/40"
-                        : "bg-background text-muted-foreground ring-2 ring-border/50"
+                        ? "bg-primary text-primary-foreground ring-primary/40 ring-2"
+                        : "bg-background text-muted-foreground ring-border/50 ring-2"
                   }`}
                 >
-                  {done ? (
-                    <Check className="size-5 md:size-6" />
-                  ) : (
-                    i + 1
-                  )}
+                  {done ? <Check className="size-5 md:size-6" /> : i + 1}
                 </div>
                 <span
-                  className={`text-center text-[10px] font-semibold uppercase tracking-[0.18em] transition md:text-xs ${
+                  className={`text-center text-[10px] font-semibold tracking-[0.18em] uppercase transition md:text-xs ${
                     active
                       ? "text-primary"
                       : done
@@ -203,10 +200,10 @@ export function CustomOrderFlow() {
       {step === "template" && (
         <section className="space-y-4">
           <div className="space-y-1">
-            <h2 className="font-serif text-3xl font-medium text-foreground md:text-4xl">
+            <h2 className="text-foreground font-serif text-3xl font-medium md:text-4xl">
               Comece pela base
             </h2>
-            <p className="text-sm text-muted-foreground md:text-base">
+            <p className="text-muted-foreground text-sm md:text-base">
               A casa do presente — em MDF cru, pronta pra receber sua história.
             </p>
           </div>
@@ -231,30 +228,30 @@ export function CustomOrderFlow() {
                           setTemplateBoxId(t.id);
                         }
                       }}
-                      className={`group flex h-full w-full cursor-pointer flex-col rounded-2xl bg-card p-2.5 text-left ring-2 transition focus:outline-none focus-visible:ring-primary sm:p-3 ${
+                      className={`group bg-card focus-visible:ring-primary flex h-full w-full cursor-pointer flex-col rounded-2xl p-2.5 text-left ring-2 transition focus:outline-none sm:p-3 ${
                         checked
-                          ? "ring-primary shadow-md shadow-primary/20"
+                          ? "ring-primary shadow-primary/20 shadow-md"
                           : "ring-border/40 hover:ring-primary/40"
                       }`}
                     >
                       <div className="relative">
                         <TemplateGallery photos={t.media} title={t.title} />
                         {checked && (
-                          <span className="pointer-events-none absolute right-2 top-2 z-20 flex size-8 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-md">
+                          <span className="bg-primary text-primary-foreground pointer-events-none absolute top-2 right-2 z-20 flex size-8 items-center justify-center rounded-full shadow-md">
                             <Check className="size-4" />
                           </span>
                         )}
                       </div>
                       <div className="mt-3 flex flex-1 flex-col gap-1 px-0.5 sm:mt-4 sm:gap-1.5 sm:px-1">
-                        <p className="line-clamp-2 break-words font-serif text-sm font-medium leading-snug text-foreground sm:text-lg md:text-xl">
+                        <p className="text-foreground line-clamp-2 font-serif text-sm leading-snug font-medium break-words sm:text-lg md:text-xl">
                           {t.title}
                         </p>
                         {dims && (
-                          <p className="text-[11px] font-medium tracking-wide text-foreground/75 sm:text-sm md:text-base">
+                          <p className="text-foreground/75 text-[11px] font-medium tracking-wide sm:text-sm md:text-base">
                             {dims}
                           </p>
                         )}
-                        <p className="mt-auto font-serif text-base font-medium text-primary tabular-nums sm:text-xl md:text-2xl">
+                        <p className="text-primary mt-auto font-serif text-base font-medium tabular-nums sm:text-xl md:text-2xl">
                           {formatBRL(t.priceCents)}
                         </p>
                       </div>
@@ -271,15 +268,16 @@ export function CustomOrderFlow() {
         <section className="space-y-4">
           <div className="space-y-1">
             <div className="flex items-center gap-3">
-              <h2 className="font-serif text-3xl font-medium text-foreground md:text-4xl">
+              <h2 className="text-foreground font-serif text-3xl font-medium md:text-4xl">
                 Um toque na tampa
               </h2>
-              <span className="rounded-full border border-border/60 bg-muted/40 px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-[0.22em] text-muted-foreground">
+              <span className="border-border/60 bg-muted/40 text-muted-foreground rounded-full border px-2.5 py-0.5 text-[10px] font-semibold tracking-[0.22em] uppercase">
                 Opcional
               </span>
             </div>
-            <p className="text-sm text-muted-foreground md:text-base">
-              Estampa decorativa pra dar identidade à caixinha — flores, partituras, gaiolas vintage.
+            <p className="text-muted-foreground text-sm md:text-base">
+              Estampa decorativa pra dar identidade à caixinha — flores,
+              partituras, gaiolas vintage.
             </p>
           </div>
           <ul className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-3">
@@ -287,7 +285,7 @@ export function CustomOrderFlow() {
               <button
                 type="button"
                 onClick={() => setStampId(null)}
-                className={`flex h-full min-h-[180px] w-full flex-col items-center justify-center rounded-2xl border-2 border-dashed bg-muted/20 p-3 text-center transition sm:p-6 ${
+                className={`bg-muted/20 flex h-full min-h-[180px] w-full flex-col items-center justify-center rounded-2xl border-2 border-dashed p-3 text-center transition sm:p-6 ${
                   stampId === null
                     ? "border-primary text-primary"
                     : "border-border/60 text-muted-foreground hover:border-primary/50 hover:text-primary"
@@ -304,13 +302,13 @@ export function CustomOrderFlow() {
                   <button
                     type="button"
                     onClick={() => setStampId(s.id)}
-                    className={`group w-full rounded-2xl bg-card p-2.5 text-left ring-2 transition sm:p-3 ${
+                    className={`group bg-card w-full rounded-2xl p-2.5 text-left ring-2 transition sm:p-3 ${
                       checked
-                        ? "ring-primary shadow-md shadow-primary/20"
+                        ? "ring-primary shadow-primary/20 shadow-md"
                         : "ring-border/40 hover:ring-primary/40"
                     }`}
                   >
-                    <div className="relative aspect-[4/5] w-full overflow-hidden rounded-xl bg-muted">
+                    <div className="bg-muted relative aspect-[4/5] w-full overflow-hidden rounded-xl">
                       {s.imageUrl ? (
                         <Image
                           src={s.imageUrl}
@@ -320,22 +318,22 @@ export function CustomOrderFlow() {
                           className="object-cover"
                         />
                       ) : (
-                        <div className="flex h-full items-center justify-center font-serif text-sm text-muted-foreground">
+                        <div className="text-muted-foreground flex h-full items-center justify-center font-serif text-sm">
                           sem foto
                         </div>
                       )}
                       {checked && (
-                        <span className="absolute right-2 top-2 flex size-7 items-center justify-center rounded-full bg-primary text-primary-foreground sm:size-8">
+                        <span className="bg-primary text-primary-foreground absolute top-2 right-2 flex size-7 items-center justify-center rounded-full sm:size-8">
                           <Check className="size-3.5 sm:size-4" />
                         </span>
                       )}
                     </div>
                     <div className="mt-3 space-y-0.5 px-0.5 sm:space-y-1 sm:px-1">
-                      <p className="line-clamp-2 break-words font-serif text-sm leading-snug sm:text-lg">
+                      <p className="line-clamp-2 font-serif text-sm leading-snug break-words sm:text-lg">
                         {s.name}
                       </p>
                       {s.priceCents != null && (
-                        <p className="text-xs text-primary tabular-nums sm:text-sm">
+                        <p className="text-primary text-xs tabular-nums sm:text-sm">
                           + {formatBRL(s.priceCents)}
                         </p>
                       )}
@@ -351,11 +349,12 @@ export function CustomOrderFlow() {
       {step === "items" && (
         <section className="space-y-4">
           <div className="space-y-1">
-            <h2 className="font-serif text-3xl font-medium text-foreground md:text-4xl">
+            <h2 className="text-foreground font-serif text-3xl font-medium md:text-4xl">
               Os mimos lá dentro
             </h2>
-            <p className="text-sm text-muted-foreground md:text-base">
-              Escolha quem vai abrir a caixinha junto com a pessoa — um colar, uma Bíblia, um perfume.
+            <p className="text-muted-foreground text-sm md:text-base">
+              Escolha quem vai abrir a caixinha junto com a pessoa — um colar,
+              uma Bíblia, um perfume.
             </p>
           </div>
           {contents.data.length === 0 ? (
@@ -368,35 +367,35 @@ export function CustomOrderFlow() {
                 return (
                   <li key={p.id} className="h-full">
                     <div
-                      className={`group flex h-full w-full flex-col rounded-2xl bg-card p-2.5 text-left ring-2 transition sm:p-3 ${
+                      className={`group bg-card flex h-full w-full flex-col rounded-2xl p-2.5 text-left ring-2 transition sm:p-3 ${
                         selected
-                          ? "ring-primary shadow-md shadow-primary/20"
+                          ? "ring-primary shadow-primary/20 shadow-md"
                           : "ring-border/40 hover:ring-primary/40"
                       }`}
                     >
                       <div className="relative">
                         <TemplateGallery photos={p.media} title={p.title} />
                         {selected && (
-                          <span className="pointer-events-none absolute right-2 top-2 z-20 flex size-7 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-md sm:size-8">
+                          <span className="bg-primary text-primary-foreground pointer-events-none absolute top-2 right-2 z-20 flex size-7 items-center justify-center rounded-full shadow-md sm:size-8">
                             <Check className="size-3.5 sm:size-4" />
                           </span>
                         )}
                       </div>
                       <div className="mt-3 flex flex-1 flex-col gap-1 px-0.5 sm:mt-4 sm:gap-1.5 sm:px-1">
-                        <p className="line-clamp-2 break-words font-serif text-sm font-medium leading-snug text-foreground sm:text-lg md:text-xl">
+                        <p className="text-foreground line-clamp-2 font-serif text-sm leading-snug font-medium break-words sm:text-lg md:text-xl">
                           {p.title}
                         </p>
-                        <p className="mt-auto font-serif text-base font-medium text-primary tabular-nums sm:text-xl md:text-2xl">
+                        <p className="text-primary mt-auto font-serif text-base font-medium tabular-nums sm:text-xl md:text-2xl">
                           {formatBRL(p.priceCents)}
                         </p>
                       </div>
-                      <div className="mt-2.5 flex items-center justify-between rounded-full bg-muted/40 px-1 py-1 ring-1 ring-border/40 sm:mt-3 sm:px-1.5 sm:py-1.5">
+                      <div className="bg-muted/40 ring-border/40 mt-2.5 flex items-center justify-between rounded-full px-1 py-1 ring-1 sm:mt-3 sm:px-1.5 sm:py-1.5">
                         <button
                           type="button"
                           onClick={() => bumpItem(p.id, -1)}
                           disabled={qty === 0}
                           aria-label="Diminuir quantidade"
-                          className="flex size-7 items-center justify-center rounded-full bg-background text-foreground ring-1 ring-border/60 transition hover:bg-primary/10 hover:text-primary disabled:cursor-not-allowed disabled:opacity-40 sm:size-9"
+                          className="bg-background text-foreground ring-border/60 hover:bg-primary/10 hover:text-primary flex size-7 items-center justify-center rounded-full ring-1 transition disabled:cursor-not-allowed disabled:opacity-40 sm:size-9"
                         >
                           <Minus className="size-3.5 sm:size-4" />
                         </button>
@@ -408,7 +407,7 @@ export function CustomOrderFlow() {
                           onClick={() => bumpItem(p.id, 1)}
                           disabled={qty >= p.quantity}
                           aria-label="Aumentar quantidade"
-                          className="flex size-7 items-center justify-center rounded-full bg-primary text-primary-foreground shadow transition hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-40 sm:size-9"
+                          className="bg-primary text-primary-foreground hover:bg-primary/90 flex size-7 items-center justify-center rounded-full shadow transition disabled:cursor-not-allowed disabled:opacity-40 sm:size-9"
                         >
                           <Plus className="size-3.5 sm:size-4" />
                         </button>
@@ -459,14 +458,12 @@ function FloatingFooter({
         media: { id: string; url: string; alt: string | null }[];
       }
     | undefined;
-  selectedStamp:
-    | {
-        id: string;
-        name: string;
-        priceCents: number | null;
-        imageUrl: string | null;
-      }
-    | null;
+  selectedStamp: {
+    id: string;
+    name: string;
+    priceCents: number | null;
+    imageUrl: string | null;
+  } | null;
   selectedItems: {
     product: {
       id: string;
@@ -498,35 +495,35 @@ function FloatingFooter({
       {expanded && (
         <div
           aria-hidden
-          className="fixed inset-0 z-[55] bg-foreground/50 backdrop-blur-sm transition-opacity duration-500"
+          className="bg-foreground/50 fixed inset-0 z-[55] backdrop-blur-sm transition-opacity duration-500"
         />
       )}
 
       <div
         className={`fixed transition-all duration-500 ease-out ${
           expanded
-            ? "inset-0 z-[60] lg:inset-x-auto lg:bottom-auto lg:left-1/2 lg:right-auto lg:top-1/2 lg:max-h-[88vh] lg:w-[calc(100%-3rem)] lg:max-w-2xl lg:-translate-x-1/2 lg:-translate-y-1/2"
+            ? "inset-0 z-[60] lg:inset-x-auto lg:top-1/2 lg:right-auto lg:bottom-auto lg:left-1/2 lg:max-h-[88vh] lg:w-[calc(100%-3rem)] lg:max-w-2xl lg:-translate-x-1/2 lg:-translate-y-1/2"
             : "inset-x-0 bottom-[calc(env(safe-area-inset-bottom)+3.75rem)] z-40 lg:bottom-0"
         }`}
       >
         <div
-          className={`mx-auto flex flex-col bg-background shadow-[0_-12px_40px_-15px_rgba(0,0,0,0.55)] transition-all duration-500 ${
+          className={`bg-background mx-auto flex flex-col shadow-[0_-12px_40px_-15px_rgba(0,0,0,0.55)] transition-all duration-500 ${
             expanded
-              ? "h-full overflow-hidden border border-primary/25 lg:rounded-3xl lg:shadow-2xl lg:shadow-primary/20"
-              : "w-full max-w-3xl border-t border-primary/20 backdrop-blur-md md:rounded-t-3xl md:border-x"
+              ? "border-primary/25 lg:shadow-primary/20 h-full overflow-hidden border lg:rounded-3xl lg:shadow-2xl"
+              : "border-primary/20 w-full max-w-3xl border-t backdrop-blur-md md:rounded-t-3xl md:border-x"
           }`}
         >
           {expanded ? (
-            <div className="flex items-center justify-between gap-3 border-b border-border/40 bg-gradient-to-br from-card via-card to-primary/5 px-5 py-4 md:px-7">
+            <div className="border-border/40 from-card via-card to-primary/5 flex items-center justify-between gap-3 border-b bg-gradient-to-br px-5 py-4 md:px-7">
               <div className="flex items-center gap-3">
-                <span className="flex size-9 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-md shadow-primary/30">
+                <span className="bg-primary text-primary-foreground shadow-primary/30 flex size-9 items-center justify-center rounded-full shadow-md">
                   <Sparkles className="size-4" />
                 </span>
                 <div className="flex flex-col items-start text-left">
-                  <span className="font-serif text-lg text-foreground md:text-2xl">
+                  <span className="text-foreground font-serif text-lg md:text-2xl">
                     Conferir a caixinha
                   </span>
-                  <span className="text-[11px] font-medium uppercase tracking-[0.22em] text-muted-foreground md:text-xs">
+                  <span className="text-muted-foreground text-[11px] font-medium tracking-[0.22em] uppercase md:text-xs">
                     Última conferida antes de adicionar ao carrinho
                   </span>
                 </div>
@@ -535,7 +532,7 @@ function FloatingFooter({
                 type="button"
                 onClick={onPrev}
                 aria-label="Voltar"
-                className="flex size-9 items-center justify-center rounded-full text-muted-foreground transition hover:bg-primary/10 hover:text-primary"
+                className="text-muted-foreground hover:bg-primary/10 hover:text-primary flex size-9 items-center justify-center rounded-full transition"
               >
                 <ChevronLeft className="size-5" />
               </button>
@@ -545,11 +542,11 @@ function FloatingFooter({
               type="button"
               onClick={() => setOpen((v) => !v)}
               disabled={!hasSelection}
-              className="flex w-full items-center justify-between gap-3 px-5 py-3.5 transition hover:bg-primary/5 disabled:cursor-default disabled:hover:bg-transparent md:px-7 md:py-4"
+              className="hover:bg-primary/5 flex w-full items-center justify-between gap-3 px-5 py-3.5 transition disabled:cursor-default disabled:hover:bg-transparent md:px-7 md:py-4"
             >
               <div className="flex items-center gap-3">
                 <span
-                  className={`flex size-8 items-center justify-center rounded-full bg-primary/10 text-primary transition ${
+                  className={`bg-primary/10 text-primary flex size-8 items-center justify-center rounded-full transition ${
                     hasSelection ? "" : "opacity-40"
                   }`}
                 >
@@ -560,10 +557,10 @@ function FloatingFooter({
                   />
                 </span>
                 <div className="flex flex-col items-start text-left">
-                  <span className="font-serif text-base text-foreground md:text-lg">
+                  <span className="text-foreground font-serif text-base md:text-lg">
                     Sua caixa
                   </span>
-                  <span className="text-[11px] font-medium uppercase tracking-[0.22em] text-muted-foreground md:text-xs">
+                  <span className="text-muted-foreground text-[11px] font-medium tracking-[0.22em] uppercase md:text-xs">
                     {hasSelection
                       ? `${itemCount} ${itemCount === 1 ? "item" : "itens"}`
                       : "Comece escolhendo a caixa"}
@@ -571,7 +568,7 @@ function FloatingFooter({
                 </div>
               </div>
               {hasSelection && (
-                <span className="font-serif text-xl text-primary md:text-2xl">
+                <span className="text-primary font-serif text-xl md:text-2xl">
                   {formatBRL(totalCents)}
                 </span>
               )}
@@ -583,7 +580,7 @@ function FloatingFooter({
               className={`flex-1 overflow-y-auto ${
                 expanded
                   ? "px-5 py-5 md:px-7"
-                  : "max-h-64 border-t border-border/40 bg-muted/20 px-5 py-3 md:max-h-80 md:px-7"
+                  : "border-border/40 bg-muted/20 max-h-64 border-t px-5 py-3 md:max-h-80 md:px-7"
               }`}
             >
               <ul className={expanded ? "space-y-3" : "space-y-2"}>
@@ -623,9 +620,7 @@ function FloatingFooter({
                   expanded ? (
                     <ConfirmRow
                       key={it.product.id}
-                      kind={
-                        it.quantity > 1 ? `Item × ${it.quantity}` : "Item"
-                      }
+                      kind={it.quantity > 1 ? `Item × ${it.quantity}` : "Item"}
                       title={it.product.title}
                       imageUrl={it.product.media[0]?.url ?? null}
                       priceCents={
@@ -635,9 +630,7 @@ function FloatingFooter({
                   ) : (
                     <SelectionRow
                       key={it.product.id}
-                      kind={
-                        it.quantity > 1 ? `Item × ${it.quantity}` : "Item"
-                      }
+                      kind={it.quantity > 1 ? `Item × ${it.quantity}` : "Item"}
                       title={it.product.title}
                       imageUrl={it.product.media[0]?.url ?? null}
                       priceCents={
@@ -649,11 +642,11 @@ function FloatingFooter({
               </ul>
 
               {expanded && (
-                <div className="mt-5 flex items-baseline justify-between border-t border-border/40 pt-4">
-                  <span className="text-[10px] font-semibold uppercase tracking-[0.28em] text-muted-foreground md:text-xs">
+                <div className="border-border/40 mt-5 flex items-baseline justify-between border-t pt-4">
+                  <span className="text-muted-foreground text-[10px] font-semibold tracking-[0.28em] uppercase md:text-xs">
                     Total
                   </span>
-                  <span className="font-serif text-3xl text-primary md:text-4xl">
+                  <span className="text-primary font-serif text-3xl md:text-4xl">
                     {formatBRL(totalCents)}
                   </span>
                 </div>
@@ -661,13 +654,12 @@ function FloatingFooter({
             </div>
           )}
 
-          <div className="flex items-center gap-3 border-t border-border/40 px-5 py-3 md:px-7 md:py-3.5">
+          <div className="border-border/40 flex items-center gap-3 border-t px-5 py-3 md:px-7 md:py-3.5">
             <Button
               type="button"
               variant="outline"
               onClick={onPrev}
               disabled={isFirstStep && !expanded}
-              className="rounded-full"
             >
               Voltar
             </Button>
@@ -678,7 +670,7 @@ function FloatingFooter({
                 size="lg"
                 onClick={onSubmit}
                 disabled={!canAdvance}
-                className="gap-2 rounded-full px-6 shadow-md shadow-primary/25"
+                className="shadow-primary/25 gap-2 px-6 shadow-md"
               >
                 <ShoppingBag className="size-4" />
                 Adicionar ao carrinho
@@ -688,7 +680,7 @@ function FloatingFooter({
                 type="button"
                 onClick={onNext}
                 disabled={!canAdvance}
-                className="rounded-full px-6 shadow-md shadow-primary/25"
+                className="shadow-primary/25 px-6 shadow-md"
               >
                 Continuar
               </Button>
@@ -713,25 +705,31 @@ function SelectionRow({
 }) {
   return (
     <li className="flex items-center gap-3">
-      <div className="relative size-14 shrink-0 overflow-hidden rounded-lg bg-background ring-1 ring-border/50">
+      <div className="bg-background ring-border/50 relative size-14 shrink-0 overflow-hidden rounded-lg ring-1">
         {imageUrl ? (
-          <Image src={imageUrl} alt={title} fill sizes="56px" className="object-cover" />
+          <Image
+            src={imageUrl}
+            alt={title}
+            fill
+            sizes="56px"
+            className="object-cover"
+          />
         ) : (
-          <div className="flex h-full items-center justify-center text-xl text-primary/40">
+          <div className="text-primary/40 flex h-full items-center justify-center text-xl">
             ✦
           </div>
         )}
       </div>
       <div className="min-w-0 flex-1">
-        <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-primary/80 md:text-xs">
+        <p className="text-primary/80 text-[11px] font-semibold tracking-[0.22em] uppercase md:text-xs">
           {kind}
         </p>
-        <p className="truncate font-serif text-base leading-tight text-foreground md:text-lg">
+        <p className="text-foreground truncate font-serif text-base leading-tight md:text-lg">
           {title}
         </p>
       </div>
       {priceCents != null && priceCents > 0 && (
-        <p className="shrink-0 font-serif text-base text-foreground md:text-lg">
+        <p className="text-foreground shrink-0 font-serif text-base md:text-lg">
           {formatBRL(priceCents)}
         </p>
       )}
@@ -751,8 +749,8 @@ function ConfirmRow({
   priceCents: number | null;
 }) {
   return (
-    <li className="flex items-center gap-4 rounded-2xl bg-background/60 p-3 ring-1 ring-border/40">
-      <div className="relative size-16 shrink-0 overflow-hidden rounded-xl bg-muted ring-1 ring-border/40 md:size-20">
+    <li className="bg-background/60 ring-border/40 flex items-center gap-4 rounded-2xl p-3 ring-1">
+      <div className="bg-muted ring-border/40 relative size-16 shrink-0 overflow-hidden rounded-xl ring-1 md:size-20">
         {imageUrl ? (
           <Image
             src={imageUrl}
@@ -762,21 +760,21 @@ function ConfirmRow({
             className="object-cover"
           />
         ) : (
-          <div className="flex h-full items-center justify-center text-2xl text-primary/40">
+          <div className="text-primary/40 flex h-full items-center justify-center text-2xl">
             ✦
           </div>
         )}
       </div>
       <div className="min-w-0 flex-1">
-        <p className="text-[10px] font-semibold uppercase tracking-[0.24em] text-primary/80 md:text-xs">
+        <p className="text-primary/80 text-[10px] font-semibold tracking-[0.24em] uppercase md:text-xs">
           {kind}
         </p>
-        <p className="mt-1 font-serif text-base leading-tight text-foreground md:text-lg">
+        <p className="text-foreground mt-1 font-serif text-base leading-tight md:text-lg">
           {title}
         </p>
       </div>
       {priceCents != null && priceCents > 0 && (
-        <p className="shrink-0 font-serif text-base text-foreground md:text-lg">
+        <p className="text-foreground shrink-0 font-serif text-base md:text-lg">
           {formatBRL(priceCents)}
         </p>
       )}
@@ -796,7 +794,7 @@ function TemplateGallery({
 
   if (photos.length === 0) {
     return (
-      <div className="relative flex aspect-[4/5] w-full items-center justify-center overflow-hidden rounded-xl bg-muted font-serif text-sm text-muted-foreground">
+      <div className="bg-muted text-muted-foreground relative flex aspect-[4/5] w-full items-center justify-center overflow-hidden rounded-xl font-serif text-sm">
         Sem foto
       </div>
     );
@@ -827,7 +825,7 @@ function TemplateGallery({
         {photos.map((p) => (
           <div
             key={p.id}
-            className="relative aspect-[4/5] w-full shrink-0 snap-center overflow-hidden bg-muted"
+            className="bg-muted relative aspect-[4/5] w-full shrink-0 snap-center overflow-hidden"
           >
             <Image
               src={p.url}
@@ -851,7 +849,7 @@ function TemplateGallery({
             }}
             disabled={idx === 0}
             aria-label="foto anterior"
-            className="absolute left-2 top-1/2 z-10 hidden size-8 -translate-y-1/2 items-center justify-center rounded-full bg-background/85 text-foreground shadow-md ring-1 ring-border/60 backdrop-blur transition hover:bg-background hover:text-primary disabled:pointer-events-none disabled:opacity-0 md:flex md:opacity-0 md:group-hover/gal:opacity-100"
+            className="bg-background/85 text-foreground ring-border/60 hover:bg-background hover:text-primary absolute top-1/2 left-2 z-10 hidden size-8 -translate-y-1/2 items-center justify-center rounded-full shadow-md ring-1 backdrop-blur transition disabled:pointer-events-none disabled:opacity-0 md:flex md:opacity-0 md:group-hover/gal:opacity-100"
           >
             <ChevronLeft className="size-4" />
           </button>
@@ -863,7 +861,7 @@ function TemplateGallery({
             }}
             disabled={idx === photos.length - 1}
             aria-label="próxima foto"
-            className="absolute right-2 top-1/2 z-10 hidden size-8 -translate-y-1/2 items-center justify-center rounded-full bg-background/85 text-foreground shadow-md ring-1 ring-border/60 backdrop-blur transition hover:bg-background hover:text-primary disabled:pointer-events-none disabled:opacity-0 md:flex md:opacity-0 md:group-hover/gal:opacity-100"
+            className="bg-background/85 text-foreground ring-border/60 hover:bg-background hover:text-primary absolute top-1/2 right-2 z-10 hidden size-8 -translate-y-1/2 items-center justify-center rounded-full shadow-md ring-1 backdrop-blur transition disabled:pointer-events-none disabled:opacity-0 md:flex md:opacity-0 md:group-hover/gal:opacity-100"
           >
             <ChevronRight className="size-4" />
           </button>
@@ -879,8 +877,8 @@ function TemplateGallery({
                 aria-label={`foto ${i + 1}`}
                 className={`h-1.5 rounded-full transition-all duration-300 ${
                   i === idx
-                    ? "w-5 bg-primary"
-                    : "w-1.5 bg-background/85 ring-1 ring-border/40 hover:bg-primary/50"
+                    ? "bg-primary w-5"
+                    : "bg-background/85 ring-border/40 hover:bg-primary/50 w-1.5 ring-1"
                 }`}
               />
             ))}

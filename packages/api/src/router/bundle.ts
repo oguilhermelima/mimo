@@ -1,5 +1,5 @@
 import { TRPCError } from "@trpc/server";
-import { and, asc, desc, eq, gt, inArray } from "drizzle-orm";
+import { and, asc, desc, eq, inArray } from "drizzle-orm";
 import { z } from "zod/v4";
 
 import {
@@ -9,11 +9,9 @@ import {
   CreateBundleMediaSchema,
   CreateBundleSchema,
   PriceHistory,
-  Product,
   ProductMedia,
   UpdateBundleSchema,
 } from "@caixa/db/schema";
-import { customOrderSchema } from "@caixa/validators";
 
 import { adminProcedure, createTRPCRouter, publicProcedure } from "../trpc";
 
@@ -130,6 +128,7 @@ export const bundleRouter = createTRPCRouter({
   /* ── admin ── */
   adminAll: adminProcedure.query(({ ctx }) =>
     ctx.db.query.Bundle.findMany({
+      where: eq(Bundle.source, "catalog"),
       orderBy: [desc(Bundle.createdAt)],
       with: {
         templateBox: true,
@@ -258,80 +257,5 @@ export const bundleRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       await ctx.db.delete(BundleMedia).where(eq(BundleMedia.id, input.id));
       return { ok: true };
-    }),
-
-  /* ── encomenda (user_order) ── */
-  createUserOrder: publicProcedure
-    .input(customOrderSchema)
-    .mutation(async ({ ctx, input }) => {
-      const template = await ctx.db.query.Product.findFirst({
-        where: and(
-          eq(Product.id, input.templateBoxId),
-          eq(Product.type, "template_box"),
-        ),
-      });
-      if (!template)
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: "template_box inválido",
-        });
-
-      const contentIds = input.items.map((i) => i.productId);
-      if (contentIds.length > 0) {
-        const products = await ctx.db.query.Product.findMany({
-          where: and(
-            inArray(Product.id, contentIds),
-            eq(Product.hidden, false),
-            gt(Product.quantity, 0),
-          ),
-        });
-        if (products.length !== contentIds.length) {
-          throw new TRPCError({
-            code: "BAD_REQUEST",
-            message: "um ou mais produtos indisponíveis",
-          });
-        }
-      }
-
-      const [bundle] = await ctx.db
-        .insert(Bundle)
-        .values({
-          source: "user_order",
-          title: `Encomenda — ${input.customerName}`,
-          templateBoxId: input.templateBoxId,
-          stampId: input.stampId,
-          customerName: input.customerName,
-          customerNote: input.customerNote ?? null,
-          quantity: 1,
-        })
-        .returning();
-      if (!bundle) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
-
-      await ctx.db.insert(BundleItem).values(
-        input.items.map((it, i) => ({
-          bundleId: bundle.id,
-          productId: it.productId,
-          quantity: it.quantity,
-          sortOrder: i,
-        })),
-      );
-
-      const detail = await ctx.db.query.Bundle.findFirst({
-        where: eq(Bundle.id, bundle.id),
-        with: {
-          templateBox: true,
-          stamp: true,
-          items: {
-            orderBy: asc(BundleItem.sortOrder),
-            with: { product: true },
-          },
-        },
-      });
-      if (!detail) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR" });
-
-      return {
-        ...detail,
-        effectivePriceCents: effectivePrice(detail.priceCents, detail.items),
-      };
     }),
 });

@@ -2,7 +2,8 @@
 
 import { useMemo, useRef, useState } from "react";
 import Image from "next/image";
-import { useMutation, useSuspenseQueries } from "@tanstack/react-query";
+import { useRouter } from "next/navigation";
+import { useSuspenseQueries } from "@tanstack/react-query";
 import {
   Check,
   ChevronLeft,
@@ -10,18 +11,15 @@ import {
   ChevronUp,
   Minus,
   Plus,
+  ShoppingBag,
   Sparkles,
 } from "lucide-react";
 import { toast } from "@caixa/ui/toast";
 
-import { PAYMENT_METHODS, type PaymentMethod } from "@caixa/db/schema";
 import { Button } from "@caixa/ui/button";
-import { Input } from "@caixa/ui/input";
-import { Label } from "@caixa/ui/label";
 
-import { env } from "~/env";
-import { formatBRL, formatDimensions, paymentLabel } from "~/lib/format";
-import { buildCustomOrderUrl } from "~/lib/whatsapp";
+import { useCart } from "~/lib/cart-store";
+import { formatBRL, formatDimensions } from "~/lib/format";
 import { useTRPC } from "~/trpc/react";
 
 type StepKey = "template" | "stamp" | "items" | "confirm";
@@ -29,11 +27,14 @@ const STEPS: { key: StepKey; label: string }[] = [
   { key: "template", label: "Caixa base" },
   { key: "stamp", label: "Estampa" },
   { key: "items", label: "Conteúdo" },
-  { key: "confirm", label: "Conferir" },
+  { key: "confirm", label: "Revisar" },
 ];
 
 export function CustomOrderFlow() {
   const trpc = useTRPC();
+  const router = useRouter();
+  const addToCart = useCart((s) => s.add);
+
   const [templates, stamps, contents] = useSuspenseQueries({
     queries: [
       trpc.product.publicTemplateBoxes.queryOptions(),
@@ -46,9 +47,6 @@ export function CustomOrderFlow() {
   const [templateBoxId, setTemplateBoxId] = useState<string>("");
   const [stampId, setStampId] = useState<string | null>(null);
   const [itemQtys, setItemQtys] = useState<Record<string, number>>({});
-  const [customerName, setCustomerName] = useState("");
-  const [customerNote, setCustomerNote] = useState("");
-  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("pix");
 
   const selectedTemplate = templates.data.find((p) => p.id === templateBoxId);
   const selectedStamp = stamps.data.find((s) => s.id === stampId) ?? null;
@@ -63,39 +61,13 @@ export function CustomOrderFlow() {
 
   const totalCents = useMemo(() => {
     let total = 0;
-    if (selectedTemplate?.priceCents)
-      total += selectedTemplate.priceCents;
+    if (selectedTemplate?.priceCents) total += selectedTemplate.priceCents;
     if (selectedStamp?.priceCents) total += selectedStamp.priceCents;
     for (const it of selectedItems) {
       total += (it.product.priceCents ?? 0) * it.quantity;
     }
     return total;
   }, [selectedTemplate, selectedStamp, selectedItems]);
-
-  const submitOrder = useMutation(
-    trpc.bundle.createUserOrder.mutationOptions({
-      onSuccess: (bundle) => {
-        toast.success("encomenda registrada — abrindo WhatsApp…");
-        const url = buildCustomOrderUrl({
-          customerName,
-          templateBoxTitle: selectedTemplate?.title ?? "",
-          stampName: selectedStamp?.name ?? null,
-          items: selectedItems.map((it) => ({
-            title: it.product.title,
-            priceCents: it.product.priceCents,
-            quantity: it.quantity,
-          })),
-          priceCents: bundle.effectivePriceCents,
-          note: customerNote || null,
-          paymentMethod,
-          storeName: env.NEXT_PUBLIC_STORE_NAME,
-          phone: env.NEXT_PUBLIC_WHATSAPP_NUMBER,
-        });
-        window.open(url, "_blank");
-      },
-      onError: (err) => toast.error(err.message),
-    }),
-  );
 
   const bumpItem = (id: string, delta: number) => {
     setItemQtys((prev) => {
@@ -112,7 +84,7 @@ export function CustomOrderFlow() {
     if (step === "template") return !!templateBoxId;
     if (step === "stamp") return true;
     if (step === "items") return selectedItems.length > 0;
-    if (step === "confirm") return customerName.length > 0;
+    if (step === "confirm") return !!selectedTemplate && selectedItems.length > 0;
     return false;
   };
 
@@ -127,18 +99,37 @@ export function CustomOrderFlow() {
     if (prev) setStep(prev.key);
   };
 
-  const handleSubmit = () => {
-    submitOrder.mutate({
-      templateBoxId,
-      stampId: stampId ?? null,
-      items: selectedItems.map((it) => ({
-        productId: it.product.id,
-        quantity: it.quantity,
-      })),
-      customerName,
-      customerNote: customerNote || undefined,
-      paymentMethod,
+  const handleAddToCart = () => {
+    if (!selectedTemplate || selectedItems.length === 0) return;
+
+    const titleParts = [selectedTemplate.title];
+    if (selectedStamp) titleParts.push(`com ${selectedStamp.name}`);
+    const title = `Encomenda — ${titleParts.join(" ")}`;
+
+    const imageUrl =
+      selectedTemplate.media[0]?.url ??
+      selectedStamp?.imageUrl ??
+      selectedItems[0]?.product.media[0]?.url ??
+      null;
+
+    addToCart({
+      kind: "custom_box",
+      itemId: crypto.randomUUID(),
+      title,
+      priceCents: totalCents > 0 ? totalCents : null,
+      imageUrl,
+      customBox: {
+        templateBoxId: selectedTemplate.id,
+        stampId: selectedStamp?.id ?? null,
+        items: selectedItems.map((it) => ({
+          productId: it.product.id,
+          quantity: it.quantity,
+        })),
+      },
     });
+
+    toast.success("caixinha adicionada ao carrinho");
+    router.push("/carrinho");
   };
 
   const currentIdx = STEPS.findIndex((s) => s.key === step);
@@ -151,8 +142,8 @@ export function CustomOrderFlow() {
             Monte sua caixinha
           </h1>
           <p className="mt-2 text-muted-foreground md:text-lg">
-            Escolha a caixa, a estampa e os itens — a gente finaliza pelo
-            WhatsApp.
+            Escolha a caixa, a estampa e os itens — depois é só finalizar a
+            compra.
           </p>
         </div>
 
@@ -439,16 +430,9 @@ export function CustomOrderFlow() {
         totalCents={totalCents}
         onPrev={prevStep}
         onNext={nextStep}
-        onSubmit={handleSubmit}
+        onSubmit={handleAddToCart}
         canAdvance={canAdvance()}
         isFirstStep={currentIdx === 0}
-        isLoading={submitOrder.isPending}
-        customerName={customerName}
-        setCustomerName={setCustomerName}
-        customerNote={customerNote}
-        setCustomerNote={setCustomerNote}
-        paymentMethod={paymentMethod}
-        setPaymentMethod={setPaymentMethod}
       />
     </div>
   );
@@ -465,13 +449,6 @@ function FloatingFooter({
   onSubmit,
   canAdvance,
   isFirstStep,
-  isLoading,
-  customerName,
-  setCustomerName,
-  customerNote,
-  setCustomerNote,
-  paymentMethod,
-  setPaymentMethod,
 }: {
   expanded: boolean;
   selectedTemplate:
@@ -505,13 +482,6 @@ function FloatingFooter({
   onSubmit: () => void;
   canAdvance: boolean;
   isFirstStep: boolean;
-  isLoading: boolean;
-  customerName: string;
-  setCustomerName: (v: string) => void;
-  customerNote: string;
-  setCustomerNote: (v: string) => void;
-  paymentMethod: PaymentMethod;
-  setPaymentMethod: (v: PaymentMethod) => void;
 }) {
   const [open, setOpen] = useState(false);
   const hasSelection =
@@ -554,10 +524,10 @@ function FloatingFooter({
                 </span>
                 <div className="flex flex-col items-start text-left">
                   <span className="font-serif text-lg text-foreground md:text-2xl">
-                    Conferir e enviar
+                    Conferir a caixinha
                   </span>
                   <span className="text-[11px] font-medium uppercase tracking-[0.22em] text-muted-foreground md:text-xs">
-                    Última conferida antes do WhatsApp
+                    Última conferida antes de adicionar ao carrinho
                   </span>
                 </div>
               </div>
@@ -679,76 +649,14 @@ function FloatingFooter({
               </ul>
 
               {expanded && (
-                <>
-                  <div className="mt-5 flex items-baseline justify-between border-t border-border/40 pt-4">
-                    <span className="text-[10px] font-semibold uppercase tracking-[0.28em] text-muted-foreground md:text-xs">
-                      Total
-                    </span>
-                    <span className="font-serif text-3xl text-primary md:text-4xl">
-                      {formatBRL(totalCents)}
-                    </span>
-                  </div>
-
-                  <div className="mt-7 space-y-1">
-                    <h3 className="flex items-center gap-2 font-serif text-lg text-foreground md:text-xl">
-                      <span aria-hidden className="text-primary">✦</span>
-                      Para fechar
-                    </h3>
-                    <p className="text-sm text-muted-foreground">
-                      Te chamamos pelo WhatsApp pra alinhar cores, bilhete e
-                      prazo antes de confirmar.
-                    </p>
-                  </div>
-
-                  <div className="mt-5 grid gap-4 md:grid-cols-2">
-                    <div className="space-y-2">
-                      <Label className="text-[10px] font-semibold uppercase tracking-[0.24em] text-muted-foreground">
-                        Seu nome
-                      </Label>
-                      <Input
-                        value={customerName}
-                        onChange={(e) => setCustomerName(e.target.value)}
-                        placeholder="Como podemos te chamar?"
-                        required
-                        className="rounded-full px-4"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label className="text-[10px] font-semibold uppercase tracking-[0.24em] text-muted-foreground">
-                        Pagamento
-                      </Label>
-                      <select
-                        value={paymentMethod}
-                        onChange={(e) =>
-                          setPaymentMethod(e.target.value as PaymentMethod)
-                        }
-                        className="h-10 w-full rounded-full border border-border/70 bg-background px-4 text-sm transition focus:border-primary/60 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
-                      >
-                        {PAYMENT_METHODS.map((m) => (
-                          <option key={m} value={m}>
-                            {paymentLabel(m)}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-                  </div>
-
-                  <div className="mt-4 space-y-2">
-                    <Label className="text-[10px] font-semibold uppercase tracking-[0.24em] text-muted-foreground">
-                      Observações
-                      <span className="ml-1 normal-case tracking-normal text-muted-foreground/70">
-                        (opcional)
-                      </span>
-                    </Label>
-                    <textarea
-                      value={customerNote}
-                      onChange={(e) => setCustomerNote(e.target.value)}
-                      rows={3}
-                      className="w-full resize-none rounded-2xl border border-border/70 bg-background px-4 py-3 text-sm transition focus:border-primary/60 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
-                      placeholder="Bilhete, cor da fita, mensagem especial…"
-                    />
-                  </div>
-                </>
+                <div className="mt-5 flex items-baseline justify-between border-t border-border/40 pt-4">
+                  <span className="text-[10px] font-semibold uppercase tracking-[0.28em] text-muted-foreground md:text-xs">
+                    Total
+                  </span>
+                  <span className="font-serif text-3xl text-primary md:text-4xl">
+                    {formatBRL(totalCents)}
+                  </span>
+                </div>
               )}
             </div>
           )}
@@ -769,11 +677,11 @@ function FloatingFooter({
                 type="button"
                 size="lg"
                 onClick={onSubmit}
-                disabled={!canAdvance || isLoading}
+                disabled={!canAdvance}
                 className="gap-2 rounded-full px-6 shadow-md shadow-primary/25"
               >
-                <Sparkles className="size-4" />
-                Enviar pelo WhatsApp
+                <ShoppingBag className="size-4" />
+                Adicionar ao carrinho
               </Button>
             ) : (
               <Button

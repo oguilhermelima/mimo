@@ -38,6 +38,21 @@ export type CouponScope = (typeof COUPON_SCOPES)[number];
 export const USER_ROLES = ["user", "admin"] as const;
 export type UserRole = (typeof USER_ROLES)[number];
 
+export const ORDER_STATUSES = [
+  "reservado",
+  "aguardando_pagamento",
+  "pago",
+  "entregue",
+  "cancelado",
+] as const;
+export type OrderStatus = (typeof ORDER_STATUSES)[number];
+
+export const FULFILLMENT_METHODS = ["delivery", "pickup_taboao"] as const;
+export type FulfillmentMethod = (typeof FULFILLMENT_METHODS)[number];
+
+export const ORDER_ITEM_KINDS = ["product", "bundle", "custom_box"] as const;
+export type OrderItemKind = (typeof ORDER_ITEM_KINDS)[number];
+
 /**
  * Products: template_box/box são shells; jewelry/perfume/cosmetic são conteúdos.
  * Composição de caixas (pré-montadas e encomendas) vive na tabela `bundle`.
@@ -316,6 +331,150 @@ export const Verification = pgTable("verification", (t) => ({
     .notNull(),
 }));
 
+/* ────────── address & order ────────── */
+
+/**
+ * Endereço cadastrado pelo usuário. Só usado quando fulfillmentMethod="delivery".
+ * Pickup local em Taboão da Serra-SP é combinado por WhatsApp depois.
+ */
+export const Address = pgTable(
+  "address",
+  (t) => ({
+    id: t.uuid().notNull().primaryKey().defaultRandom(),
+    userId: t
+      .text("user_id")
+      .notNull()
+      .references(() => User.id, { onDelete: "cascade" }),
+    label: t.varchar({ length: 60 }),
+    recipientName: t.varchar("recipient_name", { length: 200 }).notNull(),
+    postalCode: t.varchar("postal_code", { length: 8 }).notNull(),
+    street: t.varchar({ length: 200 }).notNull(),
+    number: t.varchar({ length: 20 }).notNull(),
+    complement: t.varchar({ length: 120 }),
+    district: t.varchar({ length: 120 }).notNull(),
+    city: t.varchar({ length: 120 }).notNull(),
+    state: t.varchar({ length: 2 }).notNull(),
+    country: t.varchar({ length: 2 }).notNull().default("BR"),
+    isDefault: t.boolean("is_default").notNull().default(false),
+    createdAt: t.timestamp("created_at").defaultNow().notNull(),
+    updatedAt: t
+      .timestamp("updated_at", { mode: "date", withTimezone: true })
+      .$onUpdateFn(() => sql`now()`),
+  }),
+  (table) => [index("address_user_idx").on(table.userId)],
+);
+
+/**
+ * Order: pedido feito pelo usuário no checkout.
+ * Status default "reservado" (estoque travado por 12h enquanto admin combina pgto via WhatsApp).
+ * Snapshot de endereço dentro do próprio Order (deliverAddress*) pra não perder dado se o user editar/apagar Address depois.
+ */
+export const Order = pgTable(
+  "order",
+  (t) => ({
+    id: t.uuid().notNull().primaryKey().defaultRandom(),
+    userId: t
+      .text("user_id")
+      .notNull()
+      .references(() => User.id, { onDelete: "restrict" }),
+
+    status: t
+      .varchar({ length: 32 })
+      .notNull()
+      .default("reservado")
+      .$type<OrderStatus>(),
+
+    fulfillmentMethod: t
+      .varchar("fulfillment_method", { length: 32 })
+      .notNull()
+      .$type<FulfillmentMethod>(),
+
+    /** Snapshot de endereço (para não perder dado se Address for editado/apagado). */
+    deliverRecipientName: t.varchar("deliver_recipient_name", { length: 200 }),
+    deliverPostalCode: t.varchar("deliver_postal_code", { length: 8 }),
+    deliverStreet: t.varchar("deliver_street", { length: 200 }),
+    deliverNumber: t.varchar("deliver_number", { length: 20 }),
+    deliverComplement: t.varchar("deliver_complement", { length: 120 }),
+    deliverDistrict: t.varchar("deliver_district", { length: 120 }),
+    deliverCity: t.varchar("deliver_city", { length: 120 }),
+    deliverState: t.varchar("deliver_state", { length: 2 }),
+    deliverCountry: t.varchar("deliver_country", { length: 2 }),
+
+    /** Snapshot dos dados do cliente no momento do pedido. */
+    customerName: t.varchar("customer_name", { length: 200 }).notNull(),
+    customerEmail: t.varchar("customer_email", { length: 200 }).notNull(),
+    customerPhone: t.varchar("customer_phone", { length: 20 }).notNull(),
+    customerCpf: t.varchar("customer_cpf", { length: 11 }).notNull(),
+    customerNote: t.text("customer_note"),
+
+    paymentMethod: t
+      .varchar("payment_method", { length: 16 })
+      .notNull()
+      .$type<PaymentMethod>(),
+
+    subtotalCents: t.integer("subtotal_cents").notNull(),
+    discountCents: t.integer("discount_cents").notNull().default(0),
+    totalCents: t.integer("total_cents").notNull(),
+
+    couponId: t.uuid("coupon_id").references(() => Coupon.id, {
+      onDelete: "set null",
+    }),
+    couponCodeSnapshot: t.varchar("coupon_code_snapshot", { length: 64 }),
+
+    reservedUntil: t
+      .timestamp("reserved_until", { withTimezone: true })
+      .notNull(),
+    paidAt: t.timestamp("paid_at", { withTimezone: true }),
+    fulfilledAt: t.timestamp("fulfilled_at", { withTimezone: true }),
+    cancelledAt: t.timestamp("cancelled_at", { withTimezone: true }),
+    cancellationReason: t.text("cancellation_reason"),
+
+    createdAt: t.timestamp("created_at").defaultNow().notNull(),
+    updatedAt: t
+      .timestamp("updated_at", { mode: "date", withTimezone: true })
+      .$onUpdateFn(() => sql`now()`),
+  }),
+  (table) => [
+    index("order_user_idx").on(table.userId, table.createdAt),
+    index("order_status_idx").on(table.status),
+  ],
+);
+
+/**
+ * Linha do pedido. kind discrimina destino do FK:
+ * - product → productId (item avulso)
+ * - bundle → bundleId (caixa do catálogo)
+ * - custom_box → bundleId (Bundle source="user_order" criado no checkout)
+ *
+ * priceCentsSnapshot e titleSnapshot ficam imutáveis depois da compra,
+ * mesmo se o produto/bundle for editado depois.
+ */
+export const OrderItem = pgTable(
+  "order_item",
+  (t) => ({
+    id: t.uuid().notNull().primaryKey().defaultRandom(),
+    orderId: t
+      .uuid("order_id")
+      .notNull()
+      .references(() => Order.id, { onDelete: "cascade" }),
+
+    kind: t.varchar({ length: 16 }).notNull().$type<OrderItemKind>(),
+
+    productId: t.uuid("product_id").references(() => Product.id, {
+      onDelete: "restrict",
+    }),
+    bundleId: t.uuid("bundle_id").references(() => Bundle.id, {
+      onDelete: "restrict",
+    }),
+
+    titleSnapshot: t.varchar("title_snapshot", { length: 200 }).notNull(),
+    priceCentsSnapshot: t.integer("price_cents_snapshot").notNull(),
+    quantity: t.integer().notNull(),
+    sortOrder: t.integer("sort_order").notNull().default(0),
+  }),
+  (table) => [index("order_item_order_idx").on(table.orderId)],
+);
+
 /* ────────── relations ────────── */
 
 export const productRelations = relations(Product, ({ many }) => ({
@@ -362,6 +521,33 @@ export const bundleItemRelations = relations(BundleItem, ({ one }) => ({
   product: one(Product, {
     fields: [BundleItem.productId],
     references: [Product.id],
+  }),
+}));
+
+export const userRelations = relations(User, ({ many }) => ({
+  addresses: many(Address),
+  orders: many(Order),
+}));
+
+export const addressRelations = relations(Address, ({ one }) => ({
+  user: one(User, { fields: [Address.userId], references: [User.id] }),
+}));
+
+export const orderRelations = relations(Order, ({ one, many }) => ({
+  user: one(User, { fields: [Order.userId], references: [User.id] }),
+  coupon: one(Coupon, { fields: [Order.couponId], references: [Coupon.id] }),
+  items: many(OrderItem),
+}));
+
+export const orderItemRelations = relations(OrderItem, ({ one }) => ({
+  order: one(Order, { fields: [OrderItem.orderId], references: [Order.id] }),
+  product: one(Product, {
+    fields: [OrderItem.productId],
+    references: [Product.id],
+  }),
+  bundle: one(Bundle, {
+    fields: [OrderItem.bundleId],
+    references: [Bundle.id],
   }),
 }));
 
@@ -507,5 +693,45 @@ export const UpdateCouponSchema = createUpdateSchema(Coupon, {
   scope: z.enum(COUPON_SCOPES).optional(),
   targetProductType: z.enum(PRODUCT_TYPES).nullish(),
 }).omit({ id: true, createdAt: true });
+
+const onlyDigits = (s: string) => s.replace(/\D+/g, "");
+
+const postalCodeSchema = z
+  .string()
+  .transform(onlyDigits)
+  .refine((v) => v.length === 8, "CEP deve ter 8 dígitos");
+
+const stateSchema = z
+  .string()
+  .length(2, "UF deve ter 2 letras")
+  .transform((v) => v.toUpperCase());
+
+export const CreateAddressSchema = createInsertSchema(Address, {
+  label: z.string().max(60).nullish(),
+  recipientName: z.string().min(1).max(200),
+  postalCode: postalCodeSchema,
+  street: z.string().min(1).max(200),
+  number: z.string().min(1).max(20),
+  complement: z.string().max(120).nullish(),
+  district: z.string().min(1).max(120),
+  city: z.string().min(1).max(120),
+  state: stateSchema,
+  country: z
+    .string()
+    .length(2)
+    .transform((v) => v.toUpperCase())
+    .default("BR"),
+  isDefault: z.boolean().default(false),
+}).omit({ id: true, userId: true, createdAt: true, updatedAt: true });
+
+export const UpdateAddressSchema = createUpdateSchema(Address, {
+  postalCode: postalCodeSchema.optional(),
+  state: stateSchema.optional(),
+  country: z
+    .string()
+    .length(2)
+    .transform((v) => v.toUpperCase())
+    .optional(),
+}).omit({ id: true, userId: true, createdAt: true, updatedAt: true });
 
 export { dimensionsSchema };

@@ -8,6 +8,7 @@ const LINKS = [
   { href: "/admin/caixas", label: "Caixas", match: ["/admin/caixas"] },
   { href: "/admin/estampas", label: "Estampas", match: ["/admin/estampas"] },
   { href: "/admin/cupons", label: "Cupons", match: ["/admin/cupons"] },
+  { href: "/admin/pedidos", label: "Pedidos", match: ["/admin/pedidos"] },
 ];
 
 export function AdminNav() {

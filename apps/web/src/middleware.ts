@@ -7,7 +7,7 @@ import { NextResponse, type NextRequest } from "next/server";
 const COOKIE_PREFIX = "caixa";
 
 export const config = {
-  matcher: ["/admin/:path*", "/conta/:path*"],
+  matcher: ["/admin/:path*", "/conta/:path*", "/checkout/:path*"],
 };
 
 export async function middleware(req: NextRequest) {

@@ -4,17 +4,20 @@ import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useQuery } from "@tanstack/react-query";
-import { Minus, Plus, Sparkles, X } from "lucide-react";
+import { Minus, Plus, ShoppingBag, Sparkles, X } from "lucide-react";
 
-import { PAYMENT_METHODS } from "@caixa/db/schema";
 import { Button } from "@caixa/ui/button";
 
-import { env } from "~/env";
 import { totalCents, useCart } from "~/lib/cart-store";
-import { formatBRL, paymentLabel } from "~/lib/format";
-import { buildWhatsAppUrl } from "~/lib/whatsapp";
+import { formatBRL } from "~/lib/format";
 import { useTRPC } from "~/trpc/react";
 import { LogoMark } from "./logo";
+
+const KIND_LABEL: Record<string, string> = {
+  product: "Item avulso",
+  bundle: "Caixinha pronta",
+  custom_box: "Caixinha personalizada",
+};
 
 export function CartView() {
   const entries = useCart((s) => s.entries);
@@ -23,8 +26,6 @@ export function CartView() {
   const clear = useCart((s) => s.clear);
 
   const trpc = useTRPC();
-  const [paymentMethod, setPaymentMethod] = useState<string>("pix");
-  const [notes, setNotes] = useState("");
   const [couponCode, setCouponCode] = useState("");
 
   const couponQuery = useQuery(
@@ -45,6 +46,12 @@ export function CartView() {
       : 0;
   const finalTotal =
     typeof grand === "number" ? Math.max(0, grand - discountCents) : null;
+
+  const hasUnpriced = entries.some((e) => e.priceCents == null);
+  const checkoutHref =
+    coupon && !couponInvalid && couponCode.trim().length > 0
+      ? `/checkout?coupon=${encodeURIComponent(coupon.code)}`
+      : "/checkout";
 
   if (entries.length === 0) {
     return (
@@ -115,12 +122,22 @@ export function CartView() {
                       <p className="flex items-center gap-1.5 text-[9px] uppercase tracking-[0.24em] text-primary/80 sm:gap-2 sm:text-[10px] md:text-xs">
                         <span aria-hidden>✦</span>
                         <span className="truncate">
-                          {entry.kind === "bundle" ? "Caixinha pronta" : "Item avulso"}
+                          {KIND_LABEL[entry.kind] ?? "Item"}
                         </span>
                       </p>
                       <p className="mt-1 line-clamp-2 break-words font-serif text-base leading-tight text-foreground sm:text-lg md:text-2xl">
                         {entry.title}
                       </p>
+                      {entry.kind === "custom_box" && entry.customBox && (
+                        <p className="mt-1 text-xs text-muted-foreground">
+                          {entry.customBox.items.reduce(
+                            (n, it) => n + it.quantity,
+                            0,
+                          )}{" "}
+                          itens dentro
+                          {entry.customBox.stampId ? " · com estampa" : ""}
+                        </p>
+                      )}
                       <div className="mt-1.5 flex flex-col gap-0 leading-tight">
                         <p className="font-serif text-xl text-primary tabular-nums sm:text-2xl md:text-3xl">
                           {formatBRL(lineTotal)}
@@ -230,57 +247,23 @@ export function CartView() {
           )}
         </div>
 
-        <div className="space-y-2">
-          <label className="text-[10px] font-semibold uppercase tracking-[0.28em] text-muted-foreground">
-            Forma de pagamento
-          </label>
-          <select
-            value={paymentMethod}
-            onChange={(e) => setPaymentMethod(e.target.value)}
-            className="w-full rounded-full border border-border/70 bg-background px-4 py-2 text-sm transition focus:border-primary/60 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+        {hasUnpriced ? (
+          <div className="rounded-2xl border border-amber-300/50 bg-amber-50/60 p-3 text-xs text-amber-900">
+            Algum item está sob consulta — entre em contato pelo WhatsApp pra
+            fechar essa compra.
+          </div>
+        ) : (
+          <Button
+            size="lg"
+            className="w-full gap-2 rounded-full shadow-lg shadow-primary/25"
+            asChild
           >
-            {PAYMENT_METHODS.map((m) => (
-              <option key={m} value={m}>
-                {paymentLabel(m)}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <div className="space-y-2">
-          <label className="text-[10px] font-semibold uppercase tracking-[0.28em] text-muted-foreground">
-            Observações
-          </label>
-          <textarea
-            value={notes}
-            onChange={(e) => setNotes(e.target.value)}
-            placeholder="Personalizações, cores, bilhete…"
-            rows={3}
-            className="w-full resize-none rounded-2xl border border-border/70 bg-background px-4 py-3 text-sm transition focus:border-primary/60 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
-          />
-        </div>
-
-        <Button
-          size="lg"
-          className="w-full rounded-full shadow-lg shadow-primary/25"
-          asChild
-        >
-          <a
-            href={buildWhatsAppUrl({
-              entries,
-              paymentMethod,
-              notes,
-              couponCode:
-                coupon && !couponInvalid ? coupon.code : undefined,
-              storeName: env.NEXT_PUBLIC_STORE_NAME,
-              phone: env.NEXT_PUBLIC_WHATSAPP_NUMBER,
-            })}
-            target="_blank"
-            rel="noreferrer"
-          >
-            Encomendar no WhatsApp
-          </a>
-        </Button>
+            <Link href={checkoutHref}>
+              <ShoppingBag className="size-4" />
+              Finalizar compra
+            </Link>
+          </Button>
+        )}
 
         <button
           onClick={clear}

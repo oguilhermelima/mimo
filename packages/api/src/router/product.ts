@@ -47,10 +47,14 @@ export const productRouter = createTRPCRouter({
       return product;
     }),
 
-  /** Template boxes disponíveis pra /encomenda (ignora hidden, filtra estoque). */
+  /** Template boxes disponíveis pra /encomenda (apenas não-hidden — shells dos bundles ficam escondidos). */
   publicTemplateBoxes: publicProcedure.query(({ ctx }) =>
     ctx.db.query.Product.findMany({
-      where: and(eq(Product.type, "template_box"), gt(Product.quantity, 0)),
+      where: and(
+        eq(Product.type, "template_box"),
+        eq(Product.hidden, false),
+        gt(Product.quantity, 0),
+      ),
       orderBy: [desc(Product.createdAt)],
       with: {
         media: { orderBy: asc(ProductMedia.sortOrder) },

@@ -2,19 +2,28 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { ShoppingBag } from "lucide-react";
+import { Search, ShoppingBag, User } from "lucide-react";
 
 import { cn } from "@caixa/ui";
 
 import { useCart } from "~/lib/cart-store";
 import { Logo } from "./logo";
 
+const NAV_LINKS = [
+  { href: "/produtos", label: "Presentes" },
+  { href: "/encomenda", label: "Encomenda" },
+  { href: "/sobre", label: "Sobre" },
+];
+
 export function SiteHeader() {
   const count = useCart((s) => s.entries.reduce((n, e) => n + e.quantity, 0));
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 20);
+    const onScroll = () => {
+      const next = window.scrollY > 24;
+      setScrolled((prev) => (prev === next ? prev : next));
+    };
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
@@ -23,62 +32,80 @@ export function SiteHeader() {
   return (
     <header
       className={cn(
-        "fixed inset-x-0 top-0 z-50 border-b backdrop-blur-xl transition-[background,border-color,box-shadow] duration-300",
+        "fixed inset-x-0 top-0 z-50 border-b bg-background transition-[border-color,box-shadow] duration-300",
         scrolled
-          ? "border-border/30 bg-background/75 shadow-sm shadow-background/10 supports-[backdrop-filter]:bg-background/55"
-          : "border-transparent bg-background/40 supports-[backdrop-filter]:bg-background/25",
+          ? "border-border/30 shadow-sm shadow-background/10"
+          : "border-transparent",
       )}
     >
       <div
         className={cn(
-          "mx-auto flex w-full max-w-7xl items-center justify-between gap-3 px-4 transition-[padding] duration-300 lg:px-10",
-          scrolled ? "py-1 lg:py-2" : "py-2.5 lg:py-4",
+          "mx-auto grid w-full max-w-7xl grid-cols-[auto_1fr_auto] items-center gap-3 px-6 transition-[padding] duration-300 md:px-10 lg:grid-cols-[1fr_auto_1fr] lg:gap-6",
+          scrolled ? "py-3 lg:py-4" : "py-5 lg:py-7",
         )}
       >
-        <Link href="/" className="group inline-flex items-center">
+        <nav className="hidden items-center gap-1 text-sm lg:-ml-3 lg:flex">
+          {NAV_LINKS.map((link) => (
+            <Link
+              key={link.href}
+              href={link.href}
+              className="rounded-full px-3 py-2 text-foreground/80 transition hover:text-primary"
+            >
+              {link.label}
+            </Link>
+          ))}
+        </nav>
+
+        <Link
+          href="/"
+          aria-label="Encantim"
+          className="group flex items-center justify-center gap-2.5"
+        >
           <Logo
+            variant="full"
             markClassName={cn(
-              "text-foreground transition-all duration-300 group-hover:-rotate-6",
-              scrolled ? "size-6 lg:size-9" : "size-9 lg:size-12",
+              "transition-all duration-300",
+              scrolled ? "size-8 md:size-9" : "size-10 md:size-12",
             )}
             wordmarkClassName={cn(
-              "inline-flex text-foreground transition-all duration-300",
-              scrolled ? "text-sm lg:text-lg" : "text-lg lg:text-2xl",
+              "transition-all duration-300",
+              scrolled
+                ? "[&_span]:text-2xl md:[&_span]:text-[1.75rem]"
+                : "[&_span]:text-3xl md:[&_span]:text-[2.25rem]",
             )}
           />
         </Link>
-        <nav className="hidden items-center gap-4 text-sm lg:flex">
+
+        <div className="flex items-center justify-end gap-1 lg:-mr-2 lg:gap-3">
+          <div className="hidden items-center gap-2 rounded-full bg-foreground/5 px-3 py-2 text-sm text-foreground/60 ring-1 ring-border/50 transition focus-within:ring-primary/50 lg:flex lg:w-56">
+            <Search className="size-4 shrink-0" />
+            <input
+              type="search"
+              placeholder="Buscar"
+              className="w-full bg-transparent placeholder:text-foreground/50 focus:outline-none"
+              aria-label="Buscar"
+            />
+          </div>
           <Link
-            href="/produtos"
-            className="rounded-full px-3 py-2 text-muted-foreground transition hover:text-primary"
+            href="/conta"
+            aria-label="Minha conta"
+            className="flex size-9 items-center justify-center rounded-full text-foreground/80 transition hover:bg-foreground/5 hover:text-primary lg:size-10"
           >
-            Produtos
-          </Link>
-          <Link
-            href="/encomenda"
-            className="rounded-full px-3 py-2 text-muted-foreground transition hover:text-primary"
-          >
-            Montar
-          </Link>
-          <Link
-            href="/sobre"
-            className="rounded-full px-3 py-2 text-muted-foreground transition hover:text-primary"
-          >
-            Sobre
+            <User className="size-5" />
           </Link>
           <Link
             href="/carrinho"
-            className="relative flex items-center gap-2 rounded-full bg-primary/10 px-4 py-2 text-primary transition hover:bg-primary/20"
+            aria-label="Carrinho"
+            className="relative flex size-9 items-center justify-center rounded-full text-foreground/80 transition hover:bg-foreground/5 hover:text-primary lg:size-10"
           >
-            <ShoppingBag className="size-4" />
-            <span>Carrinho</span>
+            <ShoppingBag className="size-5" />
             {count > 0 && (
-              <span className="inline-flex min-w-5 items-center justify-center rounded-full bg-primary px-1.5 py-0.5 text-xs font-semibold leading-none text-primary-foreground">
+              <span className="absolute -right-0.5 -top-0.5 inline-flex min-w-4 items-center justify-center rounded-full bg-primary px-1 text-[10px] font-semibold leading-none text-primary-foreground">
                 {count}
               </span>
             )}
           </Link>
-        </nav>
+        </div>
       </div>
     </header>
   );

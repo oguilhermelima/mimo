@@ -71,8 +71,8 @@ export function CartView() {
   const itemCount = entries.reduce((n, e) => n + e.quantity, 0);
 
   return (
-    <div className="grid gap-8 lg:grid-cols-[1fr_360px]">
-      <div className="space-y-4">
+    <div className="grid min-w-0 gap-8 lg:grid-cols-[minmax(0,1fr)_360px]">
+      <div className="min-w-0 space-y-4">
         <div className="flex items-baseline justify-between border-b border-border/40 pb-3">
           <h2 className="font-serif text-xl text-foreground md:text-2xl">
             Seus itens
@@ -91,16 +91,16 @@ export function CartView() {
             return (
               <li
                 key={entry.lineId}
-                className="group relative overflow-hidden rounded-2xl border border-primary/15 bg-gradient-to-br from-card via-card to-primary/5 p-4 transition hover:border-primary/30 hover:shadow-lg hover:shadow-primary/5 md:p-5"
+                className="group relative overflow-hidden rounded-2xl border border-primary/15 bg-gradient-to-br from-card via-card to-primary/5 p-3 transition hover:border-primary/30 hover:shadow-lg hover:shadow-primary/5 sm:p-4 md:p-5"
               >
-                <div className="flex gap-4 md:gap-5">
-                  <div className="relative aspect-[4/5] w-24 shrink-0 overflow-hidden rounded-xl bg-muted shadow-sm ring-1 ring-inset ring-border/40 md:w-28">
+                <div className="flex gap-3 sm:gap-4 md:gap-5">
+                  <div className="relative aspect-[4/5] w-20 shrink-0 overflow-hidden rounded-xl bg-muted shadow-sm ring-1 ring-inset ring-border/40 sm:w-24 md:w-28">
                     {entry.imageUrl ? (
                       <Image
                         src={entry.imageUrl}
                         alt={entry.title}
                         fill
-                        sizes="(min-width: 768px) 112px, 96px"
+                        sizes="(min-width: 768px) 112px, (min-width: 640px) 96px, 80px"
                         className="object-cover"
                       />
                     ) : (
@@ -112,26 +112,28 @@ export function CartView() {
 
                   <div className="flex min-w-0 flex-1 flex-col justify-between gap-3">
                     <div className="min-w-0">
-                      <p className="flex items-center gap-2 text-[10px] uppercase tracking-[0.28em] text-primary/80 md:text-xs">
+                      <p className="flex items-center gap-1.5 text-[9px] uppercase tracking-[0.24em] text-primary/80 sm:gap-2 sm:text-[10px] md:text-xs">
                         <span aria-hidden>✦</span>
-                        {entry.kind === "bundle" ? "Caixinha pronta" : "Item avulso"}
+                        <span className="truncate">
+                          {entry.kind === "bundle" ? "Caixinha pronta" : "Item avulso"}
+                        </span>
                       </p>
-                      <p className="mt-1.5 truncate font-serif text-xl leading-tight text-foreground md:text-2xl">
+                      <p className="mt-1 line-clamp-2 break-words font-serif text-base leading-tight text-foreground sm:text-lg md:text-2xl">
                         {entry.title}
                       </p>
-                      <div className="mt-2 flex items-baseline gap-2">
-                        <p className="font-serif text-2xl text-primary md:text-3xl">
+                      <div className="mt-1.5 flex flex-col gap-0 leading-tight">
+                        <p className="font-serif text-xl text-primary tabular-nums sm:text-2xl md:text-3xl">
                           {formatBRL(lineTotal)}
                         </p>
                         {entry.quantity > 1 && entry.priceCents != null && (
-                          <p className="text-xs text-muted-foreground">
+                          <p className="text-[11px] text-muted-foreground">
                             {formatBRL(entry.priceCents)} cada
                           </p>
                         )}
                       </div>
                     </div>
 
-                    <div className="flex items-center justify-between gap-3">
+                    <div className="flex flex-wrap items-center justify-between gap-2">
                       <div className="inline-flex items-center rounded-full bg-background ring-1 ring-border/60">
                         <button
                           type="button"
@@ -140,11 +142,11 @@ export function CartView() {
                           }
                           disabled={entry.quantity <= 1}
                           aria-label="Diminuir quantidade"
-                          className="flex size-9 items-center justify-center rounded-full text-foreground/70 transition hover:text-primary disabled:cursor-not-allowed disabled:opacity-40"
+                          className="flex size-8 items-center justify-center rounded-full text-foreground/70 transition hover:text-primary disabled:cursor-not-allowed disabled:opacity-40 sm:size-9"
                         >
                           <Minus className="size-3.5" />
                         </button>
-                        <span className="w-7 select-none text-center text-sm font-medium tabular-nums">
+                        <span className="w-6 select-none text-center text-sm font-medium tabular-nums sm:w-7">
                           {entry.quantity}
                         </span>
                         <button
@@ -153,7 +155,7 @@ export function CartView() {
                             setQuantity(entry.lineId, entry.quantity + 1)
                           }
                           aria-label="Aumentar quantidade"
-                          className="flex size-9 items-center justify-center rounded-full text-foreground/70 transition hover:text-primary"
+                          className="flex size-8 items-center justify-center rounded-full text-foreground/70 transition hover:text-primary sm:size-9"
                         >
                           <Plus className="size-3.5" />
                         </button>
@@ -163,7 +165,7 @@ export function CartView() {
                         type="button"
                         onClick={() => remove(entry.lineId)}
                         aria-label="Remover do carrinho"
-                        className="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs text-muted-foreground transition hover:bg-destructive/10 hover:text-destructive"
+                        className="inline-flex items-center gap-1 rounded-full px-2 py-1.5 text-[11px] text-muted-foreground transition hover:bg-destructive/10 hover:text-destructive sm:gap-1.5 sm:px-3 sm:text-xs"
                       >
                         <X className="size-3.5" />
                         <span className="hidden sm:inline">Remover</span>

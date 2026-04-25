@@ -45,7 +45,7 @@ export default function RootLayout(props: { children: React.ReactNode }) {
     <html lang="pt-BR" className="light" suppressHydrationWarning>
       <body
         className={cn(
-          "min-h-screen overflow-x-hidden bg-background font-sans text-foreground antialiased",
+          "flex min-h-screen flex-col overflow-x-clip bg-background font-sans text-foreground antialiased",
           inter.variable,
           serif.variable,
         )}
@@ -54,7 +54,7 @@ export default function RootLayout(props: { children: React.ReactNode }) {
           <TRPCReactProvider>
             <ScrollRestore />
             <SiteHeader />
-            <main className="overflow-x-hidden pb-20 pt-[64px] lg:pb-0 lg:pt-[88px]">
+            <main className="flex-1 overflow-x-clip pb-20 pt-[64px] lg:pb-0 lg:pt-[88px]">
               {props.children}
             </main>
             <MobileNav />

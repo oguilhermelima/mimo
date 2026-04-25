@@ -116,6 +116,90 @@ export function GrainOverlay({ className }: { className?: string }) {
   );
 }
 
+/**
+ * Lacre de cera dourado — selo de carta. Circular, com inicial "E" embossada.
+ * Use absolute + rotação leve para overhang em cards.
+ */
+export function WaxSeal({ className }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 64 64"
+      className={cn("drop-shadow-md", className)}
+      aria-hidden
+    >
+      <defs>
+        <radialGradient id="wax-body" cx="38%" cy="30%" r="70%">
+          <stop offset="0%" stopColor="#e9c987" />
+          <stop offset="45%" stopColor="#c89a4a" />
+          <stop offset="80%" stopColor="#8a5d20" />
+          <stop offset="100%" stopColor="#4a300d" />
+        </radialGradient>
+      </defs>
+      <path
+        d="M32 3 C 47 2, 60 13, 61 28 C 63 38, 58 50, 49 57 C 41 62, 30 61, 22 58 C 11 55, 3 44, 4 30 C 3 15, 17 4, 32 3 Z"
+        fill="url(#wax-body)"
+      />
+      <circle
+        cx="32"
+        cy="32"
+        r="18"
+        fill="none"
+        stroke="#2c1c06"
+        strokeOpacity="0.4"
+        strokeWidth="0.6"
+      />
+      <text
+        x="32"
+        y="41"
+        textAnchor="middle"
+        fontFamily="Georgia, serif"
+        fontStyle="italic"
+        fontSize="24"
+        fontWeight="600"
+        fill="#2c1c06"
+        fillOpacity="0.65"
+      >
+        E
+      </text>
+      <ellipse cx="22" cy="19" rx="8" ry="3.5" fill="white" fillOpacity="0.22" />
+    </svg>
+  );
+}
+
+/**
+ * Fita washi — strip translúcida com listras sutis e bordas levemente irregulares.
+ * Use com rotação. preserveAspectRatio=none deixa esticar.
+ */
+export function WashiTape({ className }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 120 24"
+      preserveAspectRatio="none"
+      className={cn("text-primary", className)}
+      aria-hidden
+    >
+      <defs>
+        <pattern
+          id="washi-stripes"
+          width="8"
+          height="24"
+          patternUnits="userSpaceOnUse"
+          patternTransform="rotate(0)"
+        >
+          <rect width="8" height="24" fill="currentColor" fillOpacity="0.55" />
+          <rect width="2" height="24" fill="currentColor" fillOpacity="0.85" />
+          <rect x="4" width="1" height="24" fill="white" fillOpacity="0.25" />
+        </pattern>
+      </defs>
+      <path
+        d="M0 3 Q 6 0 12 2 T 24 2 T 36 3 T 48 1 T 60 3 T 72 2 T 84 3 T 96 1 T 108 3 T 120 2
+           L 120 22 Q 114 24 108 22 T 96 22 T 84 23 T 72 21 T 60 23 T 48 22 T 36 23 T 24 21 T 12 23 T 0 22 Z"
+        fill="url(#washi-stripes)"
+      />
+    </svg>
+  );
+}
+
 /** Brilho animado em forma de estrela de 4 pontas (para sparkles importantes). */
 export function BigSparkle({
   className,

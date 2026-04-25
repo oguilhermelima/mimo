@@ -6,16 +6,17 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import { ArrowDown, MessageCircleHeart } from "lucide-react";
 
 import { Button } from "@caixa/ui/button";
+import { cn } from "@caixa/ui";
 
 import { env } from "~/env";
 import { useTRPC } from "~/trpc/react";
 import { LogoMark } from "./logo";
 import {
   BigSparkle,
-  CornerFlourish,
-  GlitterOverlay,
   GrainOverlay,
   Petal,
+  WashiTape,
+  WaxSeal,
 } from "./ornaments";
 
 export function Hero() {
@@ -47,7 +48,7 @@ export function Hero() {
   const heroImg = featured?.media[0];
   const side = enriched
     .filter((p) => p.id !== featured?.id && p.media.length > 0)
-    .slice(0, 3);
+    .slice(0, 2);
 
   const waHref = `https://wa.me/${env.NEXT_PUBLIC_WHATSAPP_NUMBER}?text=${encodeURIComponent(`Olá! Quero saber mais sobre as caixinhas da ${env.NEXT_PUBLIC_STORE_NAME} 💌`)}`;
 
@@ -83,7 +84,7 @@ export function Hero() {
             </h1>
 
             <p className="mx-auto mt-7 max-w-md text-balance text-base leading-relaxed text-muted-foreground md:mx-0 md:max-w-lg md:text-lg">
-              Caixinhas artesanais que nascem devagar — papel por papel,
+              Caixinhas artesanais feitas com cuidado — papel por papel,
               laço por laço. Escolha uma pronta ou monte a sua; a gente
               amarra cada detalhe pelo WhatsApp.
             </p>
@@ -95,7 +96,7 @@ export function Hero() {
                 className="group gap-2 rounded-full px-7 shadow-lg shadow-primary/25"
               >
                 <Link href="#catalogo">
-                  Ver o Catálogo
+                  Ver os Presentes
                   <ArrowDown className="size-4 transition group-hover:translate-y-0.5" />
                 </Link>
               </Button>
@@ -121,92 +122,77 @@ export function Hero() {
 
           <div className="relative z-10 mx-auto w-full max-w-md md:max-w-none">
             {heroImg && featured ? (
-              <div className="relative mx-auto aspect-[4/5] w-full max-w-[18rem] sm:max-w-[22rem] md:ml-auto md:max-w-[28rem] lg:max-w-none">
-                {/* halo pulsante atrás */}
-                <div className="animate-halo-pulse absolute -inset-10 rounded-full bg-gradient-to-br from-primary/40 via-primary/10 to-transparent blur-3xl" />
-                {/* sombra colorida extra */}
-                <div className="absolute -inset-4 rounded-[2.5rem] bg-gradient-to-br from-primary/30 via-accent/30 to-primary/20 blur-2xl" />
+              <div className="relative px-2 py-6 md:px-10 md:py-10">
+                <div
+                  aria-hidden
+                  className="pointer-events-none absolute -inset-6 -z-10 rounded-[3rem] bg-gradient-to-br from-primary/20 via-transparent to-accent/30 blur-3xl"
+                />
 
-                <Link
-                  href={`/caixa/${featured.slug}`}
-                  className="group relative block aspect-[4/5] w-full"
+                <article
+                  className="relative -rotate-[1.4deg] transform-gpu rounded-[3px] bg-[#fce4e0] p-3.5 ring-1 ring-black/10 shadow-[0_30px_55px_-22px_rgba(0,0,0,0.55),0_15px_25px_-15px_rgba(0,0,0,0.35)] md:p-5"
+                  style={{ isolation: "isolate" }}
                 >
-                  {/* cantos ornamentados */}
-                  <CornerFlourish className="pointer-events-none absolute -left-4 -top-4 z-20 size-12 md:size-16" />
-                  <CornerFlourish className="pointer-events-none absolute -right-4 -top-4 z-20 size-12 -scale-x-100 md:size-16" />
-                  <CornerFlourish className="pointer-events-none absolute -bottom-4 -left-4 z-20 size-12 -scale-y-100 md:size-16" />
-                  <CornerFlourish className="pointer-events-none absolute -bottom-4 -right-4 z-20 size-12 -scale-100 md:size-16" />
+                  <PaperGrain />
+                  <DeckledStrip className="absolute -top-1 inset-x-3 h-1.5" />
+                  <DeckledStrip className="absolute -bottom-1 inset-x-3 h-1.5 -scale-y-100" />
 
-                  <div
-                    className="animate-float-tilt relative aspect-[4/5] w-full overflow-hidden rounded-[2rem] shadow-2xl shadow-primary/30 ring-1 ring-primary/20 transition-[box-shadow] duration-500 group-hover:shadow-primary/40"
-                    style={{
-                      isolation: "isolate",
-                      transform: "translateZ(0)",
-                      backfaceVisibility: "hidden",
-                    }}
+                  <Link
+                    href={`/caixa/${featured.slug}`}
+                    className="group relative block"
                   >
-                    <Image
-                      src={heroImg.url}
-                      alt={heroImg.alt ?? featured.title}
-                      fill
-                      priority
-                      sizes="(min-width: 768px) 45vw, 90vw"
-                      className="object-cover transition-transform duration-[900ms] ease-out group-hover:scale-[1.06]"
-                    />
-                    {/* vinheta radial */}
-                    <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_55%,rgba(0,0,0,0.35)_100%)]" />
-                    {/* overlay gradient bottom */}
-                    <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-foreground/60 via-transparent to-transparent" />
-
-                    {/* glitter mágico */}
-                    <GlitterOverlay />
-
-                    <div className="pointer-events-none absolute bottom-6 left-6 right-6 z-10 text-primary-foreground">
-                      <p className="flex items-center gap-2 text-[10px] uppercase tracking-[0.3em] opacity-90">
-                        <span className="inline-block h-px w-6 bg-primary-foreground/70" />
-                        Em Destaque
-                      </p>
-                      <p className="mt-2 font-serif text-3xl leading-tight md:text-4xl">
-                        {featured.title}
-                      </p>
+                    <div className="relative aspect-[4/5] overflow-hidden ring-1 ring-black/15">
+                      <Image
+                        src={heroImg.url}
+                        alt={heroImg.alt ?? featured.title}
+                        fill
+                        priority
+                        sizes="(min-width: 768px) 35vw, 75vw"
+                        className="object-cover transition-transform duration-[900ms] ease-out group-hover:scale-[1.04]"
+                      />
+                      <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/35 via-transparent to-transparent" />
+                      <div className="pointer-events-none absolute inset-0 shadow-[inset_0_0_28px_rgba(0,0,0,0.22)]" />
                     </div>
 
-                    <span className="absolute right-5 top-5 z-10 inline-flex items-center gap-1.5 rounded-full bg-background/90 px-3 py-1.5 text-xs font-medium text-primary shadow-md backdrop-blur">
-                      <span className="size-1.5 rounded-full bg-primary animate-pulse" />
-                      Clique para ver
-                    </span>
-                  </div>
-                </Link>
+                    <div className="mt-3 flex items-baseline justify-between gap-3 px-0.5 md:mt-4">
+                      <div className="min-w-0">
+                        <p className="text-[9px] font-semibold uppercase tracking-[0.32em] text-[#a86b6b] md:text-[10px]">
+                          Em Destaque
+                        </p>
+                        <p className="mt-0.5 truncate font-serif text-xl leading-tight text-[#5a2a2a] md:text-2xl">
+                          {featured.title}
+                        </p>
+                      </div>
+                      <p className="shrink-0 font-serif text-[10px] italic text-[#a86b6b]/85 md:text-xs">
+                        N°. 01
+                      </p>
+                    </div>
+                  </Link>
+
+                  <WaxSeal className="pointer-events-none absolute -bottom-5 -right-3 size-14 rotate-[10deg] md:-bottom-8 md:-right-6 md:size-20" />
+                </article>
 
                 {side[0] && (
-                  <FloatingThumb
+                  <PostageStamp
                     product={side[0]}
-                    className="absolute -left-6 -top-6 hidden aspect-[4/5] w-[6.4rem] sm:block md:-left-12 md:-top-12 md:w-32"
-                    style={{ animationDelay: "0.5s" }}
-                    label="02"
+                    country="ENCANTIM · BRASIL"
+                    value="01"
+                    className="absolute -left-1 top-2 w-20 -rotate-[7deg] md:-left-14 md:-top-2 md:w-32"
                   />
                 )}
                 {side[1] && (
-                  <FloatingThumb
-                    product={side[1]}
-                    className="absolute -right-6 top-1/3 hidden aspect-[4/5] w-[5.6rem] sm:block md:-right-10 md:w-[6.4rem]"
-                    style={{ animationDelay: "1.8s" }}
-                    label="03"
-                  />
-                )}
-                {side[2] && (
-                  <FloatingThumb
-                    product={side[2]}
-                    className="absolute -bottom-6 left-6 hidden aspect-[4/5] w-[5.6rem] sm:block md:-bottom-10 md:left-8 md:w-[6.4rem]"
-                    style={{ animationDelay: "3.2s" }}
-                    label="04"
-                  />
+                  <div className="absolute -bottom-6 -right-2 hidden w-24 rotate-[6deg] md:block md:-bottom-10 md:-right-12 md:w-32">
+                    <WashiTape className="absolute -top-3 left-1/2 z-20 h-3 w-20 -translate-x-1/2 -rotate-[14deg] text-primary/70 drop-shadow-md md:-top-4 md:h-4 md:w-24" />
+                    <PostageStamp
+                      product={side[1]}
+                      country="ATELIER · 2026"
+                      value="02"
+                    />
+                  </div>
                 )}
               </div>
             ) : (
               <HeroPlaceholder />
             )}
-
           </div>
         </div>
 
@@ -270,11 +256,11 @@ function HeroStat({ n, t }: { n: string; t: string }) {
   );
 }
 
-function FloatingThumb({
+function PostageStamp({
   product,
+  country,
+  value,
   className,
-  style,
-  label,
 }: {
   product: {
     id: string;
@@ -282,39 +268,72 @@ function FloatingThumb({
     title: string;
     media: { url: string; alt: string | null }[];
   };
+  country: string;
+  value: string;
   className?: string;
-  style?: React.CSSProperties;
-  label?: string;
 }) {
   const m = product.media[0]!;
   return (
     <Link
       href={`/caixa/${product.slug}`}
       aria-label={product.title}
-      className={`animate-float-tilt group absolute overflow-hidden rounded-2xl shadow-xl ring-2 ring-background transition-[box-shadow,ring] duration-300 hover:ring-primary ${className ?? ""}`}
-      style={{
-        isolation: "isolate",
-        transform: "translateZ(0)",
-        backfaceVisibility: "hidden",
-        ...style,
-      }}
+      className={cn(
+        "group relative block bg-[#fdfaee] p-1.5 ring-1 ring-black/15 shadow-[0_14px_24px_-10px_rgba(0,0,0,0.55),0_6px_10px_-6px_rgba(0,0,0,0.4)] outline outline-1 outline-dashed outline-offset-[3px] outline-black/30 md:p-2",
+        className,
+      )}
     >
-      <div className="relative size-full">
+      <div className="relative aspect-[3/4] overflow-hidden">
         <Image
           src={m.url}
           alt={m.alt ?? product.title}
           fill
-          sizes="140px"
-          className="object-cover transition-transform duration-[700ms] ease-out group-hover:scale-[1.08]"
+          sizes="(min-width: 768px) 140px, 90px"
+          className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.06]"
         />
-        <GlitterOverlay />
-        {label && (
-          <span className="absolute left-2 top-2 z-10 rounded-full bg-background/90 px-1.5 py-0.5 text-[9px] font-semibold text-primary shadow-sm">
-            {label}
-          </span>
-        )}
+        <span className="absolute right-1 top-1 z-10 inline-flex items-center justify-center rounded-sm bg-[#fdfaee]/95 px-1 text-[8px] font-bold tracking-wider text-[#3a2812] shadow-sm md:px-1.5 md:text-[9px]">
+          {value}
+        </span>
       </div>
+      <p className="mt-1 text-center font-serif text-[7px] uppercase tracking-[0.25em] text-[#3a2812]/80 md:text-[8px]">
+        {country}
+      </p>
     </Link>
+  );
+}
+
+function PaperGrain() {
+  return (
+    <svg
+      className="pointer-events-none absolute inset-0 size-full opacity-[0.18] mix-blend-multiply"
+      aria-hidden
+    >
+      <filter id="paper-grain">
+        <feTurbulence
+          type="fractalNoise"
+          baseFrequency="0.9"
+          numOctaves="2"
+          stitchTiles="stitch"
+        />
+        <feColorMatrix values="0 0 0 0 0.55  0 0 0 0 0.32  0 0 0 0 0.32  0 0 0 0.55 0" />
+      </filter>
+      <rect width="100%" height="100%" filter="url(#paper-grain)" />
+    </svg>
+  );
+}
+
+function DeckledStrip({ className }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 200 6"
+      preserveAspectRatio="none"
+      className={cn("pointer-events-none text-[#fce4e0]", className)}
+      aria-hidden
+    >
+      <path
+        d="M0 6 L0 4 Q 6 2 12 3 T 24 3 T 36 2 T 48 4 T 60 2 T 72 3 T 84 2 T 96 4 T 108 2 T 120 3 T 132 2 T 144 4 T 156 2 T 168 3 T 180 2 T 200 3 L 200 6 Z"
+        fill="currentColor"
+      />
+    </svg>
   );
 }
 

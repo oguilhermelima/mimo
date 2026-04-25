@@ -69,21 +69,10 @@ export function Catalog() {
 
   return (
     <ul className="mx-auto grid max-w-2xl grid-cols-1 gap-8 sm:max-w-none sm:grid-cols-2 sm:gap-6 lg:grid-cols-3 lg:gap-8">
-      {cards.map((c, i) => (
-        <li
-          key={c.key}
-          className="animate-fade-slide-up min-w-0"
-          style={{ animationDelay: `${i * 60}ms` }}
-        >
+      {cards.map((c) => (
+        <li key={c.key} className="min-w-0">
           <Link href={c.href} className="group block">
-            <div
-              className="relative aspect-[4/5] w-full overflow-hidden rounded-2xl bg-muted/50 ring-1 ring-border/40 transition-[box-shadow,ring] duration-500 group-hover:ring-primary/50"
-              style={{
-                isolation: "isolate",
-                transform: "translateZ(0)",
-                backfaceVisibility: "hidden",
-              }}
-            >
+            <div className="relative aspect-[4/5] w-full overflow-hidden rounded-2xl bg-muted/50 ring-1 ring-border/40 transition-[box-shadow,ring] duration-500 group-hover:ring-primary/50">
               {c.imageUrl ? (
                 <Image
                   src={c.imageUrl}

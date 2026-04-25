@@ -104,11 +104,6 @@ export function ProductDetail({ slug }: { slug: string }) {
                   <div
                     key={m.id}
                     className="relative aspect-[4/5] w-full shrink-0 snap-center overflow-hidden rounded-3xl bg-muted/50 ring-1 ring-border/40"
-                    style={{
-                      isolation: "isolate",
-                      transform: "translateZ(0)",
-                      backfaceVisibility: "hidden",
-                    }}
                   >
                     {m.kind === "video" ? (
                       <video

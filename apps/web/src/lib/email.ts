@@ -62,6 +62,31 @@ function verificationEmailHtml(name: string, url: string): string {
 </html>`.trim();
 }
 
+function changeEmailHtml(name: string, newEmail: string, url: string): string {
+  return `
+<!doctype html>
+<html lang="pt-BR">
+  <body style="${baseStyles}">
+    <div style="${cardStyles}">
+      <h1 style="font-family: 'Cormorant Garamond', serif; color: #a8336a; font-size: 28px; margin: 0 0 16px;">
+        ${env.NEXT_PUBLIC_STORE_NAME}
+      </h1>
+      <p style="font-size: 16px; line-height: 1.5;">Olá, ${name}!</p>
+      <p style="font-size: 16px; line-height: 1.5;">
+        Recebemos um pedido para trocar o email da sua conta para
+        <strong>${newEmail}</strong>. Confirme abaixo se foi você. O link expira em 1 hora.
+      </p>
+      <p style="margin: 24px 0;">
+        <a href="${url}" style="${buttonStyles}">Confirmar troca de email</a>
+      </p>
+      <p style="font-size: 13px; color: #846270;">
+        Se você não pediu, pode ignorar este email — sua conta segue com o email atual.
+      </p>
+    </div>
+  </body>
+</html>`.trim();
+}
+
 function resetPasswordHtml(name: string, url: string): string {
   return `
 <!doctype html>
@@ -109,5 +134,19 @@ export async function sendResetPasswordEmail(args: {
     to: args.to,
     subject: `Redefinir senha — ${env.NEXT_PUBLIC_STORE_NAME}`,
     html: resetPasswordHtml(args.name, args.url),
+  });
+}
+
+export async function sendChangeEmailVerification(args: {
+  to: string;
+  name: string;
+  newEmail: string;
+  url: string;
+}): Promise<void> {
+  await client().emails.send({
+    from: env.RESEND_FROM,
+    to: args.to,
+    subject: `Confirme a troca de email — ${env.NEXT_PUBLIC_STORE_NAME}`,
+    html: changeEmailHtml(args.name, args.newEmail, args.url),
   });
 }

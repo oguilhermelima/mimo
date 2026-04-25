@@ -14,7 +14,11 @@ import {
 } from "@caixa/db/schema";
 
 import { env } from "~/env";
-import { sendResetPasswordEmail, sendVerificationEmail } from "./email";
+import {
+  sendChangeEmailVerification,
+  sendResetPasswordEmail,
+  sendVerificationEmail,
+} from "./email";
 
 export const auth = betterAuth({
   appName: env.NEXT_PUBLIC_STORE_NAME,
@@ -42,6 +46,25 @@ export const auth = betterAuth({
         type: "string",
         required: false,
         input: true,
+      },
+    },
+    changeEmail: {
+      enabled: true,
+      sendChangeEmailVerification: async ({
+        user,
+        newEmail,
+        url,
+      }: {
+        user: { email: string; name: string };
+        newEmail: string;
+        url: string;
+      }) => {
+        await sendChangeEmailVerification({
+          to: user.email,
+          name: user.name,
+          newEmail,
+          url,
+        });
       },
     },
   },

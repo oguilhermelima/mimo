@@ -25,6 +25,7 @@ import { toast } from "@caixa/ui/toast";
 
 import { authClient } from "~/lib/auth-client";
 import { formatBRL } from "~/lib/format";
+import { digits, maskCpf, maskPhoneBr } from "~/lib/format-input";
 import { useCepAutofill } from "~/lib/use-cep-autofill";
 import { useTRPC } from "~/trpc/react";
 
@@ -73,57 +74,86 @@ export function AccountView() {
     router.refresh();
   };
 
+  const activeTab = TABS.find((t) => t.key === tab) ?? TABS[0];
+
   return (
     <div className="space-y-8">
-      <header className="flex flex-wrap items-center justify-between gap-3 border-b border-border/40 pb-4">
-        <div>
-          <h1 className="font-serif text-4xl text-primary md:text-5xl">
-            Sua conta
-          </h1>
-          <p className="text-sm text-muted-foreground md:text-base">
-            seus dados, endereços e pedidos.
-          </p>
-        </div>
-        <Button
-          variant="outline"
-          size="sm"
-          className="rounded-full"
-          onClick={handleLogout}
-        >
-          <LogOut className="mr-1.5 size-3.5" />
-          Sair
-        </Button>
+      <header className="border-border/40 border-b pb-6">
+        <h1 className="text-primary font-serif text-4xl md:text-5xl">
+          Sua conta
+        </h1>
+        <p className="text-muted-foreground mt-1 text-sm md:text-base">
+          seus dados, endereços e pedidos.
+        </p>
       </header>
 
-      <nav className="flex flex-wrap gap-2">
-        {TABS.map(({ key, label, icon: Icon }) => {
-          const active = tab === key;
-          return (
-            <button
-              key={key}
-              type="button"
-              onClick={() => setTabUrl(key)}
-              className={
-                active
-                  ? "inline-flex items-center gap-2 rounded-full bg-primary px-4 py-1.5 text-sm text-primary-foreground"
-                  : "inline-flex items-center gap-2 rounded-full bg-muted/60 px-4 py-1.5 text-sm text-muted-foreground ring-1 ring-border/60 transition hover:bg-primary/10 hover:text-primary"
-              }
-            >
-              <Icon className="size-3.5" />
-              {label}
-            </button>
-          );
-        })}
-      </nav>
+      <div className="grid gap-8 lg:grid-cols-[240px_1fr] lg:gap-10">
+        <aside className="lg:sticky lg:top-28 lg:self-start">
+          <nav className="flex gap-2 overflow-x-auto pb-1 lg:flex-col lg:gap-1 lg:overflow-visible lg:pb-0">
+            {TABS.map(({ key, label, icon: Icon }) => {
+              const active = tab === key;
+              return (
+                <button
+                  key={key}
+                  type="button"
+                  onClick={() => setTabUrl(key)}
+                  className={
+                    active
+                      ? "bg-primary text-primary-foreground inline-flex shrink-0 items-center gap-2 rounded-full px-4 py-2 text-sm lg:w-full lg:justify-start lg:rounded-xl lg:px-3"
+                      : "bg-muted/60 text-muted-foreground ring-border/60 hover:bg-primary/10 hover:text-primary lg:hover:bg-muted/60 inline-flex shrink-0 items-center gap-2 rounded-full px-4 py-2 text-sm ring-1 transition lg:w-full lg:justify-start lg:rounded-xl lg:bg-transparent lg:px-3 lg:ring-0"
+                  }
+                >
+                  <Icon className="size-4" />
+                  {label}
+                </button>
+              );
+            })}
+          </nav>
 
-      {tab === "dados" && <ProfileTab />}
-      {tab === "enderecos" && <AddressesTab />}
-      {tab === "pedidos" && <OrdersTab />}
+          <div className="border-border/40 mt-6 hidden border-t pt-4 lg:block">
+            <Button
+              variant="ghost"
+              size="sm"
+              className="text-muted-foreground hover:text-destructive w-full justify-start rounded-xl px-3"
+              onClick={handleLogout}
+            >
+              <LogOut className="mr-2 size-4" />
+              Sair
+            </Button>
+          </div>
+        </aside>
+
+        <div className="min-w-0">
+          <div className="mb-5 flex items-center justify-between gap-3 lg:hidden">
+            <h2 className="text-foreground font-serif text-2xl">
+              {activeTab.label}
+            </h2>
+            <Button variant="outline" size="sm" onClick={handleLogout}>
+              <LogOut className="mr-1.5 size-3.5" />
+              Sair
+            </Button>
+          </div>
+
+          {tab === "dados" && <ProfileTab />}
+          {tab === "enderecos" && <AddressesTab />}
+          {tab === "pedidos" && <OrdersTab />}
+        </div>
+      </div>
     </div>
   );
 }
 
 function ProfileTab() {
+  return (
+    <div className="max-w-2xl space-y-5">
+      <ProfileForm />
+      <EmailForm />
+      <PasswordForm />
+    </div>
+  );
+}
+
+function ProfileForm() {
   const trpc = useTRPC();
   const qc = useQueryClient();
 
@@ -131,9 +161,10 @@ function ProfileTab() {
     queries: [trpc.user.me.queryOptions()],
   });
 
+  const cpfLocked = !!me.cpf;
   const [name, setName] = useState(me.name);
-  const [phone, setPhone] = useState(me.phone ?? "");
-  const [cpf, setCpf] = useState(me.cpf ?? "");
+  const [phone, setPhone] = useState(maskPhoneBr(me.phone ?? ""));
+  const [cpf, setCpf] = useState(maskCpf(me.cpf ?? ""));
 
   const update = useMutation(
     trpc.user.updateProfile.mutationOptions({
@@ -149,21 +180,20 @@ function ProfileTab() {
     e.preventDefault();
     update.mutate({
       name: name.trim(),
-      phone: phone.replace(/\D+/g, ""),
-      cpf: cpf.replace(/\D+/g, ""),
+      phone: digits(phone),
+      ...(cpfLocked ? {} : { cpf: digits(cpf) }),
     });
   };
 
   return (
     <form
       onSubmit={submit}
-      className="max-w-xl space-y-5 rounded-2xl border border-border/40 bg-card/30 p-6"
+      className="border-border/40 bg-card/30 space-y-5 rounded-2xl border p-6"
     >
-      <div className="space-y-2">
-        <Label>Email</Label>
-        <Input value={me.email} readOnly disabled />
-        <p className="text-xs text-muted-foreground">
-          Pra mudar email, fale com a gente.
+      <div>
+        <h3 className="font-serif text-lg">Dados pessoais</h3>
+        <p className="text-muted-foreground text-xs">
+          Nome, telefone e CPF que aparecem nos pedidos.
         </p>
       </div>
 
@@ -180,13 +210,14 @@ function ProfileTab() {
 
       <div className="grid gap-4 sm:grid-cols-2">
         <div className="space-y-2">
-          <Label htmlFor="phone">Telefone (DDD + número)</Label>
+          <Label htmlFor="phone">Telefone</Label>
           <Input
             id="phone"
             value={phone}
-            onChange={(e) => setPhone(e.target.value)}
+            onChange={(e) => setPhone(maskPhoneBr(e.target.value))}
             inputMode="numeric"
-            placeholder="11999999999"
+            placeholder="(11) 99999-9999"
+            maxLength={15}
           />
         </div>
         <div className="space-y-2">
@@ -194,20 +225,191 @@ function ProfileTab() {
           <Input
             id="cpf"
             value={cpf}
-            onChange={(e) => setCpf(e.target.value)}
+            onChange={(e) => setCpf(maskCpf(e.target.value))}
             inputMode="numeric"
-            placeholder="00000000000"
+            placeholder="000.000.000-00"
             maxLength={14}
+            disabled={cpfLocked}
+            readOnly={cpfLocked}
+          />
+          {cpfLocked && (
+            <p className="text-muted-foreground text-xs">
+              CPF não pode ser alterado depois de cadastrado.
+            </p>
+          )}
+        </div>
+      </div>
+
+      <Button type="submit" disabled={update.isPending}>
+        {update.isPending ? "salvando…" : "Salvar alterações"}
+      </Button>
+    </form>
+  );
+}
+
+function EmailForm() {
+  const trpc = useTRPC();
+  const [{ data: me }] = useSuspenseQueries({
+    queries: [trpc.user.me.queryOptions()],
+  });
+
+  const [email, setEmail] = useState(me.email);
+  const [pending, setPending] = useState(false);
+
+  const dirty = email.trim().toLowerCase() !== me.email.toLowerCase();
+
+  const submit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!dirty) return;
+    setPending(true);
+    try {
+      const { error } = await authClient.changeEmail({
+        newEmail: email.trim(),
+        callbackURL: "/conta?tab=dados",
+      });
+      if (error) {
+        toast.error(error.message ?? "não foi possível trocar o email");
+      } else {
+        toast.success(
+          `enviamos um link para ${me.email} pra confirmar a troca`,
+        );
+      }
+    } finally {
+      setPending(false);
+    }
+  };
+
+  return (
+    <form
+      onSubmit={submit}
+      className="border-border/40 bg-card/30 space-y-4 rounded-2xl border p-6"
+    >
+      <div>
+        <h3 className="font-serif text-lg">Email</h3>
+        <p className="text-muted-foreground text-xs">
+          Trocar o email envia um link de confirmação para o endereço atual.
+        </p>
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="email">Email</Label>
+        <Input
+          id="email"
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+          maxLength={200}
+          autoComplete="email"
+        />
+      </div>
+
+      <Button type="submit" variant="outline" disabled={!dirty || pending}>
+        {pending ? "enviando…" : "Trocar email"}
+      </Button>
+    </form>
+  );
+}
+
+function PasswordForm() {
+  const [current, setCurrent] = useState("");
+  const [next, setNext] = useState("");
+  const [confirm, setConfirm] = useState("");
+  const [pending, setPending] = useState(false);
+
+  const reset = () => {
+    setCurrent("");
+    setNext("");
+    setConfirm("");
+  };
+
+  const submit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (next.length < 8) {
+      toast.error("nova senha precisa de pelo menos 8 caracteres");
+      return;
+    }
+    if (next !== confirm) {
+      toast.error("a confirmação não bate com a nova senha");
+      return;
+    }
+    setPending(true);
+    try {
+      const { error } = await authClient.changePassword({
+        currentPassword: current,
+        newPassword: next,
+        revokeOtherSessions: true,
+      });
+      if (error) {
+        toast.error(error.message ?? "não foi possível trocar a senha");
+      } else {
+        toast.success("senha atualizada");
+        reset();
+      }
+    } finally {
+      setPending(false);
+    }
+  };
+
+  return (
+    <form
+      onSubmit={submit}
+      className="border-border/40 bg-card/30 space-y-4 rounded-2xl border p-6"
+    >
+      <div>
+        <h3 className="font-serif text-lg">Senha</h3>
+        <p className="text-muted-foreground text-xs">
+          Trocar a senha encerra sessões em outros dispositivos.
+        </p>
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="current-password">Senha atual</Label>
+        <Input
+          id="current-password"
+          type="password"
+          value={current}
+          onChange={(e) => setCurrent(e.target.value)}
+          required
+          autoComplete="current-password"
+        />
+      </div>
+
+      <div className="grid gap-4 sm:grid-cols-2">
+        <div className="space-y-2">
+          <Label htmlFor="new-password">Nova senha</Label>
+          <Input
+            id="new-password"
+            type="password"
+            value={next}
+            onChange={(e) => setNext(e.target.value)}
+            required
+            minLength={8}
+            maxLength={128}
+            autoComplete="new-password"
+          />
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="confirm-password">Confirmar nova senha</Label>
+          <Input
+            id="confirm-password"
+            type="password"
+            value={confirm}
+            onChange={(e) => setConfirm(e.target.value)}
+            required
+            minLength={8}
+            maxLength={128}
+            autoComplete="new-password"
           />
         </div>
       </div>
 
       <Button
         type="submit"
-        className="rounded-full"
-        disabled={update.isPending}
+        variant="outline"
+        disabled={pending || !current || !next || !confirm}
       >
-        {update.isPending ? "salvando…" : "Salvar alterações"}
+        {pending ? "salvando…" : "Trocar senha"}
       </Button>
     </form>
   );
@@ -271,7 +473,7 @@ function AddressesTab() {
   return (
     <div className="space-y-4">
       {addresses.length === 0 && editing !== "new" && (
-        <p className="text-sm text-muted-foreground">
+        <p className="text-muted-foreground text-sm">
           Você ainda não cadastrou endereços. Adicione um quando quiser receber
           uma caixinha.
         </p>
@@ -296,18 +498,18 @@ function AddressesTab() {
           ) : (
             <li
               key={addr.id}
-              className="flex items-start gap-3 rounded-2xl border border-border/60 bg-card/30 p-4"
+              className="border-border/60 bg-card/30 flex items-start gap-3 rounded-2xl border p-4"
             >
               <div className="flex-1 text-sm">
-                <p className="font-medium text-foreground">
+                <p className="text-foreground font-medium">
                   {addr.label ?? addr.recipientName}
                   {addr.isDefault && (
-                    <span className="ml-2 inline-flex items-center gap-1 rounded-full bg-primary/15 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.18em] text-primary">
+                    <span className="bg-primary/15 text-primary ml-2 inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-semibold tracking-[0.18em] uppercase">
                       <Star className="size-2.5" /> padrão
                     </span>
                   )}
                 </p>
-                <p className="mt-0.5 text-muted-foreground">
+                <p className="text-muted-foreground mt-0.5">
                   {addr.street}, {addr.number}
                   {addr.complement ? ` — ${addr.complement}` : ""}
                 </p>
@@ -321,7 +523,7 @@ function AddressesTab() {
                   <Button
                     size="sm"
                     variant="ghost"
-                    className="rounded-full text-xs"
+                    className="text-xs"
                     onClick={() => setDefault.mutate({ id: addr.id })}
                   >
                     Tornar padrão
@@ -330,7 +532,7 @@ function AddressesTab() {
                 <Button
                   size="sm"
                   variant="ghost"
-                  className="rounded-full text-xs"
+                  className="text-xs"
                   onClick={() => setEditing(addr.id)}
                 >
                   Editar
@@ -338,7 +540,7 @@ function AddressesTab() {
                 <Button
                   size="sm"
                   variant="ghost"
-                  className="rounded-full text-xs text-destructive"
+                  className="text-destructive text-xs"
                   onClick={() => {
                     if (confirm("Remover este endereço?"))
                       remove.mutate({ id: addr.id });
@@ -367,7 +569,6 @@ function AddressesTab() {
         <Button
           type="button"
           variant="outline"
-          className="rounded-full"
           onClick={() => setEditing("new")}
         >
           <Plus className="mr-2 size-4" />
@@ -448,7 +649,7 @@ function AddressForm({
   return (
     <form
       onSubmit={submit}
-      className="space-y-7 rounded-2xl border border-border/60 bg-card/50 p-5 md:p-6"
+      className="border-border/60 bg-card/50 space-y-7 rounded-2xl border p-5 md:p-6"
     >
       <FormSubsection title="Quem recebe">
         <div className="grid gap-4 sm:grid-cols-[1.5fr_1fr]">
@@ -552,12 +753,12 @@ function AddressForm({
         </div>
       </FormSubsection>
 
-      <label className="flex items-center gap-2 border-t border-border/40 pt-4 text-sm">
+      <label className="border-border/40 flex items-center gap-2 border-t pt-4 text-sm">
         <input
           type="checkbox"
           checked={!!data.isDefault}
           onChange={(e) => set("isDefault", e.target.checked)}
-          className="size-4 rounded border-border accent-primary"
+          className="border-border accent-primary size-4 rounded"
         />
         Usar como endereço padrão
       </label>
@@ -566,13 +767,12 @@ function AddressForm({
         <Button
           type="button"
           variant="outline"
-          className="rounded-full"
           onClick={onCancel}
           disabled={pending}
         >
           Cancelar
         </Button>
-        <Button type="submit" className="rounded-full" disabled={pending}>
+        <Button type="submit" disabled={pending}>
           {pending ? "salvando…" : "Salvar"}
         </Button>
       </div>
@@ -588,10 +788,12 @@ function OrdersTab() {
 
   if (orders.length === 0) {
     return (
-      <div className="rounded-2xl border border-dashed border-border/60 p-10 text-center">
-        <Package className="mx-auto mb-3 size-8 text-primary/40" />
-        <p className="font-serif text-xl text-foreground">Sem pedidos por aqui</p>
-        <p className="mt-1 text-sm text-muted-foreground">
+      <div className="border-border/60 rounded-2xl border border-dashed p-10 text-center">
+        <Package className="text-primary/40 mx-auto mb-3 size-8" />
+        <p className="text-foreground font-serif text-xl">
+          Sem pedidos por aqui
+        </p>
+        <p className="text-muted-foreground mt-1 text-sm">
           Quando você fizer uma compra, ela aparece aqui pra acompanhar.
         </p>
       </div>
@@ -606,22 +808,22 @@ function OrdersTab() {
           <li key={o.id}>
             <Link
               href={`/conta/pedidos/${o.id}`}
-              className="flex items-center justify-between gap-3 rounded-2xl border border-border/60 bg-card/30 p-4 transition hover:border-primary/40"
+              className="border-border/60 bg-card/30 hover:border-primary/40 flex items-center justify-between gap-3 rounded-2xl border p-4 transition"
             >
               <div className="flex-1">
-                <p className="font-mono text-xs text-muted-foreground">
+                <p className="text-muted-foreground font-mono text-xs">
                   #{o.id.slice(0, 8)}
                 </p>
                 <p className="mt-0.5 font-serif text-base">
                   {itemsCount} {itemsCount === 1 ? "item" : "itens"} ·{" "}
                   {formatBRL(o.totalCents)}
                 </p>
-                <p className="mt-0.5 text-xs text-muted-foreground">
+                <p className="text-muted-foreground mt-0.5 text-xs">
                   {new Date(o.createdAt).toLocaleString("pt-BR")}
                 </p>
               </div>
               <span
-                className={`shrink-0 rounded-full px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] ring-1 ${
+                className={`shrink-0 rounded-full px-3 py-1 text-[10px] font-semibold tracking-[0.18em] uppercase ring-1 ${
                   STATUS_TONE[o.status] ?? STATUS_TONE.cancelado
                 }`}
               >
@@ -649,7 +851,7 @@ function Field({
   return (
     <div className="space-y-1.5">
       <div className="flex items-baseline justify-between gap-2">
-        <Label className="text-[10px] font-semibold uppercase tracking-[0.22em] text-muted-foreground">
+        <Label className="text-muted-foreground text-[10px] font-semibold tracking-[0.22em] uppercase">
           {label}
         </Label>
         {hint && (
@@ -678,7 +880,7 @@ function FormSubsection({
 }) {
   return (
     <div className="space-y-4">
-      <h3 className="text-[10px] font-semibold uppercase tracking-[0.28em] text-primary/80">
+      <h3 className="text-primary/80 text-[10px] font-semibold tracking-[0.28em] uppercase">
         {title}
       </h3>
       <div className="space-y-4">{children}</div>

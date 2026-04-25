@@ -42,13 +42,39 @@ export const userRouter = createTRPCRouter({
   updateProfile: protectedProcedure
     .input(updateProfileSchema)
     .mutation(async ({ ctx, input }) => {
+      const current = await ctx.db.query.User.findFirst({
+        where: eq(User.id, ctx.user.id),
+        columns: { cpf: true },
+      });
+      if (!current) throw new TRPCError({ code: "NOT_FOUND" });
+
       const patch: Partial<typeof User.$inferInsert> = {};
       if (input.name !== undefined) patch.name = input.name;
       if (input.phone !== undefined)
         patch.phone = input.phone.length === 0 ? null : input.phone;
-      if (input.cpf !== undefined)
-        patch.cpf = input.cpf.length === 0 ? null : input.cpf;
       if (input.image !== undefined) patch.image = input.image ?? null;
+
+      if (input.cpf !== undefined && input.cpf.length > 0) {
+        if (current.cpf && current.cpf !== input.cpf) {
+          throw new TRPCError({
+            code: "FORBIDDEN",
+            message: "CPF não pode ser alterado depois de cadastrado",
+          });
+        }
+        if (!current.cpf) {
+          const taken = await ctx.db.query.User.findFirst({
+            where: and(eq(User.cpf, input.cpf), ne(User.id, ctx.user.id)),
+            columns: { id: true },
+          });
+          if (taken) {
+            throw new TRPCError({
+              code: "CONFLICT",
+              message: "CPF já cadastrado em outra conta",
+            });
+          }
+          patch.cpf = input.cpf;
+        }
+      }
 
       if (Object.keys(patch).length === 0) {
         throw new TRPCError({ code: "BAD_REQUEST", message: "nada pra atualizar" });

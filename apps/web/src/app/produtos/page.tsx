@@ -4,7 +4,7 @@ import { HydrateClient, prefetch, trpc } from "~/trpc/server";
 import { ProductsPage } from "~/components/products-page";
 import { ProductsPageSkeleton } from "~/components/skeletons";
 
-export const metadata = { title: "produtos" };
+export const metadata = { title: "presentes" };
 
 export default function ProdutosRoute() {
   prefetch(trpc.bundle.catalogList.queryOptions());

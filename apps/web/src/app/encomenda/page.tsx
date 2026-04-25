@@ -4,6 +4,8 @@ import { HydrateClient, prefetch, trpc } from "~/trpc/server";
 import { CustomOrderFlow } from "~/components/custom-order-flow";
 import { EncomendaSkeleton } from "~/components/skeletons";
 
+export const metadata = { title: "sua caixa" };
+
 export default function EncomendaPage() {
   prefetch(trpc.product.publicTemplateBoxes.queryOptions());
   prefetch(trpc.stamp.listAvailable.queryOptions());

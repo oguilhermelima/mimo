@@ -3,8 +3,8 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
+  Gift,
   Home,
-  Package,
   ShoppingBag,
   Sparkles,
   User,
@@ -29,14 +29,14 @@ const ITEMS: NavItem[] = [
   },
   {
     href: "/produtos",
-    icon: Package,
-    label: "Produtos",
+    icon: Gift,
+    label: "Presentes",
     match: (p) => p.startsWith("/produtos") || p.startsWith("/produto") || p.startsWith("/caixa"),
   },
   {
     href: "/encomenda",
     icon: Sparkles,
-    label: "Montar",
+    label: "Sua Caixa",
     match: (p) => p.startsWith("/encomenda"),
   },
   {
@@ -60,7 +60,7 @@ export function MobileNav() {
   return (
     <nav
       aria-label="navegação principal"
-      className="fixed inset-x-0 bottom-0 z-50 border-t border-border/30 bg-background/90 backdrop-blur-xl supports-[backdrop-filter]:bg-background/70 lg:hidden"
+      className="fixed inset-x-0 bottom-0 z-50 border-t border-border/30 bg-background lg:hidden"
       style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
     >
       <ul className="mx-auto grid max-w-lg grid-cols-5 items-stretch px-1 py-1.5">

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { Search, ShoppingBag, User } from "lucide-react";
 
 import { cn } from "@caixa/ui";
@@ -11,13 +12,14 @@ import { Logo } from "./logo";
 
 const NAV_LINKS = [
   { href: "/produtos", label: "Presentes" },
-  { href: "/encomenda", label: "Encomenda" },
+  { href: "/encomenda", label: "Sua Caixa" },
   { href: "/sobre", label: "Sobre" },
 ];
 
 export function SiteHeader() {
   const count = useCart((s) => s.entries.reduce((n, e) => n + e.quantity, 0));
   const [scrolled, setScrolled] = useState(false);
+  const pathname = usePathname() ?? "/";
 
   useEffect(() => {
     const onScroll = () => {
@@ -44,16 +46,35 @@ export function SiteHeader() {
           scrolled ? "py-3 lg:py-4" : "py-5 lg:py-7",
         )}
       >
-        <nav className="hidden items-center gap-1 text-sm lg:-ml-3 lg:flex">
-          {NAV_LINKS.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className="rounded-full px-3 py-2 text-foreground/80 transition hover:text-primary"
-            >
-              {link.label}
-            </Link>
-          ))}
+        <nav className="hidden items-center gap-1 lg:-ml-3 lg:flex">
+          {NAV_LINKS.map((link) => {
+            const active =
+              pathname === link.href ||
+              (link.href !== "/" && pathname.startsWith(link.href + "/")) ||
+              (link.href === "/produtos" &&
+                (pathname.startsWith("/produto") || pathname.startsWith("/caixa")));
+            return (
+              <Link
+                key={link.href}
+                href={link.href}
+                className={cn(
+                  "group relative inline-flex items-center rounded-full px-4 py-2 text-sm font-medium tracking-wide transition",
+                  active
+                    ? "text-primary"
+                    : "text-foreground/85 hover:bg-foreground/5 hover:text-primary",
+                )}
+              >
+                {link.label}
+                <span
+                  aria-hidden
+                  className={cn(
+                    "absolute -bottom-0.5 left-1/2 h-0.5 -translate-x-1/2 rounded-full bg-primary transition-all duration-300",
+                    active ? "w-6" : "w-0 group-hover:w-3",
+                  )}
+                />
+              </Link>
+            );
+          })}
         </nav>
 
         <Link
@@ -76,7 +97,7 @@ export function SiteHeader() {
           />
         </Link>
 
-        <div className="flex items-center justify-end gap-1 lg:-mr-2 lg:gap-3">
+        <div className="hidden items-center justify-end gap-1 lg:-mr-2 lg:flex lg:gap-3">
           <div className="hidden items-center gap-2 rounded-full bg-foreground/5 px-3 py-2 text-sm text-foreground/60 ring-1 ring-border/50 transition focus-within:ring-primary/50 lg:flex lg:w-56">
             <Search className="size-4 shrink-0" />
             <input

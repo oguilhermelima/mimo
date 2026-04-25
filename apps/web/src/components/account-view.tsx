@@ -448,27 +448,31 @@ function AddressForm({
   return (
     <form
       onSubmit={submit}
-      className="space-y-3 rounded-2xl border border-border/60 bg-card/50 p-5"
+      className="space-y-7 rounded-2xl border border-border/60 bg-card/50 p-5 md:p-6"
     >
-      <div className="grid gap-3 sm:grid-cols-2">
-        <Field label="Apelido (ex.: casa, trabalho)">
-          <Input
-            value={data.label ?? ""}
-            onChange={(e) => set("label", e.target.value)}
-            maxLength={60}
-          />
-        </Field>
-        <Field label="Nome de quem recebe">
-          <Input
-            value={data.recipientName}
-            onChange={(e) => set("recipientName", e.target.value)}
-            required
-            maxLength={200}
-          />
-        </Field>
-      </div>
+      <FormSubsection title="Quem recebe">
+        <div className="grid gap-4 sm:grid-cols-[1.5fr_1fr]">
+          <Field label="Nome completo">
+            <Input
+              value={data.recipientName}
+              onChange={(e) => set("recipientName", e.target.value)}
+              required
+              maxLength={200}
+              placeholder="Como aparece no envelope"
+            />
+          </Field>
+          <Field label="Apelido (opcional)">
+            <Input
+              value={data.label ?? ""}
+              onChange={(e) => set("label", e.target.value)}
+              maxLength={60}
+              placeholder="ex.: casa, trabalho"
+            />
+          </Field>
+        </div>
+      </FormSubsection>
 
-      <div className="grid gap-3 sm:grid-cols-[140px_1fr]">
+      <FormSubsection title="Endereço">
         <Field
           label="CEP"
           hint={
@@ -476,7 +480,7 @@ function AddressForm({
               ? "buscando…"
               : cep.error
                 ? cep.error
-                : undefined
+                : "preenchemos o restante automaticamente"
           }
           hintTone={cep.error ? "error" : "muted"}
         >
@@ -487,46 +491,47 @@ function AddressForm({
             required
             inputMode="numeric"
             maxLength={9}
+            className="max-w-[220px]"
           />
         </Field>
-        <Field label="Rua / Avenida">
-          <Input
-            value={data.street}
-            onChange={(e) => set("street", e.target.value)}
-            required
-            maxLength={200}
-          />
-        </Field>
-      </div>
 
-      <div className="grid gap-3 sm:grid-cols-[140px_1fr]">
-        <Field label="Número">
-          <Input
-            value={data.number}
-            onChange={(e) => set("number", e.target.value)}
-            required
-            maxLength={20}
-          />
-        </Field>
-        <Field label="Complemento">
+        <div className="grid gap-4 sm:grid-cols-[1fr_140px]">
+          <Field label="Rua / Avenida">
+            <Input
+              value={data.street}
+              onChange={(e) => set("street", e.target.value)}
+              required
+              maxLength={200}
+            />
+          </Field>
+          <Field label="Número">
+            <Input
+              value={data.number}
+              onChange={(e) => set("number", e.target.value)}
+              required
+              maxLength={20}
+            />
+          </Field>
+        </div>
+
+        <Field label="Complemento (opcional)">
           <Input
             value={data.complement ?? ""}
             onChange={(e) => set("complement", e.target.value)}
             maxLength={120}
+            placeholder="ap, bloco, ponto de referência…"
           />
         </Field>
-      </div>
 
-      <div className="grid gap-3 sm:grid-cols-2">
-        <Field label="Bairro">
-          <Input
-            value={data.district}
-            onChange={(e) => set("district", e.target.value)}
-            required
-            maxLength={120}
-          />
-        </Field>
-        <div className="grid grid-cols-[1fr_80px] gap-3">
+        <div className="grid gap-4 sm:grid-cols-[1fr_1fr_90px]">
+          <Field label="Bairro">
+            <Input
+              value={data.district}
+              onChange={(e) => set("district", e.target.value)}
+              required
+              maxLength={120}
+            />
+          </Field>
           <Field label="Cidade">
             <Input
               value={data.city}
@@ -545,9 +550,9 @@ function AddressForm({
             />
           </Field>
         </div>
-      </div>
+      </FormSubsection>
 
-      <label className="flex items-center gap-2 text-sm">
+      <label className="flex items-center gap-2 border-t border-border/40 pt-4 text-sm">
         <input
           type="checkbox"
           checked={!!data.isDefault}
@@ -660,6 +665,23 @@ function Field({
         )}
       </div>
       {children}
+    </div>
+  );
+}
+
+function FormSubsection({
+  title,
+  children,
+}: {
+  title: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="space-y-4">
+      <h3 className="text-[10px] font-semibold uppercase tracking-[0.28em] text-primary/80">
+        {title}
+      </h3>
+      <div className="space-y-4">{children}</div>
     </div>
   );
 }

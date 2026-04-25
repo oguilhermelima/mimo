@@ -13,7 +13,12 @@ export function formatDimensions(
 ): string | null {
   const parts = [width, height, depth].filter((n): n is number => n != null);
   if (parts.length === 0) return null;
-  return parts.map((n) => `${n}mm`).join(" × ");
+  return parts
+    .map((n) => {
+      const cm = n / 10;
+      return Number.isInteger(cm) ? `${cm}cm` : `${cm.toFixed(1)}cm`;
+    })
+    .join(" × ");
 }
 
 export function paymentLabel(method: string): string {

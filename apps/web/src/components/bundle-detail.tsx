@@ -252,10 +252,10 @@ export function BundleDetail({ slug }: { slug: string }) {
             </div>
             <div className="border-x border-primary/15">
               <dt className="font-serif text-base text-primary md:text-lg">
-                Sob
+                Pronta
               </dt>
               <dd className="text-[9px] uppercase tracking-[0.22em] text-muted-foreground md:text-[10px]">
-                Encomenda
+                Entrega
               </dd>
             </div>
             <div>
@@ -324,34 +324,29 @@ export function BundleDetail({ slug }: { slug: string }) {
                         key={it.id}
                         className="w-32 shrink-0 snap-start sm:w-36"
                       >
-                        <Link
-                          href={`/produto/${it.product.slug}`}
-                          className="group block"
-                        >
-                          <div className="relative aspect-[4/5] overflow-hidden rounded-xl bg-muted shadow-sm ring-1 ring-inset ring-border/40 transition group-hover:ring-primary/50">
-                            {media ? (
-                              <Image
-                                src={media.url}
-                                alt={media.alt ?? it.product.title}
-                                fill
-                                sizes="(min-width: 640px) 144px, 128px"
-                                className="object-cover transition-transform duration-500 group-hover:scale-105"
-                              />
-                            ) : (
-                              <div className="flex h-full items-center justify-center text-3xl font-serif text-primary/30">
-                                ✦
-                              </div>
-                            )}
-                            {it.quantity > 1 && (
-                              <span className="absolute right-1.5 top-1.5 rounded-full bg-background/95 px-1.5 py-0.5 text-[10px] font-semibold text-primary shadow-sm">
-                                {it.quantity}×
-                              </span>
-                            )}
-                          </div>
-                          <p className="mt-2 line-clamp-2 text-xs leading-snug text-foreground transition-colors group-hover:text-primary">
-                            {it.product.title}
-                          </p>
-                        </Link>
+                        <div className="relative aspect-[4/5] overflow-hidden rounded-xl bg-muted shadow-sm ring-1 ring-inset ring-border/40">
+                          {media ? (
+                            <Image
+                              src={media.url}
+                              alt={media.alt ?? it.product.title}
+                              fill
+                              sizes="(min-width: 640px) 144px, 128px"
+                              className="object-cover"
+                            />
+                          ) : (
+                            <div className="flex h-full items-center justify-center text-3xl font-serif text-primary/30">
+                              ✦
+                            </div>
+                          )}
+                          {it.quantity > 1 && (
+                            <span className="absolute right-1.5 top-1.5 rounded-full bg-background/95 px-1.5 py-0.5 text-[10px] font-semibold text-primary shadow-sm">
+                              {it.quantity}×
+                            </span>
+                          )}
+                        </div>
+                        <p className="mt-2 line-clamp-2 text-xs leading-snug text-foreground">
+                          {it.product.title}
+                        </p>
                       </li>
                     );
                   })}
@@ -363,7 +358,7 @@ export function BundleDetail({ slug }: { slug: string }) {
           <Button
             onClick={handleAdd}
             disabled={isSoldOut}
-            className="group/cta relative mt-2 h-16 w-full gap-3 overflow-hidden rounded-full text-base font-semibold tracking-wide shadow-xl shadow-primary/30 transition-all hover:shadow-2xl hover:shadow-primary/40 disabled:opacity-60 md:h-[72px] md:text-lg"
+            className="group/cta relative mt-2 h-16 w-full gap-3 overflow-hidden text-base font-semibold tracking-wide shadow-xl shadow-primary/30 transition-all hover:shadow-2xl hover:shadow-primary/40 disabled:opacity-60 md:h-[72px] md:text-lg"
           >
             <span
               aria-hidden

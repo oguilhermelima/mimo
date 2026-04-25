@@ -26,6 +26,7 @@ import { toast } from "@caixa/ui/toast";
 
 import { totalCents, useCart, type CartEntry } from "~/lib/cart-store";
 import { formatBRL, paymentLabel } from "~/lib/format";
+import { useCepAutofill } from "~/lib/use-cep-autofill";
 import { useTRPC } from "~/trpc/react";
 
 type Fulfillment = "delivery" | "pickup_taboao";
@@ -507,6 +508,17 @@ function NewAddressForm({
   const set = (k: keyof NewAddressInput, v: string) =>
     setData((d) => ({ ...d, [k]: v }));
 
+  const cep = useCepAutofill(data.postalCode, (addr) =>
+    setData((d) => ({
+      ...d,
+      street: d.street || addr.street,
+      district: d.district || addr.district,
+      city: d.city || addr.city,
+      state: d.state || addr.state,
+      complement: d.complement || addr.complement || "",
+    })),
+  );
+
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
     onSubmit({
@@ -546,13 +558,24 @@ function NewAddressForm({
       </div>
 
       <div className="grid gap-3 sm:grid-cols-[140px_1fr]">
-        <Field label="CEP">
+        <Field
+          label="CEP"
+          hint={
+            cep.pending
+              ? "buscando…"
+              : cep.error
+                ? cep.error
+                : undefined
+          }
+          hintTone={cep.error ? "error" : "muted"}
+        >
           <Input
             value={data.postalCode}
             onChange={(e) => set("postalCode", e.target.value)}
             placeholder="00000-000"
             required
             inputMode="numeric"
+            maxLength={9}
           />
         </Field>
         <Field label="Rua / Avenida">
@@ -635,16 +658,33 @@ function NewAddressForm({
 
 function Field({
   label,
+  hint,
+  hintTone = "muted",
   children,
 }: {
   label: string;
+  hint?: string;
+  hintTone?: "muted" | "error";
   children: React.ReactNode;
 }) {
   return (
     <div className="space-y-1.5">
-      <Label className="text-[10px] font-semibold uppercase tracking-[0.22em] text-muted-foreground">
-        {label}
-      </Label>
+      <div className="flex items-baseline justify-between gap-2">
+        <Label className="text-[10px] font-semibold uppercase tracking-[0.22em] text-muted-foreground">
+          {label}
+        </Label>
+        {hint && (
+          <span
+            className={`text-[10px] ${
+              hintTone === "error"
+                ? "text-destructive"
+                : "text-muted-foreground"
+            }`}
+          >
+            {hint}
+          </span>
+        )}
+      </div>
       {children}
     </div>
   );

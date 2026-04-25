@@ -58,6 +58,9 @@ async function seedAdmin() {
   });
 }
 
+const unsplash = (id: string) =>
+  `https://images.unsplash.com/photo-${id}?auto=format&fit=crop&w=800&q=80`;
+
 async function main() {
   console.log("seed: wiping");
   await db.delete(BundleItem);
@@ -71,260 +74,23 @@ async function main() {
 
   await seedAdmin();
 
-  console.log("seed: template shells");
-  const [shellMedia] = await db
-    .insert(Product)
-    .values({
-      type: "template_box",
-      slug: "caixa-crua-media-mdf",
-      title: "Caixa crua média (MDF)",
-      description:
-        "Caixa crua em MDF, formato médio — ideal para presentes médios com Bíblia, porta-joias ou kit de maquiagem.",
-      priceCents: 3500,
-      quantity: 25,
-      lowStockThreshold: 5,
-      color: "natural",
-      widthMm: 240,
-      heightMm: 180,
-      depthMm: 75,
-      tags: ["caixa-crua", "mdf", "media"],
-      hidden: true,
-    })
-    .returning();
+  console.log("seed: child products (conteúdos)");
 
-  const [shellAzul] = await db
-    .insert(Product)
-    .values({
-      type: "template_box",
-      slug: "caixa-crua-azul-clara",
-      title: "Caixa crua azul clara",
-      description:
-        "Caixa revestida em tecido azul claro com cordão decorativo — aberta para receber as estampas e detalhes à mão.",
-      priceCents: 4500,
-      quantity: 15,
-      lowStockThreshold: 4,
-      color: "azul-claro",
-      widthMm: 260,
-      heightMm: 170,
-      depthMm: 95,
-      tags: ["caixa-crua", "azul"],
-      hidden: true,
-    })
-    .returning();
-
-  const [shellMini] = await db
-    .insert(Product)
-    .values({
-      type: "template_box",
-      slug: "caixa-crua-mini",
-      title: "Caixa crua mini",
-      description:
-        "Caixa pequena para mimos delicados: pulseiras, colares, miniaturas.",
-      priceCents: 2500,
-      quantity: 30,
-      lowStockThreshold: 6,
-      color: "natural",
-      widthMm: 120,
-      heightMm: 100,
-      depthMm: 60,
-      tags: ["caixa-crua", "mini"],
-      hidden: true,
-    })
-    .returning();
-
-  if (!shellMedia || !shellAzul || !shellMini)
-    throw new Error("seed: shell insert failed");
-
-  console.log("seed: stamps");
-  const [stampRosaFloral] = await db
-    .insert(Stamp)
-    .values({
-      slug: "rosa-floral-vintage",
-      name: "Rosa Floral Vintage",
-      description: "Estampa floral em tons de rosa com laço cetim.",
-      imageUrl: "/news/rosa-jardim-1.jpeg",
-      priceCents: 1500,
-      quantity: 20,
-      lowStockThreshold: 4,
-    })
-    .returning();
-
-  const [stampAzulProvence] = await db
-    .insert(Stamp)
-    .values({
-      slug: "azul-provence",
-      name: "Azul Provence",
-      description: "Estampa floral azul inspirada em Provence, elegante.",
-      imageUrl: "/news/azul-provence.jpeg",
-      priceCents: 1700,
-      quantity: 15,
-      lowStockThreshold: 3,
-    })
-    .returning();
-
-  const [stampBorboleta] = await db
-    .insert(Stamp)
-    .values({
-      slug: "borboleta-flores",
-      name: "Borboleta & Flores",
-      description:
-        "Estampa pastel com borboletas e flores delicadas, tom romântico.",
-      imageUrl: "/news/borboleta-primavera.jpeg",
-      priceCents: 1800,
-      quantity: 12,
-      lowStockThreshold: 3,
-    })
-    .returning();
-
-  const [stampGaiola] = await db
-    .insert(Stamp)
-    .values({
-      slug: "gaiola-vintage",
-      name: "Gaiola Vintage",
-      description:
-        "Estampa com gaiola dourada e passarinho — charme clássico.",
-      imageUrl: "/news/gaiola-dourada.jpeg",
-      priceCents: 1600,
-      quantity: 10,
-      lowStockThreshold: 2,
-    })
-    .returning();
-
-  const [stampJasmim] = await db
-    .insert(Stamp)
-    .values({
-      slug: "jasmim-dourado",
-      name: "Jasmim Dourado",
-      description: "Flores de jasmim em fundo claro com laço verde-sálvia.",
-      imageUrl: "/news/jasmim-2.jpeg",
-      priceCents: 1700,
-      quantity: 14,
-      lowStockThreshold: 3,
-    })
-    .returning();
-
-  const [stampPolka] = await db
-    .insert(Stamp)
-    .values({
-      slug: "polka-delicada",
-      name: "Polka Delicada",
-      description: "Estampa de poá rosa claro com interior ilustrado.",
-      imageUrl: "/news/polka-delicada.jpeg",
-      priceCents: 1400,
-      quantity: 12,
-      lowStockThreshold: 3,
-    })
-    .returning();
-
-  const [stampListras] = await db
-    .insert(Stamp)
-    .values({
-      slug: "listras-romance",
-      name: "Listras Romance",
-      description: "Listras azuis claras com detalhe de rosa vintage.",
-      imageUrl: "/news/listras-rosa.jpeg",
-      priceCents: 1400,
-      quantity: 10,
-      lowStockThreshold: 2,
-    })
-    .returning();
-
-  const [stampPadrinhos] = await db
-    .insert(Stamp)
-    .values({
-      slug: "manual-padrinhos-azul",
-      name: "Manual dos Padrinhos — Azul",
-      description: "Estampa temática de casamento em tons de azul e flores.",
-      imageUrl: "/news/padrinhos-3.jpeg",
-      priceCents: 2200,
-      quantity: 8,
-      lowStockThreshold: 2,
-    })
-    .returning();
-
-  const [stampMelodia] = await db
-    .insert(Stamp)
-    .values({
-      slug: "melodia-partitura",
-      name: "Melodia de Rosas",
-      description:
-        "Estampa com partitura musical e rosas em tons pastel — delicada.",
-      imageUrl: "/news/melodia-rosas-1.jpeg",
-      priceCents: 1600,
-      quantity: 9,
-      lowStockThreshold: 2,
-    })
-    .returning();
-
-  if (
-    !stampRosaFloral ||
-    !stampAzulProvence ||
-    !stampBorboleta ||
-    !stampGaiola ||
-    !stampJasmim ||
-    !stampPolka ||
-    !stampListras ||
-    !stampPadrinhos ||
-    !stampMelodia
-  )
-    throw new Error("seed: stamp insert failed");
-
-  console.log("seed: content products");
-  const [colarCoracao] = await db
-    .insert(Product)
-    .values({
-      type: "jewelry",
-      slug: "colar-coracao-delicado",
-      title: "Colar coração delicado",
-      description: "Colar em ouro folheado com pingente de coração e zircônia.",
-      priceCents: 5500,
-      quantity: 14,
-      lowStockThreshold: 3,
-      tags: ["colar", "jewelry"],
-    })
-    .returning();
-
-  const [pulseiraVerde] = await db
-    .insert(Product)
-    .values({
-      type: "jewelry",
-      slug: "pulseira-coracao-verde",
-      title: "Pulseira coração verde",
-      description:
-        "Pulseira fina folheada com pingente coração em zircônia verde.",
-      priceCents: 4500,
-      quantity: 12,
-      lowStockThreshold: 3,
-      tags: ["pulseira", "jewelry"],
-    })
-    .returning();
-
-  const [pulseiraInfinito] = await db
-    .insert(Product)
-    .values({
-      type: "jewelry",
-      slug: "pulseira-infinito",
-      title: "Pulseira infinito",
-      description: "Pulseira fina com pingente infinito em aço cirúrgico.",
-      priceCents: 3900,
-      quantity: 16,
-      lowStockThreshold: 3,
-      tags: ["pulseira", "jewelry"],
-    })
-    .returning();
-
-  const [kitPinceis] = await db
+  const [bibliaRosa] = await db
     .insert(Product)
     .values({
       type: "cosmetic",
-      slug: "kit-pinceis-rose",
-      title: "Kit de pincéis rosê",
+      slug: "biblia-sagrada-nva-capa-rosa",
+      title: "Bíblia Sagrada NVA — Capa Rosa Guirlanda",
       description:
-        "Kit com 12 pincéis de maquiagem em rosê com espelho compacto.",
-      priceCents: 3900,
-      quantity: 18,
-      lowStockThreshold: 4,
-      tags: ["maquiagem", "pinceis"],
+        "Bíblia Sagrada, tradução Nova Versão Almeida (NVA), capa em guirlanda rosa floral pela Sociedade Bíblica.",
+      priceCents: 8900,
+      quantity: 12,
+      lowStockThreshold: 3,
+      widthMm: 145,
+      heightMm: 210,
+      depthMm: 28,
+      tags: ["biblia", "nva"],
     })
     .returning();
 
@@ -333,12 +99,34 @@ async function main() {
     .values({
       type: "jewelry",
       slug: "porta-joias-rose",
-      title: "Porta-joias rosê",
-      description: "Porta-joias compacto em couro sintético rosê com zíper.",
+      title: "Porta-joias rosê com zíper",
+      description:
+        "Porta-joias compacto em couro sintético rosê com zíper duplo e divisórias internas para anéis, brincos e correntes.",
       priceCents: 4500,
-      quantity: 10,
-      lowStockThreshold: 2,
-      tags: ["joalheiro"],
+      quantity: 14,
+      lowStockThreshold: 3,
+      widthMm: 110,
+      heightMm: 110,
+      depthMm: 55,
+      tags: ["joalheiro", "rose"],
+    })
+    .returning();
+
+  const [kitPinceis] = await db
+    .insert(Product)
+    .values({
+      type: "cosmetic",
+      slug: "kit-pinceis-rose-com-espelho",
+      title: "Kit de pincéis rosê com espelho",
+      description:
+        "Kit com 12 pincéis profissionais de maquiagem em rosê, com estojo retrátil e espelho compacto.",
+      priceCents: 3900,
+      quantity: 18,
+      lowStockThreshold: 4,
+      widthMm: 130,
+      heightMm: 95,
+      depthMm: 35,
+      tags: ["maquiagem", "pinceis", "rose"],
     })
     .returning();
 
@@ -346,88 +134,513 @@ async function main() {
     .insert(Product)
     .values({
       type: "jewelry",
-      slug: "potinho-cristal",
-      title: "Potinho decorativo de cristal",
+      slug: "potinho-cristal-facetado",
+      title: "Potinho de cristal facetado",
       description:
-        "Potinho em vidro cristal com tampa facetada — para pequenas joias.",
+        "Potinho decorativo em vidro cristal com tampa facetada — ideal para anéis, brincos ou pequenas joias.",
       priceCents: 2900,
       quantity: 15,
       lowStockThreshold: 3,
+      widthMm: 80,
+      heightMm: 100,
+      depthMm: 80,
       tags: ["decorativo", "cristal"],
     })
     .returning();
 
-  const [brigadeiros] = await db
-    .insert(Product)
-    .values({
-      type: "cosmetic",
-      slug: "brigadeiros-gourmet-6un",
-      title: "Brigadeiros gourmet (6 un.)",
-      description:
-        "Trio de brigadeiros gourmet: chocolate, crocante e coco — 6 unidades.",
-      priceCents: 3200,
-      quantity: 20,
-      lowStockThreshold: 5,
-      tags: ["doces", "gourmet"],
-    })
-    .returning();
-
-  const [ursinho] = await db
-    .insert(Product)
-    .values({
-      type: "cosmetic",
-      slug: "ursinho-pelucia",
-      title: "Ursinho de pelúcia",
-      description:
-        "Ursinho de pelúcia macio com laço — escolha entre rosa ou azul.",
-      priceCents: 5500,
-      quantity: 22,
-      lowStockThreshold: 4,
-      tags: ["pelucia", "bebe"],
-    })
-    .returning();
-
-  const [bibliaRosa] = await db
-    .insert(Product)
-    .values({
-      type: "cosmetic",
-      slug: "biblia-nva-capa-rosa",
-      title: "Bíblia Sagrada NVA — capa rosa",
-      description: "Bíblia Sagrada, tradução NVA, capa em guirlanda rosa.",
-      priceCents: 8900,
-      quantity: 10,
-      lowStockThreshold: 2,
-      tags: ["biblia", "nva"],
-    })
-    .returning();
-
-  const [pulseiraJoiaAzul] = await db
+  const [colarCoracao] = await db
     .insert(Product)
     .values({
       type: "jewelry",
-      slug: "pulseira-joia-azul",
-      title: "Pulseira joia azul",
-      description: "Pulseira fina folheada com pingente coração azul cristal.",
-      priceCents: 4200,
-      quantity: 9,
+      slug: "colar-coracao-zirconia",
+      title: "Colar coração delicado com zircônia",
+      description:
+        "Colar fino em ouro folheado com pingente de coração cravejado em zircônia branca.",
+      priceCents: 5500,
+      quantity: 14,
+      lowStockThreshold: 3,
+      widthMm: 8,
+      heightMm: 10,
+      depthMm: 3,
+      tags: ["colar", "coracao", "jewelry"],
+    })
+    .returning();
+
+  const [pulseiraVerde] = await db
+    .insert(Product)
+    .values({
+      type: "jewelry",
+      slug: "pulseira-coracao-esmeralda",
+      title: "Pulseira coração verde-esmeralda",
+      description:
+        "Pulseira fina em corrente veneziana folheada a ouro com pingente coração em zircônia verde-esmeralda.",
+      priceCents: 4500,
+      quantity: 12,
+      lowStockThreshold: 3,
+      widthMm: 8,
+      heightMm: 8,
+      depthMm: 3,
+      tags: ["pulseira", "coracao", "jewelry"],
+    })
+    .returning();
+
+  const [manualPadrinhos] = await db
+    .insert(Product)
+    .values({
+      type: "cosmetic",
+      slug: "manual-padrinhos-livreto",
+      title: "Manual dos Padrinhos (livreto)",
+      description:
+        "Livreto ilustrado em capa floral com rosas azuis e brancas — guia ritual para padrinhos e madrinhas.",
+      priceCents: 4900,
+      quantity: 8,
       lowStockThreshold: 2,
-      tags: ["pulseira", "jewelry"],
+      widthMm: 150,
+      heightMm: 150,
+      depthMm: 8,
+      tags: ["padrinhos", "casamento", "convite"],
+    })
+    .returning();
+
+  const [gravataAzul] = await db
+    .insert(Product)
+    .values({
+      type: "cosmetic",
+      slug: "gravata-cetim-azul-claro",
+      title: "Gravata cetim azul claro",
+      description:
+        "Gravata clássica em cetim azul claro com etiqueta \"Para o grande dia!\" — acompanha caixa de padrinhos.",
+      priceCents: 6900,
+      quantity: 6,
+      lowStockThreshold: 2,
+      widthMm: 80,
+      heightMm: 1450,
+      depthMm: 5,
+      tags: ["gravata", "cetim", "padrinhos"],
+    })
+    .returning();
+
+  const [almofadinhaAlianca] = await db
+    .insert(Product)
+    .values({
+      type: "jewelry",
+      slug: "almofadinha-alianca-azul-cristal",
+      title: "Almofadinha aliança com pingente azul-cristal",
+      description:
+        "Almofadinha branca em cetim com aliança fina cravejada por pingente coração em cristal azul.",
+      priceCents: 7900,
+      quantity: 5,
+      lowStockThreshold: 2,
+      widthMm: 90,
+      heightMm: 90,
+      depthMm: 30,
+      tags: ["alianca", "casamento", "padrinhos"],
     })
     .returning();
 
   if (
+    !bibliaRosa ||
+    !portaJoias ||
+    !kitPinceis ||
+    !potinhoCristal ||
     !colarCoracao ||
     !pulseiraVerde ||
-    !pulseiraInfinito ||
-    !kitPinceis ||
-    !portaJoias ||
-    !potinhoCristal ||
-    !brigadeiros ||
-    !ursinho ||
-    !bibliaRosa ||
-    !pulseiraJoiaAzul
+    !manualPadrinhos ||
+    !gravataAzul ||
+    !almofadinhaAlianca
   )
-    throw new Error("seed: content insert failed");
+    throw new Error("seed: child product insert failed");
+
+  console.log("seed: child product media");
+  await db.insert(ProductMedia).values([
+    {
+      productId: bibliaRosa.id,
+      kind: "image" as const,
+      url: unsplash("1637962638303-02da705114c2"),
+      alt: "Bíblia capa rosa floral",
+      sortOrder: 0,
+    },
+    {
+      productId: portaJoias.id,
+      kind: "image" as const,
+      url: unsplash("1680200256120-8ac04eb6f01d"),
+      alt: "Porta-joias rosê",
+      sortOrder: 0,
+    },
+    {
+      productId: kitPinceis.id,
+      kind: "image" as const,
+      url: unsplash("1513122991877-4a5678e6d72f"),
+      alt: "Pincéis de maquiagem com acabamento dourado",
+      sortOrder: 0,
+    },
+    {
+      productId: potinhoCristal.id,
+      kind: "image" as const,
+      url: unsplash("1526930135720-bb578fcf5752"),
+      alt: "Potinho de cristal facetado",
+      sortOrder: 0,
+    },
+    {
+      productId: colarCoracao.id,
+      kind: "image" as const,
+      url: unsplash("1639738491156-3bed044f1678"),
+      alt: "Colar coração delicado",
+      sortOrder: 0,
+    },
+    {
+      productId: pulseiraVerde.id,
+      kind: "image" as const,
+      url: unsplash("1611591437281-460bfbe1220a"),
+      alt: "Pulseira delicada com pingente coração",
+      sortOrder: 0,
+    },
+    {
+      productId: manualPadrinhos.id,
+      kind: "image" as const,
+      url: unsplash("1632610992723-82d7c212f6d7"),
+      alt: "Convite/manual de casamento",
+      sortOrder: 0,
+    },
+    {
+      productId: gravataAzul.id,
+      kind: "image" as const,
+      url: unsplash("1717730798581-0061672774e9"),
+      alt: "Terno azul com gravata",
+      sortOrder: 0,
+    },
+    {
+      productId: almofadinhaAlianca.id,
+      kind: "image" as const,
+      url: unsplash("1627293509201-cd0c780043e6"),
+      alt: "Alianças sobre tecido branco",
+      sortOrder: 0,
+    },
+  ]);
+
+  console.log("seed: template boxes (shells dos bundles — hidden)");
+
+  type ShellInput = {
+    slug: string;
+    title: string;
+    description: string;
+    priceCents: number;
+    quantity: number;
+    widthMm: number;
+    heightMm: number;
+    depthMm: number;
+    color: string;
+    coverUrl: string;
+    tags: string[];
+  };
+
+  const shells: ShellInput[] = [
+    {
+      slug: "shell-sabedoria",
+      title: "Caixa Sabedoria",
+      description:
+        "Caixa retangular grande em papel de poá rosa e azul claro com aplique de madeira escrito \"Sabedoria\" e detalhe de cartão postal vintage.",
+      priceCents: 8900,
+      quantity: 4,
+      widthMm: 280,
+      heightMm: 210,
+      depthMm: 65,
+      color: "rosa-azul",
+      coverUrl: "/catalogo/sabedoria-0.jpeg",
+      tags: ["caixa", "vintage", "sabedoria"],
+    },
+    {
+      slug: "shell-azul-perolas",
+      title: "Caixa Azul Pérolas",
+      description:
+        "Caixa retangular grande em papel floral azul-petróleo com pérolas brancas aplicadas e fita cetim azul.",
+      priceCents: 9900,
+      quantity: 5,
+      widthMm: 280,
+      heightMm: 210,
+      depthMm: 60,
+      color: "azul",
+      coverUrl: "/catalogo/azul-perolas-0.jpeg",
+      tags: ["caixa", "perolas", "azul"],
+    },
+    {
+      slug: "shell-rosa-jardim",
+      title: "Caixa Rosa Jardim",
+      description:
+        "Caixa quadrada média em papel floral com rosas e botões em tons quentes, lacinho cetim rosa.",
+      priceCents: 6900,
+      quantity: 6,
+      widthMm: 220,
+      heightMm: 220,
+      depthMm: 100,
+      color: "rosa",
+      coverUrl: "/catalogo/rosa-jardim-0.jpeg",
+      tags: ["caixa", "rosa", "floral"],
+    },
+    {
+      slug: "shell-melodia-rosas",
+      title: "Caixa Melodia de Rosas",
+      description:
+        "Caixa quadrada média em papel com partitura musical e rosas grandes em tons coral, fita cetim verde-menta.",
+      priceCents: 6500,
+      quantity: 5,
+      widthMm: 200,
+      heightMm: 200,
+      depthMm: 80,
+      color: "coral-verde",
+      coverUrl: "/catalogo/melodia-rosas-0.jpeg",
+      tags: ["caixa", "musica", "rosas"],
+    },
+    {
+      slug: "shell-borboletas-salvia",
+      title: "Caixa Borboletas Sálvia",
+      description:
+        "Caixa retangular média em verde-sálvia com borboletas e flores pastel, fecho dourado e lacinho verde-menta.",
+      priceCents: 7900,
+      quantity: 3,
+      widthMm: 250,
+      heightMm: 170,
+      depthMm: 95,
+      color: "verde-salvia",
+      coverUrl: "/catalogo/borboletas-salvia-0.jpeg",
+      tags: ["caixa", "borboletas", "salvia"],
+    },
+    {
+      slug: "shell-gaiola-dourada",
+      title: "Caixa Gaiola Dourada",
+      description:
+        "Caixa retangular pequena em papel azul claro com ilustração de gaiola dourada e passarinho vintage, fechada por fita e fecho dourados.",
+      priceCents: 5900,
+      quantity: 4,
+      widthMm: 200,
+      heightMm: 140,
+      depthMm: 85,
+      color: "azul-claro",
+      coverUrl: "/catalogo/gaiola-dourada-0.jpeg",
+      tags: ["caixa", "gaiola", "vintage"],
+    },
+    {
+      slug: "shell-listras-vintage",
+      title: "Caixa Listras Vintage",
+      description:
+        "Caixa retangular dupla em listras pastel azul-rosa com rosa pintada à mão, base em poá delicado.",
+      priceCents: 5500,
+      quantity: 5,
+      widthMm: 220,
+      heightMm: 140,
+      depthMm: 120,
+      color: "rosa-azul",
+      coverUrl: "/catalogo/listras-vintage-0.jpeg",
+      tags: ["caixa", "listras", "vintage"],
+    },
+    {
+      slug: "shell-mini-rosa",
+      title: "Caixa Mini Rosa",
+      description:
+        "Caixa pequena cúbica com rosa pintada à mão e lacinho rosa cetim, base em palha texturizada cor creme.",
+      priceCents: 3900,
+      quantity: 8,
+      widthMm: 110,
+      heightMm: 110,
+      depthMm: 80,
+      color: "rosa-creme",
+      coverUrl: "/catalogo/mini-rosa-0.jpeg",
+      tags: ["caixa", "mini", "rosa"],
+    },
+    {
+      slug: "shell-manual-padrinhos",
+      title: "Caixa Manual dos Padrinhos",
+      description:
+        "Caixa de madrinhas/padrinhos em papel floral azul, com manual ilustrado em rosas azuis e almofadinha branca para a aliança com pingente azul-cristal.",
+      priceCents: 14900,
+      quantity: 3,
+      widthMm: 230,
+      heightMm: 230,
+      depthMm: 95,
+      color: "azul-floral",
+      coverUrl: "/catalogo/manual-padrinhos-0.jpeg",
+      tags: ["caixa", "padrinhos", "casamento"],
+    },
+  ];
+
+  const shellRows = await Promise.all(
+    shells.map(async (s) => {
+      const [row] = await db
+        .insert(Product)
+        .values({
+          type: "template_box",
+          slug: s.slug,
+          title: s.title,
+          description: s.description,
+          priceCents: s.priceCents,
+          quantity: s.quantity,
+          lowStockThreshold: 1,
+          color: s.color,
+          widthMm: s.widthMm,
+          heightMm: s.heightMm,
+          depthMm: s.depthMm,
+          tags: s.tags,
+          hidden: true,
+        })
+        .returning();
+      if (!row) throw new Error(`seed: shell insert failed (${s.slug})`);
+      await db.insert(ProductMedia).values({
+        productId: row.id,
+        kind: "image" as const,
+        url: s.coverUrl,
+        alt: `${s.title} — caixa fechada`,
+        sortOrder: 0,
+      });
+      return row;
+    }),
+  );
+
+  const shellBySlug = Object.fromEntries(shellRows.map((r) => [r.slug, r]));
+
+  console.log("seed: caixas MDF cruas (públicas, /encomenda)");
+
+  type MdfShellInput = {
+    slug: string;
+    title: string;
+    description: string;
+    priceCents: number;
+    quantity: number;
+    widthMm: number;
+    heightMm: number;
+    depthMm: number;
+    photos: string[];
+    tags: string[];
+  };
+
+  const mdfShells: MdfShellInput[] = [
+    {
+      slug: "mdf-mini-quadrada",
+      title: "MDF Cru — Mini Quadrada",
+      description:
+        "Caixa cúbica em MDF cru (11×11×8cm). Ideal para mimos pequenos: pulseiras, anéis, bilhete dobrado.",
+      priceCents: 2500,
+      quantity: 12,
+      widthMm: 110,
+      heightMm: 110,
+      depthMm: 80,
+      photos: [
+        "/catalogo/mdf/mdf-mini-quadrada.jpg",
+        "/catalogo/mdf/mdf-mini-quadrada-1.jpg",
+      ],
+      tags: ["mdf", "cru", "mini", "quadrada"],
+    },
+    {
+      slug: "mdf-quadrada-media",
+      title: "MDF Cru — Quadrada Média",
+      description:
+        "Caixa MDF quadrada média (20×20×8cm). Boa para perfume, conjunto de joias ou dois mimos lado a lado.",
+      priceCents: 4500,
+      quantity: 10,
+      widthMm: 200,
+      heightMm: 200,
+      depthMm: 80,
+      photos: [
+        "/catalogo/mdf/mdf-quadrada-media.jpg",
+        "/catalogo/mdf/mdf-quadrada-media-1.jpg",
+      ],
+      tags: ["mdf", "cru", "media", "quadrada"],
+    },
+    {
+      slug: "mdf-quadrada-grande",
+      title: "MDF Cru — Quadrada Grande",
+      description:
+        "Caixa MDF quadrada grande (22×22×10cm). Espaço para kit completo — pincéis, joalheiro, potinho de cristal.",
+      priceCents: 5900,
+      quantity: 8,
+      widthMm: 220,
+      heightMm: 220,
+      depthMm: 95,
+      photos: [
+        "/catalogo/mdf/mdf-quadrada-grande.jpg",
+        "/catalogo/mdf/mdf-quadrada-grande-1.jpg",
+      ],
+      tags: ["mdf", "cru", "grande", "quadrada"],
+    },
+    {
+      slug: "mdf-retangular-media",
+      title: "MDF Cru — Retangular Média",
+      description:
+        "Caixa MDF retangular (25×17×10cm) com fecho frontal. Clássica para presentes compostos.",
+      priceCents: 5200,
+      quantity: 9,
+      widthMm: 250,
+      heightMm: 170,
+      depthMm: 95,
+      photos: [
+        "/catalogo/mdf/mdf-retangular-media.jpg",
+        "/catalogo/mdf/mdf-retangular-media-1.jpg",
+      ],
+      tags: ["mdf", "cru", "media", "retangular"],
+    },
+    {
+      slug: "mdf-retangular-slim",
+      title: "MDF Cru — Retangular Slim",
+      description:
+        "Caixa MDF retangular slim (28×21×6,5cm) — formato livro. Para Bíblia, partituras, agenda ou caderno.",
+      priceCents: 5500,
+      quantity: 7,
+      widthMm: 280,
+      heightMm: 210,
+      depthMm: 65,
+      photos: [
+        "/catalogo/mdf/mdf-retangular-slim.jpg",
+        "/catalogo/mdf/mdf-retangular-slim-1.jpg",
+      ],
+      tags: ["mdf", "cru", "slim", "biblia", "retangular"],
+    },
+    {
+      slug: "mdf-retangular-alta",
+      title: "MDF Cru — Retangular Alta",
+      description:
+        "Caixa MDF retangular com profundidade extra (22×14×12cm). Abriga itens com volume — cristais, ursinhos.",
+      priceCents: 5800,
+      quantity: 6,
+      widthMm: 220,
+      heightMm: 140,
+      depthMm: 120,
+      photos: [
+        "/catalogo/mdf/mdf-retangular-alta.jpg",
+        "/catalogo/mdf/mdf-retangular-alta-1.jpg",
+      ],
+      tags: ["mdf", "cru", "alta", "retangular"],
+    },
+  ];
+
+  for (const m of mdfShells) {
+    const [row] = await db
+      .insert(Product)
+      .values({
+        type: "template_box",
+        slug: m.slug,
+        title: m.title,
+        description: m.description,
+        priceCents: m.priceCents,
+        quantity: m.quantity,
+        lowStockThreshold: 2,
+        color: "natural",
+        widthMm: m.widthMm,
+        heightMm: m.heightMm,
+        depthMm: m.depthMm,
+        tags: m.tags,
+        hidden: false,
+      })
+      .returning();
+    if (!row) throw new Error(`seed: mdf shell insert failed (${m.slug})`);
+    await db.insert(ProductMedia).values(
+      m.photos.map((url, i) => ({
+        productId: row.id,
+        kind: "image" as const,
+        url,
+        alt: `${m.title} — foto ${i + 1}`,
+        sortOrder: i,
+      })),
+    );
+  }
 
   console.log("seed: catalog bundles");
 
@@ -435,8 +648,7 @@ async function main() {
     slug: string;
     title: string;
     description: string;
-    templateBoxId: string;
-    stampId: string | null;
+    templateBoxSlug: string;
     priceCents: number;
     quantity: number;
     lowStockThreshold: number;
@@ -446,29 +658,51 @@ async function main() {
 
   const bundles: BundleInput[] = [
     {
-      slug: "rosa-jardim",
-      title: "Rosa Jardim",
+      slug: "sabedoria",
+      title: "Sabedoria",
       description:
-        "Caixa floral em papel rosa com laço cetim verde-menta. Perfeita para um presente elegante e atemporal.",
-      templateBoxId: shellMedia.id,
-      stampId: stampRosaFloral.id,
-      priceCents: 8900,
-      quantity: 8,
-      lowStockThreshold: 2,
-      images: ["/news/rosa-jardim-1.jpeg", "/news/rosa-jardim-2.jpeg"],
-      items: [],
+        "Caixa Sabedoria com Bíblia Sagrada NVA em capa rosa floral. Conjunto de cabeceira completo, perfeito para presentear quem ama os tempos quietos.",
+      templateBoxSlug: "shell-sabedoria",
+      priceCents: 19900,
+      quantity: 4,
+      lowStockThreshold: 1,
+      images: [
+        "/catalogo/sabedoria-0.jpeg",
+        "/catalogo/sabedoria-1.jpeg",
+        "/catalogo/sabedoria-2.jpeg",
+      ],
+      items: [{ productId: bibliaRosa.id }],
     },
     {
-      slug: "kit-beleza-rose",
-      title: "Kit Beleza Rosé",
+      slug: "azul-perolas",
+      title: "Azul Pérolas",
       description:
-        "Caixa Rosa Floral com kit completo: pincéis rosê, porta-joias e potinho de cristal.",
-      templateBoxId: shellMedia.id,
-      stampId: stampRosaFloral.id,
-      priceCents: 19900,
+        "Caixa Azul Pérolas com Bíblia Sagrada NVA em capa rosa floral. Acabamento sereno e elegante, ideal para presente de fé com elegância.",
+      templateBoxSlug: "shell-azul-perolas",
+      priceCents: 21900,
       quantity: 5,
       lowStockThreshold: 2,
-      images: ["/news/kit-rose-1.jpeg", "/news/kit-rose-2.jpeg"],
+      images: [
+        "/catalogo/azul-perolas-0.jpeg",
+        "/catalogo/azul-perolas-1.jpeg",
+        "/catalogo/azul-perolas-2.jpeg",
+      ],
+      items: [{ productId: bibliaRosa.id }],
+    },
+    {
+      slug: "rosa-jardim",
+      title: "Rosa Jardim — Kit Beleza",
+      description:
+        "Caixa Rosa Jardim com kit completo: pincéis rosê com espelho, porta-joias rosê e potinho de cristal. Trio de cuidado em uma só caixa.",
+      templateBoxSlug: "shell-rosa-jardim",
+      priceCents: 22900,
+      quantity: 5,
+      lowStockThreshold: 2,
+      images: [
+        "/catalogo/rosa-jardim-0.jpeg",
+        "/catalogo/rosa-jardim-1.jpeg",
+        "/catalogo/rosa-jardim-2.jpeg",
+      ],
       items: [
         { productId: kitPinceis.id },
         { productId: portaJoias.id },
@@ -479,234 +713,93 @@ async function main() {
       slug: "melodia-de-rosas",
       title: "Melodia de Rosas",
       description:
-        "Caixa com estampa de partitura e rosas pastel + colar coração delicado.",
-      templateBoxId: shellMedia.id,
-      stampId: stampMelodia.id,
-      priceCents: 15900,
-      quantity: 6,
+        "Caixa Melodia de Rosas com colar coração delicado em ouro folheado com zircônia. Inspiração poética e mimo certeiro.",
+      templateBoxSlug: "shell-melodia-rosas",
+      priceCents: 14900,
+      quantity: 5,
       lowStockThreshold: 2,
       images: [
-        "/news/melodia-rosas-1.jpeg",
-        "/news/melodia-rosas-2.jpeg",
+        "/catalogo/melodia-rosas-0.jpeg",
+        "/catalogo/melodia-rosas-1.jpeg",
       ],
       items: [{ productId: colarCoracao.id }],
     },
     {
-      slug: "borboleta-primavera",
-      title: "Borboleta Primavera",
+      slug: "borboletas-salvia",
+      title: "Borboletas Sálvia",
       description:
-        "Caixa vintage com borboletas e flores pastel + pulseira infinito.",
-      templateBoxId: shellMedia.id,
-      stampId: stampBorboleta.id,
-      priceCents: 13900,
-      quantity: 4,
-      lowStockThreshold: 2,
-      images: ["/news/borboleta-primavera.jpeg"],
-      items: [{ productId: pulseiraInfinito.id }],
+        "Caixa Borboletas Sálvia entregue vazia para receber seu mimo escolhido. Acabamento primaveril e leve.",
+      templateBoxSlug: "shell-borboletas-salvia",
+      priceCents: 9900,
+      quantity: 3,
+      lowStockThreshold: 1,
+      images: ["/catalogo/borboletas-salvia-0.jpeg"],
+      items: [],
     },
     {
       slug: "gaiola-dourada",
       title: "Gaiola Dourada",
       description:
-        "Caixa com estampa de gaiola vintage e laço bege + pulseira infinito.",
-      templateBoxId: shellMedia.id,
-      stampId: stampGaiola.id,
-      priceCents: 12900,
+        "Caixa Gaiola Dourada entregue vazia. Charme clássico em papel azul claro com gaiola desenhada e fecho dourado.",
+      templateBoxSlug: "shell-gaiola-dourada",
+      priceCents: 7900,
       quantity: 4,
-      lowStockThreshold: 2,
-      images: ["/news/gaiola-dourada.jpeg"],
-      items: [{ productId: pulseiraInfinito.id }],
-    },
-    {
-      slug: "listras-romance",
-      title: "Listras Romance",
-      description:
-        "Caixa listrada azul-rosa com rosa vintage na tampa e pulseira coração verde.",
-      templateBoxId: shellMini.id,
-      stampId: stampListras.id,
-      priceCents: 11900,
-      quantity: 5,
-      lowStockThreshold: 2,
-      images: ["/news/listras-rosa.jpeg"],
-      items: [{ productId: pulseiraVerde.id }],
-    },
-    {
-      slug: "polka-delicada",
-      title: "Polka Delicada",
-      description:
-        "Caixa de poá rosa claro com interior ilustrado de passarinhos + pulseira.",
-      templateBoxId: shellMini.id,
-      stampId: stampPolka.id,
-      priceCents: 10900,
-      quantity: 6,
-      lowStockThreshold: 2,
-      images: ["/news/polka-delicada.jpeg"],
-      items: [{ productId: pulseiraInfinito.id }],
-    },
-    {
-      slug: "jasmim-dourado",
-      title: "Jasmim Dourado",
-      description:
-        "Caixa com flores de jasmim e laço verde-sálvia + pulseira joia azul.",
-      templateBoxId: shellMedia.id,
-      stampId: stampJasmim.id,
-      priceCents: 14900,
-      quantity: 5,
-      lowStockThreshold: 2,
-      images: ["/news/jasmim-1.jpeg", "/news/jasmim-2.jpeg"],
-      items: [{ productId: pulseiraJoiaAzul.id }],
-    },
-    {
-      slug: "floral-nobre",
-      title: "Floral Nobre",
-      description:
-        "Caixa maior em papel floral em relevo com detalhe em pérolas. Entregue vazia para o seu toque.",
-      templateBoxId: shellMedia.id,
-      stampId: null,
-      priceCents: 16900,
-      quantity: 3,
       lowStockThreshold: 1,
-      images: ["/news/floral-nobre.jpeg"],
+      images: ["/catalogo/gaiola-dourada-0.jpeg"],
       items: [],
     },
     {
-      slug: "rosa-classica-mini",
-      title: "Rosa Clássica Mini",
+      slug: "listras-vintage",
+      title: "Listras Vintage",
       description:
-        "Caixa pequena com laço rosa e rosa pintada à mão. Ideal para mimos sutis.",
-      templateBoxId: shellMini.id,
-      stampId: stampRosaFloral.id,
-      priceCents: 9900,
-      quantity: 7,
-      lowStockThreshold: 2,
-      images: ["/news/rosa-classica.jpeg"],
-      items: [{ productId: pulseiraInfinito.id }],
-    },
-    {
-      slug: "brigadeiros-gourmet",
-      title: "Brigadeiros Gourmet",
-      description:
-        "Caixa azul clara com seis brigadeiros gourmet — chocolate, crocante e coco.",
-      templateBoxId: shellAzul.id,
-      stampId: stampAzulProvence.id,
-      priceCents: 12900,
-      quantity: 8,
-      lowStockThreshold: 3,
-      images: ["/news/brigadeiros.jpeg"],
-      items: [{ productId: brigadeiros.id }],
-    },
-    {
-      slug: "morana-giovinna",
-      title: "Morana — Showcase",
-      description:
-        "Exemplo de caixa personalizada com bilhete em dourado e joia Morana. Sob encomenda com nome e mensagem à escolha.",
-      templateBoxId: shellMini.id,
-      stampId: null,
-      priceCents: 18900,
-      quantity: 3,
-      lowStockThreshold: 1,
-      images: ["/news/morana-giovinna.jpeg"],
-      items: [{ productId: portaJoias.id }],
-    },
-    {
-      slug: "romance-pink",
-      title: "Romance Pink",
-      description:
-        "Caixa rosa pink com rosa delicada + pulseira coração verde brilhante.",
-      templateBoxId: shellMini.id,
-      stampId: stampRosaFloral.id,
-      priceCents: 13900,
+        "Caixa Listras Vintage entregue vazia para receber seu presente especial. Acabamento romântico em listras pastel.",
+      templateBoxSlug: "shell-listras-vintage",
+      priceCents: 6900,
       quantity: 5,
       lowStockThreshold: 2,
-      images: ["/news/romance-pink.jpeg"],
-      items: [{ productId: pulseiraVerde.id }],
+      images: ["/catalogo/listras-vintage-0.jpeg"],
+      items: [],
     },
     {
       slug: "mini-rosa",
-      title: "Mini Rosa Delicada",
+      title: "Mini Rosa",
       description:
-        "Caixinha com laço rosa e rosa pintada à mão. Mimo sutil pronto para presentear.",
-      templateBoxId: shellMini.id,
-      stampId: stampRosaFloral.id,
-      priceCents: 7900,
-      quantity: 10,
-      lowStockThreshold: 3,
-      images: ["/news/mini-rosa.jpeg"],
-      items: [],
+        "Caixa Mini Rosa com pulseira coração verde-esmeralda em ouro folheado. Mimo discreto e impactante.",
+      templateBoxSlug: "shell-mini-rosa",
+      priceCents: 9900,
+      quantity: 6,
+      lowStockThreshold: 2,
+      images: ["/catalogo/mini-rosa-0.jpeg", "/catalogo/mini-rosa-1.jpeg"],
+      items: [{ productId: pulseiraVerde.id }],
     },
     {
-      slug: "azul-provence",
-      title: "Azul Provence",
+      slug: "manual-padrinhos",
+      title: "Manual dos Padrinhos",
       description:
-        "Caixa grande em papel azul floral com laço azul claro — elegante e espaçosa.",
-      templateBoxId: shellAzul.id,
-      stampId: stampAzulProvence.id,
-      priceCents: 17900,
-      quantity: 4,
-      lowStockThreshold: 1,
-      images: ["/news/azul-provence.jpeg"],
-      items: [],
-    },
-    {
-      slug: "padrinhos-azul-manual",
-      title: "Padrinhos Azul — Manual",
-      description:
-        "Caixa de casamento com Manual dos Padrinhos e gravata azul. Inclui bilhete 'Para o grande dia!'.",
-      templateBoxId: shellAzul.id,
-      stampId: stampPadrinhos.id,
-      priceCents: 29900,
+        "Caixa de convite para padrinhos: manual ilustrado em rosas azuis, gravata cetim azul claro \"Para o grande dia!\" e almofadinha com aliança azul-cristal. Premium para casamentos.",
+      templateBoxSlug: "shell-manual-padrinhos",
+      priceCents: 24900,
       quantity: 3,
       lowStockThreshold: 1,
       images: [
-        "/news/padrinhos-1.jpeg",
-        "/news/padrinhos-2.jpeg",
-        "/news/padrinhos-3.jpeg",
-        "/news/padrinhos-4.jpeg",
+        "/catalogo/manual-padrinhos-0.jpeg",
+        "/catalogo/manual-padrinhos-1.jpeg",
       ],
-      items: [],
-    },
-    {
-      slug: "cha-de-bebe-duo",
-      title: "Chá de Bebê Duo",
-      description:
-        "Par de caixas rosa e azul com ursinhos de pelúcia e ilustração infantil — para gêmeos ou família.",
-      templateBoxId: shellMini.id,
-      stampId: null,
-      priceCents: 23900,
-      quantity: 4,
-      lowStockThreshold: 1,
-      images: ["/news/cha-bebe.jpeg"],
-      items: [{ productId: ursinho.id, quantity: 2 }],
-    },
-    {
-      slug: "blackpink-lorena",
-      title: "BlackPink — Showcase Personalizada",
-      description:
-        "Exemplo real de caixa personalizada para fã: caneca com nome + camiseta BlackPink + foto da banda aplicada.",
-      templateBoxId: shellMini.id,
-      stampId: null,
-      priceCents: 21900,
-      quantity: 2,
-      lowStockThreshold: 1,
-      images: ["/news/blackpink-lorena.jpeg"],
-      items: [],
-    },
-    {
-      slug: "cars-giovanna-15",
-      title: "Cars Giovanna — 15 Anos",
-      description:
-        "Caixa temática Cars para festa de 15 anos — personalização total com nome, foto e idade.",
-      templateBoxId: shellMini.id,
-      stampId: null,
-      priceCents: 24900,
-      quantity: 2,
-      lowStockThreshold: 1,
-      images: ["/news/cars-giovanna.jpeg"],
-      items: [],
+      items: [
+        { productId: manualPadrinhos.id },
+        { productId: gravataAzul.id },
+        { productId: almofadinhaAlianca.id },
+      ],
     },
   ];
 
   for (const b of bundles) {
+    const shell = shellBySlug[b.templateBoxSlug];
+    if (!shell)
+      throw new Error(
+        `seed: missing shell for bundle ${b.slug} (${b.templateBoxSlug})`,
+      );
+
     const [row] = await db
       .insert(Bundle)
       .values({
@@ -714,8 +807,7 @@ async function main() {
         slug: b.slug,
         title: b.title,
         description: b.description,
-        templateBoxId: b.templateBoxId,
-        stampId: b.stampId,
+        templateBoxId: shell.id,
         priceCents: b.priceCents,
         quantity: b.quantity,
         lowStockThreshold: b.lowStockThreshold,
@@ -747,90 +839,6 @@ async function main() {
     }
   }
 
-  console.log("seed: product media");
-  const unsplash = (id: string) =>
-    `https://images.unsplash.com/photo-${id}?auto=format&fit=crop&w=800&q=80`;
-
-  await db.insert(ProductMedia).values([
-    {
-      productId: shellAzul.id,
-      kind: "image" as const,
-      url: "/news/shell-azul-aberta.jpeg",
-      alt: "Caixa crua azul clara — interior",
-      sortOrder: 0,
-    },
-    {
-      productId: colarCoracao.id,
-      kind: "image" as const,
-      url: unsplash("1639738491156-3bed044f1678"),
-      alt: "Colar com pingente de coração",
-      sortOrder: 0,
-    },
-    {
-      productId: pulseiraVerde.id,
-      kind: "image" as const,
-      url: unsplash("1611591437281-460bfbe1220a"),
-      alt: "Pulseira delicada",
-      sortOrder: 0,
-    },
-    {
-      productId: pulseiraInfinito.id,
-      kind: "image" as const,
-      url: unsplash("1619119069152-a2b331eb392a"),
-      alt: "Pulseira infinito",
-      sortOrder: 0,
-    },
-    {
-      productId: pulseiraJoiaAzul.id,
-      kind: "image" as const,
-      url: unsplash("1721206624492-3d05631471ea"),
-      alt: "Pulseira com pedra azul",
-      sortOrder: 0,
-    },
-    {
-      productId: kitPinceis.id,
-      kind: "image" as const,
-      url: unsplash("1684407616442-8d5a1b7c978e"),
-      alt: "Kit de pincéis de maquiagem rosê",
-      sortOrder: 0,
-    },
-    {
-      productId: portaJoias.id,
-      kind: "image" as const,
-      url: unsplash("1680200256120-8ac04eb6f01d"),
-      alt: "Porta-joias com colar",
-      sortOrder: 0,
-    },
-    {
-      productId: potinhoCristal.id,
-      kind: "image" as const,
-      url: unsplash("1526930135720-bb578fcf5752"),
-      alt: "Potinho decorativo em cristal",
-      sortOrder: 0,
-    },
-    {
-      productId: brigadeiros.id,
-      kind: "image" as const,
-      url: unsplash("1599599810769-bcde5a160d32"),
-      alt: "Brigadeiros gourmet",
-      sortOrder: 0,
-    },
-    {
-      productId: ursinho.id,
-      kind: "image" as const,
-      url: unsplash("1602734846297-9299fc2d4703"),
-      alt: "Ursinho de pelúcia",
-      sortOrder: 0,
-    },
-    {
-      productId: bibliaRosa.id,
-      kind: "image" as const,
-      url: unsplash("1637962638303-02da705114c2"),
-      alt: "Bíblia capa delicada",
-      sortOrder: 0,
-    },
-  ]);
-
   console.log("seed: sample coupons");
   await db.insert(Coupon).values([
     {
@@ -860,7 +868,7 @@ async function main() {
   ]);
 
   console.log(
-    `seed: done — ${bundles.length} bundles, 9 stamps, 13 products`,
+    `seed: done — ${bundles.length} bundles, ${shells.length} bundle shells, ${mdfShells.length} MDF cruas, 9 child products, 3 coupons`,
   );
   process.exit(0);
 }

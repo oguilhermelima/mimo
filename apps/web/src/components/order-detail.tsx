@@ -70,11 +70,12 @@ export function OrderDetail({ id }: { id: string }) {
         </span>
         {isReserved && (
           <p className="text-sm text-muted-foreground">
-            Reservado até{" "}
+            Itens reservados até{" "}
             <strong className="text-foreground">
               {reservedUntil.toLocaleString("pt-BR")}
             </strong>
-            . Em breve te chamamos pelo WhatsApp pra combinar o pagamento.
+            . Em breve entramos em contato pelo WhatsApp para confirmar o
+            pagamento e a entrega.
           </p>
         )}
       </header>
@@ -139,7 +140,7 @@ export function OrderDetail({ id }: { id: string }) {
           )}
           {order.fulfillmentMethod === "pickup_taboao" && (
             <p className="text-muted-foreground">
-              Endereço combinado pelo WhatsApp.
+              Endereço de retirada combinado pelo WhatsApp.
             </p>
           )}
         </div>

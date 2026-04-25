@@ -28,7 +28,7 @@ export default function HomePage() {
             Nossas caixinhas
           </h2>
           <p className="mt-4 max-w-md text-muted-foreground">
-            Toque em qualquer uma para montar do seu jeito e encomendar
+            Selecione uma caixa para personalizar e finalizar a compra.
           </p>
         </div>
         <Suspense fallback={<CatalogGridSkeleton />}>

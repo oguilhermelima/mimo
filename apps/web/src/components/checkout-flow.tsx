@@ -96,7 +96,9 @@ export function CheckoutFlow() {
 
   const handleSubmit = () => {
     if (entries.some((e) => e.priceCents == null)) {
-      toast.error("algum item está sob consulta — chame no WhatsApp");
+      toast.error(
+        "Há item sob consulta no carrinho. Entre em contato pelo WhatsApp para concluir o pedido.",
+      );
       return;
     }
 
@@ -137,8 +139,9 @@ export function CheckoutFlow() {
             Finalizar compra
           </h1>
           <p className="mt-2 text-muted-foreground md:text-lg">
-            Reserva seus itens por 12h. A gente combina o pagamento pelo WhatsApp
-            depois.
+            Ao concluir o pedido, reservamos os itens por 12 horas. Em seguida,
+            entramos em contato pelo WhatsApp para confirmar o pagamento e a
+            entrega.
           </p>
         </header>
 
@@ -146,9 +149,11 @@ export function CheckoutFlow() {
           <div className="flex items-start gap-3 rounded-2xl border border-amber-300/60 bg-amber-50/70 p-4 text-amber-900">
             <AlertCircle className="mt-0.5 size-5 shrink-0" />
             <div className="space-y-1 text-sm">
-              <p className="font-medium">Complete seu perfil antes de continuar</p>
+              <p className="font-medium">
+                Complete seu perfil antes de finalizar o pedido
+              </p>
               <p>
-                Precisamos do seu nome, CPF e telefone pra reservar o pedido.{" "}
+                Precisamos do seu nome, CPF e telefone para emitir a reserva.{" "}
                 <Link href="/conta" className="font-medium underline">
                   Atualizar perfil
                 </Link>
@@ -160,20 +165,20 @@ export function CheckoutFlow() {
         <Section
           number={1}
           title="Recebimento"
-          description="Como você quer receber a caixinha?"
+          description="Selecione como você quer receber o pedido."
         >
           <div className="grid gap-3 sm:grid-cols-2">
             <FulfillmentCard
               icon={<Truck className="size-5" />}
               title="Entrega no endereço"
-              description="Combinamos prazo e frete pelo WhatsApp."
+              description="Confirmamos prazo e valor do frete pelo WhatsApp após a reserva."
               checked={fulfillment === "delivery"}
               onClick={() => setFulfillment("delivery")}
             />
             <FulfillmentCard
               icon={<Home className="size-5" />}
               title="Retirada em Taboão"
-              description="Endereço combinado pelo WhatsApp."
+              description="Combinamos local e horário pelo WhatsApp após a reserva."
               checked={fulfillment === "pickup_taboao"}
               onClick={() => setFulfillment("pickup_taboao")}
             />
@@ -183,8 +188,8 @@ export function CheckoutFlow() {
         {fulfillment === "delivery" ? (
           <Section
             number={2}
-            title="Endereço"
-            description="Pra onde mandamos a caixinha?"
+            title="Endereço de entrega"
+            description="Para onde devemos enviar o pedido."
           >
             {addresses.data.length > 0 && (
               <ul className="space-y-2">
@@ -269,15 +274,15 @@ export function CheckoutFlow() {
           <Section
             number={2}
             title="Local de retirada"
-            description="Combinamos endereço completo pelo WhatsApp."
+            description="Endereço completo combinado pelo WhatsApp após a reserva."
           >
             <div className="rounded-2xl border border-primary/20 bg-primary/5 p-4 text-sm">
               <p className="font-serif text-lg text-primary">
                 {STORE_PICKUP_CITY}
               </p>
               <p className="mt-1 text-muted-foreground">
-                Após reservar o pedido, te chamamos no WhatsApp pra alinhar
-                horário e endereço exato da retirada.
+                Ao confirmar a reserva, entramos em contato pelo WhatsApp para
+                combinar o local exato e o horário da retirada.
               </p>
             </div>
           </Section>
@@ -286,7 +291,7 @@ export function CheckoutFlow() {
         <Section
           number={3}
           title="Pagamento"
-          description="Combinaremos o pagamento por WhatsApp depois da reserva."
+          description="A confirmação do pagamento é feita pelo WhatsApp após a reserva."
         >
           <div className="grid gap-2 sm:grid-cols-2">
             {PAYMENT_METHODS.map((m) => (
@@ -312,7 +317,7 @@ export function CheckoutFlow() {
         <Section
           number={4}
           title="Observações"
-          description="Personalizações, cores, bilhete… (opcional)"
+          description="Detalhes da personalização: cores, mensagem do bilhete, preferências (opcional)."
         >
           <textarea
             value={customerNote}
@@ -375,7 +380,7 @@ export function CheckoutFlow() {
           {couponCode && (
             <div className="flex justify-between text-emerald-700">
               <dt>Cupom {couponCode}</dt>
-              <dd>aplicado no servidor</dd>
+              <dd>validado na confirmação</dd>
             </div>
           )}
           <div className="flex items-baseline justify-between border-t border-border/40 pt-2">
@@ -398,7 +403,8 @@ export function CheckoutFlow() {
         </Button>
 
         <p className="text-center text-xs text-muted-foreground">
-          Reserva válida por 12h — depois disso, o estoque volta pro catálogo.
+          A reserva fica válida por 12 horas. Sem confirmação dentro desse
+          prazo, os itens retornam ao estoque automaticamente.
         </p>
       </aside>
     </div>

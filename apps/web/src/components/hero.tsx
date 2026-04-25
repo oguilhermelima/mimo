@@ -85,8 +85,9 @@ export function Hero() {
 
             <p className="mx-auto mt-7 max-w-md text-balance text-base leading-relaxed text-muted-foreground md:mx-0 md:max-w-lg md:text-lg">
               Caixinhas artesanais feitas com cuidado — papel por papel,
-              laço por laço. Escolha uma pronta ou monte a sua; a gente
-              amarra cada detalhe pelo WhatsApp.
+              laço por laço. Escolha uma das opções prontas ou monte a sua
+              personalizada: reserve pelo site e confirmamos cada detalhe
+              pelo WhatsApp.
             </p>
 
             <div className="mt-10 flex flex-col items-center gap-3 sm:flex-row md:items-start">

@@ -249,8 +249,8 @@ export function CartView() {
 
         {hasUnpriced ? (
           <div className="rounded-2xl border border-amber-300/50 bg-amber-50/60 p-3 text-xs text-amber-900">
-            Algum item está sob consulta — entre em contato pelo WhatsApp pra
-            fechar essa compra.
+            Há item sob consulta no carrinho. Entre em contato pelo WhatsApp
+            para concluir esse pedido.
           </div>
         ) : (
           <Button

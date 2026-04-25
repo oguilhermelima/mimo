@@ -53,8 +53,8 @@ export function EncomendaBanner() {
               {" "}caixinha
             </h2>
             <p className="text-base leading-relaxed text-muted-foreground md:text-lg">
-              Escolha a caixa crua, a estampa e os itens que vão dentro —
-              fechamos tudo no WhatsApp com carinho.
+              Escolha a caixa, a estampa e os itens que vão dentro. Reserve
+              pelo site e confirmamos cada detalhe pelo WhatsApp.
             </p>
           </div>
 
